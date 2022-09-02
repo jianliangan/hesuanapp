@@ -1,0 +1,92 @@
+<html>
+
+<body>
+    <div class="hello" id="svg-wrapper">
+
+        <svg width="100%" height="1000" id="svgg">
+
+            <path d="M 207 252 L 369.88 252" fill="none" stroke="#8c8c8c" stroke-miterlimit="10"></path>
+            <!-- <path d="M 207 252 L 371.63 252" fill="none" stroke="#8c8c8c" stroke-miterlimit="10"></path>    -->
+
+            <!--    <path d="M 376.88 262 L 369.88 265.5 L 371.63 262 L 369.88 258.5 Z" fill="#8c8c8c" stroke="#8c8c8c"
+        stroke-miterlimit="10" pointer-events="all"></path>-->
+
+            <path d="M 207 252 L 207 452" fill="none" stroke="#8c8c8c" stroke-miterlimit="10"></path>
+
+
+        </svg>
+    </div>
+</body>
+<script>
+    let abc = 4
+    let test = { abc }
+
+    function timeout(ms) {
+
+        return new Promise((resolve) => {
+
+            setTimeout(resolve, ms);
+
+        });
+
+    }
+    async function myFunction(value, ms) {
+
+        try {
+
+            await timeout(ms);
+
+        } catch (err) {
+
+
+
+        }
+
+    }
+    myFunction('hello world', 5000);
+
+
+    function drawarrow(x, y, direct) {
+        //> 
+        let str = ""
+        if (direct === "top") {
+            str = "M " + x + " " + y + " L " + (x + 3.5) + " " + (y + 7) + " L " + x + " " + (y + 5.25) + " L " + (x - 3.5) + " " + (y + 7) + " Z"
+        } else if (direct === "bottom") {
+            str = "M " + x + " " + y + " L " + (x - 3.5) + " " + (y - 7) + " L " + x + " " + (y - 5.25) + " L " + (x + 3.5) + " " + (y - 7) + " Z"
+        } else if (direct === "left") {
+            str = "M " + x + " " + y + " L " + (x + 7) + " " + (y + 3.5) + " L " + (x + 5.25) + " " + y + " L " + (x + 7) + " " + (y - 3.5) + " Z"
+        } else {
+            //>
+            str = "M " + x + " " + y + " L " + (x - 7) + " " + (y + 3.5) + " L " + (x - 5.25) + " " + y + " L " + (x - 7) + " " + (y - 3.5) + " Z"
+
+        }
+
+        return str
+    }
+    window.onload = function () {
+
+        let nameSpace = 'http://www.w3.org/2000/svg'; //���������ռ�
+        /*var barChart = document.createElementNS(nameSpace,'svg'); //��html�ﶨ��һ��svg
+        barChart.setAttribute('width', 1000); //���ӳ���
+        barChart.setAttribute('height', 1000);
+        let svgWrap = document.querySelector("#svg-wrapper"); //��id��Ϊsvg-wrapper��div�����Ӵ�svg
+        svgWrap.appendChild(barChart);*/
+        //////// 369.88 252
+        let aaa = drawarrow(369.88, 252, "right")
+        //createElementNS(��http://www.w3.org/2000/svg��,��svg��)
+        var dynObj = document.createElementNS("http://www.w3.org/2000/svg", "path")
+        dynObj.setAttribute("d", aaa)
+        dynObj.setAttribute("fill", "#8c8c8c")
+        dynObj.setAttribute("stroke", "#8c8c8c")
+        dynObj.setAttribute("stroke-miterlimit", "10")
+        dynObj.setAttribute("pointer-events", "all")
+
+        let barChart = document.querySelector("#svgg"); //��id��Ϊsvg-wrapper��div�����Ӵ�svg
+        barChart.appendChild(dynObj);
+
+
+    }
+
+</script>
+
+</html>
