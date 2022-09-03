@@ -12,7 +12,7 @@ export const ProjectPushRow = (body: any) => {
         method: 'post',
         data: JSON.stringify(body),
         headers: {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         }
     })
 }

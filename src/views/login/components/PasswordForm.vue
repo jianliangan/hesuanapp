@@ -81,44 +81,36 @@ export default {
 				password: this.$TOOL.crypto.MD5(this.form.password)
 			}
 			//获取token
-			let response = await ApiToken()
-			var user = response["data"]
-			if (user.code == 200) {
-				this.$TOOL.cookie.set("TOKEN", user.data.token, {
-					expires: this.form.autologin ? 24 * 60 * 60 : 0
-				})
-				this.$TOOL.data.set("USER_INFO", user.data.userInfo)
-			} else {
-				this.islogin = false
-				this.$message.warning(user.message)
-				return false
-			}
+			let resdata = await ApiToken()
+			var user = resdata
+
+			this.$TOOL.cookie.set("TOKEN", user.token, {
+				expires: this.form.autologin ? 24 * 60 * 60 : 0
+			})
+			this.$TOOL.data.set("USER_INFO", user.userInfo)
+
 			//获取菜单
 			var menu = null
 			if (this.form.user == 'admin') {
 				//menu = await this.$API.system.menu.myMenus.get()
-				let response = await ApiSystemMenu()
-				menu = response["data"]
+				let resdata = await ApiSystemMenu()
+				menu = resdata
 			} else {
 				menu = await this.$API.demo.menu.get()
 			}
-			if (menu.code == 200) {
 
-				if (menu.data.menu.length == 0) {
-					this.islogin = false
-					this.$alert("当前用户无任何菜单权限，请联系系统管理员", "无权限访问", {
-						type: 'error',
-						center: true
-					})
-					return false
-				}
-				this.$TOOL.data.set("MENU", menu.data.menu)
-				this.$TOOL.data.set("PERMISSIONS", menu.data.permissions)
-			} else {
+
+			if (menu.menu.length == 0) {
 				this.islogin = false
-				ElMessage.warning(menu.message)
+				this.$alert("当前用户无任何菜单权限，请联系系统管理员", "无权限访问", {
+					type: 'error',
+					center: true
+				})
 				return false
 			}
+			this.$TOOL.data.set("MENU", menu.menu)
+			this.$TOOL.data.set("PERMISSIONS", menu.permissions)
+
 
 			this.$router.replace({
 				path: '/'

@@ -68,7 +68,7 @@ service.interceptors.response.use(
                 if (response.data["err"] != undefined) {
                     ElMessage.error('接口返回错误：' + response.data["err"])
                 }
-                return response
+                return response.data["data"]
             }
         }
         //
