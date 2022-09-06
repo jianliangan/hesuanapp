@@ -4,50 +4,17 @@
 
         <el-form :model="formInstance" label-width="120px">
 
-            <el-form-item label="项目名称">
-                <el-input v-model="formInstance.projectName" />
+            <el-form-item label="项目id">
+                <el-input v-model="formInstance.projectId" />
             </el-form-item>
-            <el-form-item label="地区">
-                <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
-                    @change="cityOnChange" />
-
-
+            <el-form-item label="工程名称">
+                <el-input v-model="formInstance.constructionName" />
             </el-form-item>
-            <el-form-item label="开工日期">
-                <el-input v-model="formInstance.startTime" />
+            <el-form-item label="工期">
+                <el-input v-model="formInstance.duration" />
             </el-form-item>
-            <el-form-item label="竣工日期">
-                <el-input v-model="formInstance.completeTime" />
-            </el-form-item>
-            <el-form-item label="业主姓名">
-                <el-input v-model="formInstance.username"></el-input>
-            </el-form-item>
-            <el-form-item label="业主性质">
-                <el-input v-model="formInstance.nature"></el-input>
-            </el-form-item>
-            <el-form-item label="工程类别">
-                <el-input v-model="formInstance.category"></el-input>
-            </el-form-item>
-            <el-form-item label="工程类别细项">
-                <el-input v-model="formInstance.categoryDetail"></el-input>
-            </el-form-item>
-            <el-form-item label="项目状态">
-                <el-input v-model="formInstance.status"></el-input>
-            </el-form-item>
-            <el-form-item label="合同额">
-                <el-input v-model="formInstance.contractPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="结算时间">
-                <el-input v-model="formInstance.finalTime"></el-input>
-            </el-form-item>
-            <el-form-item label="预计总收入">
-                <el-input v-model="formInstance.estimateIncome"></el-input>
-            </el-form-item>
-            <el-form-item label="预计总成本">
-                <el-input v-model="formInstance.estimateCost"></el-input>
-            </el-form-item>
-            <el-form-item label="计税方式">
-                <el-input v-model="formInstance.taxWay"></el-input>
+            <el-form-item label="备注">
+                <el-input v-model="formInstance.comment" />
             </el-form-item>
 
             <el-form-item>
@@ -60,38 +27,23 @@
 
     </el-dialog>
 
-    <el-button text type="primary" @click="ClkAddFlow">新增</el-button>
+    <el-button type="primary" @click="ClkAddFlow">新增</el-button>
+    <el-button type="primary" @click="ClkAddFlow">上移</el-button>
+    <el-button type="primary" @click="ClkAddFlow">下移</el-button>
+    <el-button type="primary" @click="ClkAddFlow">合并</el-button>
     <div ref="mainframe" :style="{ 'height': '100%', 'overflow': 'hidden' }">
 
         <div class="scTable-table" :style="{ 'height': tableData.tablePackageHeight }">
             <el-table v-loading="loading" :data="tableData.list" row-key="id" border default-expand-all stripe
                 :height="tableData.tableHeight">
-                <el-table-column prop="projectName" label="项目名称" fixed />
-                <el-table-column label="省/市区">
-                    <template #default="scope">
-                        {{ planAreas.get(scope.row.province)?.name + "/" + planAreas.get(scope.row.city)?.name
-                                +
-                                "/" +
-                                planAreas.get(scope.row.region)?.name
-                        }}
-                    </template>
-                </el-table-column>
+                <el-table-column type="selection" width="55" />
+                <el-table-column prop="projectId" label="项目id" fixed />
 
-                <el-table-column prop="startTime" label="开工日期" />
+                <el-table-column prop="constructionName" label="工程名称" />
 
-                <el-table-column prop="completeTime" label="竣工日期" />
-                <el-table-column prop="username" label="业主姓名" />
-                <el-table-column prop="nature" label="业务性质" />
-                <el-table-column prop="category" label="工程类别" />
-                <el-table-column prop="categoryDetail" label="工程类别细项" />
+                <el-table-column prop="duration" label="工期" />
+                <el-table-column prop="comment" label="备注" />
 
-
-                <el-table-column prop="status" label="项目状态" />
-                <el-table-column prop="contractPrice" label="合同额" />
-                <el-table-column prop="finalTime" label="结算时间" />
-                <el-table-column prop="estimateIncome" label="预计总收入" />
-                <el-table-column prop="estimateCost" label="预计总成本" />
-                <el-table-column prop="taxWay" label="计税方式" />
                 <el-table-column label="操作" fixed="right" width="150">
                     <template #default="scope">
 
@@ -112,8 +64,8 @@
         </div>
 
         <div class="scTable-page">
-            <el-pagination layout="prev, pager, next" :total="pageInfo.num" :page-size="pageInfo.size" small background
-                @current-change="HandleCurrentChange" />
+            <el-pagination layout="prev, pager, next" :total="pageInfo.itemTotal" :page-size="pageInfo.pageSize" small
+                background @current-change="HandleCurrentChange" />
         </div>
     </div>
 </template>
@@ -121,9 +73,16 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { tools_objToobj } from '@/components/jrTools/index'
-import { ProjectFetchList, ProjectPushRow } from '@/api/model/project';
-import chinaAreas from '@/components/chinaareas/index'
-import { Key } from '@element-plus/icons-vue';
+/**
+ * need to change
+ * api call
+ */
+//import chinaAreas from '@/components/chinaareas/index'
+/**
+ * need to change
+ * api call
+ */
+import { ConstructionFetchList, ConstructionPushRow } from '@/api/model/construction';
 interface baseObject {
     [key: string]: any
 }
@@ -136,8 +95,12 @@ function getAllAreas(areas: Array<baseObject>, result: Map<string, baseObject>) 
         result.set(areas[i].code, { code: areas[i].code, name: areas[i].name })
     }
 }
-getAllAreas(chinaAreas, planAreas.value)
-console.log("pppppppppp", chinaAreas.length, planAreas.value.get(11)?.name)
+/**
+ * need to change
+ * api call
+ */
+//getAllAreas(chinaAreas, planAreas.value)
+
 // do not use same name with ref
 
 const mainframe = ref<baseObject>({})
@@ -197,14 +160,19 @@ function ClkEditFlow(row: baseObject) {
     dialogIsAdd.value = false
     SubMitLoading.value = false
     dialogAddVisible.value = true
-    formInstance.value.groupcity = [formInstance.value.province, formInstance.value.city, formInstance.value.region]
+    /**
+ * need to change
+ * api call
+ */
+    //formInstance.value.groupcity = [formInstance.value.province, formInstance.value.city, formInstance.value.region]
 }
 const onCancel = () => {
     dialogAddVisible.value == false
 }
 
 /**
- * event handle with api
+ * need to change
+ * api call
  */
 let cityOnChange = () => {
     formInstance.value.province = formInstance.value.groupcity[0]
@@ -219,46 +187,41 @@ const OnSubmit = () => {
     } else {
         formInstance.value.cmd = "edit"
     }
-    console.log(",,,,,,,,,,,,,,,,", formInstance.value.province)
+    //console.log(",,,,,,,,,,,,,,,,", formInstance.value.province)
     PushDataRow(formInstance.value)
 }
 function DeleteRow(row: any) {
     row.cmd = "delete"
     PushDataRow(row)
 }
-/**
- * !!!!!need to change
- * api call
- */
-const groupsProps = {
-    value: "code",
-    label: "name",
 
-}
 const PushDataRow = async (body: any) => {
 
-    ProjectPushRow(body).then((response: any) => {
+    ConstructionPushRow(body).then((response: any) => {
         FetchDataList(listUriParams)
         dialogAddVisible.value = false
 
     })
 }
+/**
+ * need to change
+ * api call
+ */
 const FetchDataList = async (row: any) => {
     loading.value = true
-    ProjectFetchList(row).then((resdata: any) => {
+    ConstructionFetchList(row).then((resdata: any) => {
 
-        pageInfo.value.num = resdata["pagenum"]
-        pageInfo.value.size = resdata["pagesize"]
+        pageInfo.value.itemTotal = parseInt(resdata["itemTotal"])
+        pageInfo.value.pageSize = parseInt(resdata["pageSize"])
         tableData.value.list = resdata["list"]
-
+        console.log(",,,,,,,,,,,,,,,,", pageInfo.value)
         loading.value = false
     }).catch((err: any) => {
         loading.value = false
     })
-}
-//start init
-const PageLoaded = () => {
-    FetchDataList(listUriParams)
+};
+function PageLoaded() {
+    FetchDataList(listUriParams);
 }
 PageLoaded()
 </script>

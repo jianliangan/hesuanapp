@@ -29,7 +29,7 @@ const routes = [
 		path: '/',
 		//name: 'WorkFlowEdit',
 		//component: WorkFlowEdit
-		redirect: '/project',
+		redirect: '/home/project',
 		name: 'layout',
 		component: Layout,
 		children: []

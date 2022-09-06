@@ -4,7 +4,7 @@ const DEFAULT_CONFIG = {
     APP_NAME: "成本预算系统",//process.env.VUE_APP_TITLE,
 
     //首页地址
-    DASHBOARD_URL: "/project",
+    DASHBOARD_URL: "/home/project",
 
     //版本号
     APP_VER: "1.00",
