@@ -84,8 +84,8 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
+  
+  <script lang="ts" setup>
 import { computed, ref } from "vue";
 import {
   tools_objToobj,
@@ -101,9 +101,9 @@ import {
  * api call
  */
 import {
-  ConstructionFetchList,
-  ConstructionPushRow,
-} from "@/api/model/construction";
+  projectIndexFetchList,
+  projectIndexPushRow,
+} from "@/api/model/projectindex";
 import { ElMessage } from "element-plus";
 interface baseObject {
   [key: string]: any;
@@ -300,7 +300,7 @@ function DeleteRow(row: any) {
 
 const PushDataRow = async (body: any) => {
   loading.value = true;
-  ConstructionPushRow(body)
+  projectIndexPushRow(body)
     .then((response: any) => {
       FetchDataList(listUriParams);
       loading.value = false;
@@ -316,7 +316,7 @@ const PushDataRow = async (body: any) => {
  */
 const FetchDataList = async (row: any) => {
   loading.value = true;
-  ConstructionFetchList(row)
+  projectIndexFetchList(row)
     .then((resdata: any) => {
       pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
       pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
@@ -356,7 +356,7 @@ function PageLoaded() {
 }
 PageLoaded();
 </script>
-<style scoped>
+  <style scoped>
 .scTable-table {
   height: calc(100% - 50px);
 }
@@ -369,3 +369,5 @@ PageLoaded();
   padding: 0 15px;
 }
 </style>
+
+  
