@@ -8,6 +8,7 @@ import router from './router'
 import store from './store'
 import jiarui from './jiarui'
 import i18n from './locales'
+import ajTable from './components/ajTable/index.vue'
 import * as scIcons from './assets/icons'
 const app = createApp(App)
 app.use(store).use(ElementPlus).use(i18n).use(router).use(jiarui).mount('#app')
@@ -19,3 +20,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 for (let icon in scIcons) {
     app.component(`ScIcon${icon}`, scIcons[icon as keyof typeof scIcons])
 }
+
+app.component("ajTable", ajTable)

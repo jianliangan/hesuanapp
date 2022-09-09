@@ -1,12 +1,12 @@
 import request from '@/utils/request'
-export const projectIndexFetchList = (query: any) => {
+export const ProjectIndexFetchList = (query: any) => {
     return request({
         url: '/projectindex/tree',
         method: 'get',
         params: query
     })
 }
-export const projectIndexPushRow = (body: any) => {
+export const ProjectIndexPushRow = (body: any) => {
     return request({
         url: '/projectindex/push',
         method: 'post',

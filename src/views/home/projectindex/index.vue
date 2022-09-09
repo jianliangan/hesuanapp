@@ -117,8 +117,8 @@ import {
  * api call
  */
 import {
-  projectIndexFetchList,
-  projectIndexPushRow,
+  ProjectIndexFetchList,
+  ProjectIndexPushRow,
 } from "@/api/model/projectindex";
 import { ElMessage } from "element-plus";
 import { ProjectFetchList } from "@/api/model/project";
@@ -305,7 +305,7 @@ function DeleteRow(row: any) {
 
 const PushDataRow = async (body: any) => {
   loading.value = true;
-  projectIndexPushRow(body)
+  ProjectIndexPushRow(body)
     .then((response: any) => {
       FetchDataList(listUriParams);
       loading.value = false;
@@ -321,7 +321,7 @@ const PushDataRow = async (body: any) => {
  */
 const FetchDataList = async (row: any) => {
   loading.value = true;
-  projectIndexFetchList(row)
+  ProjectIndexFetchList(row)
     .then((resdata: any) => {
       pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
       pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
