@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 export const projectIndexFetchList = (query: any) => {
     return request({
-        url: '/construction/fetch',
+        url: '/projectindex/tree',
         method: 'get',
         params: query
     })
 }
 export const projectIndexPushRow = (body: any) => {
     return request({
-        url: '/construction/push',
+        url: '/projectindex/push',
         method: 'post',
         data: JSON.stringify(body),
         headers: {

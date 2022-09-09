@@ -2,13 +2,16 @@
   <el-dialog v-model="dialogAddVisible" title="新增" width="50%">
     <el-form :model="formInstance" label-width="120px">
       <el-form-item label="项目id">
-        <el-input v-model="formInstance.projectId" />
+        <el-input v-model="formInstance.projectId" disabled />
       </el-form-item>
-      <el-form-item label="工程名称">
-        <el-input v-model="formInstance.constructionName" />
+      <el-form-item label="项目名称">
+        <el-input v-model="formInstance.projectName" disabled />
       </el-form-item>
-      <el-form-item label="工期">
-        <el-input v-model="formInstance.duration" />
+      <el-form-item label="名称">
+        <el-input v-model="formInstance.nodeName" />
+      </el-form-item>
+      <el-form-item label="序号">
+        <el-input v-model="formInstance.sort" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input v-model="formInstance.comment" />
@@ -23,70 +26,83 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <el-container>
+    <el-aside width="200px" v-loading="showasideing">
+      <el-container>
+        <el-header>
+          <el-input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            clearable
+          ></el-input>
+        </el-header>
+        <el-main class="nopadding">
+          <el-tree
+            ref="mytree"
+            node-key="projectId"
+            :highlight-current="true"
+            :data="organizedata"
+            :props="groupsProps"
+            @node-click="leftRowClick"
+          ></el-tree>
+        </el-main>
+      </el-container>
+    </el-aside>
+    <el-container>
+      <el-main class="nopadding">
+        <el-button type="primary" @click="ClkAddData">新增</el-button>
 
-  <el-button type="primary" @click="ClkAddData">新增</el-button>
-  <el-button type="primary" @click="ClkTopData">上移</el-button>
-  <el-button type="primary" @click="ClkDownData">下移</el-button>
-  <el-button type="primary" @click="ClkMergeData">合并</el-button>
-  <el-button type="primary" @click="ClkSeparateData">解并</el-button>
-  <div ref="mainframe" :style="{ height: '100%', overflow: 'hidden' }">
-    <div
-      class="scTable-table"
-      :style="{ height: tableData.tablePackageHeight }"
-    >
-      <el-table
-        v-loading="loading"
-        :data="tableData.list"
-        row-key="constructionId"
-        border
-        default-expand-all
-        stripe
-        :height="tableData.tableHeight"
-        @selection-change="SelectionChange"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="sortR" label="序号" fixed />
-        <el-table-column prop="constructionName" label="工程名称" />
-        <el-table-column prop="projectId" label="项目id" />
+        <div ref="mainframe" :style="{ height: '100%', overflow: 'hidden' }">
+          <div
+            class="scTable-table"
+            :style="{ height: tableData.tablePackageHeight }"
+          >
+            <el-table
+              v-loading="loading"
+              :data="tableData.list"
+              row-key="nodeName"
+              border
+              default-expand-all
+              stripe
+              :height="tableData.tableHeight"
+              @selection-change="SelectionChange"
+            >
+              <el-table-column prop="nodeName" label="名称" />
+              <el-table-column prop="sort" label="序号" />
+              <el-table-column prop="comment" label="备注" />
 
-        <el-table-column prop="duration" label="工期" />
-        <el-table-column prop="comment" label="备注" />
-
-        <el-table-column label="操作" fixed="right" width="150">
-          <template #default="scope">
-            <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)">
-              <template #reference>
-                <el-button link type="primary" size="small"> 删除 </el-button>
-              </template>
-            </el-popconfirm>
-            <span>
-              <el-button
-                text
-                type="primary"
-                @click.stop="ClkEditData(scope.row)"
-                >编辑</el-button
-              >
-            </span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <div class="scTable-page">
-      <el-pagination
-        layout="prev, pager, next"
-        :total="pageInfo.itemTotal"
-        :page-size="pageInfo.pageSize"
-        small
-        background
-        @current-change="HandleCurrentChange"
-      />
-    </div>
-  </div>
+              <el-table-column label="操作" fixed="right" width="150">
+                <template #default="scope">
+                  <el-popconfirm
+                    title="确定删除吗"
+                    @confirm="DeleteRow(scope.row)"
+                  >
+                    <template #reference>
+                      <el-button link type="primary" size="small">
+                        删除
+                      </el-button>
+                    </template>
+                  </el-popconfirm>
+                  <span>
+                    <el-button
+                      text
+                      type="primary"
+                      @click.stop="ClkEditData(scope.row)"
+                      >编辑</el-button
+                    >
+                  </span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
   
   <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import {
   tools_objToobj,
   tools_sort_map_loop,
@@ -105,10 +121,19 @@ import {
   projectIndexPushRow,
 } from "@/api/model/projectindex";
 import { ElMessage } from "element-plus";
+import { ProjectFetchList } from "@/api/model/project";
 interface baseObject {
   [key: string]: any;
 }
+const groupsProps = {
+  value: "projectId",
+  label: "projectName",
+  emitPath: false,
+  checkStrictly: true,
+};
 let planAreas = ref(new Map<string, baseObject>());
+const organizedata = ref(new Array<baseObject>());
+let organizedata2 = new Array<any>();
 function getAllAreas(
   areas: Array<baseObject>,
   result: Map<string, baseObject>
@@ -126,11 +151,13 @@ function getAllAreas(
 //getAllAreas(chinaAreas, planAreas.value)
 
 // do not use same name with ref
-
+const mytree = ref<baseObject>("");
+const filterText = ref("");
+const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
 const dialogAddVisible = ref(false);
 const dialogIsAdd = ref(true);
-const loading = ref(true);
+const loading = ref(false);
 const pageInfo = ref<baseObject>({});
 const SubMitLoading = ref(false);
 const formInstance = ref<baseObject>({});
@@ -152,111 +179,87 @@ tableData.value.tablePackageHeight = computed({
   },
   set() {},
 });
+watch(filterText, (newValue, oldValue) => {
+  organizedata.value = organizedata2.filter((data) => {
+    if (newValue) {
+      return data.projectName.toLowerCase().includes(newValue);
+    } else {
+      return true;
+    }
+  });
+  // var allNode = { id: "", projectName: "所有项目" };
+  // organizedata.value.unshift(allNode);
+});
+const FetchProjectDataList = async (row: any) => {
+  showasideing.value = true;
+
+  console.log("aaaaaaaaaa");
+
+  ProjectFetchList(row)
+    .then((response: any) => {
+      organizedata.value = organizedata2 = response["list"];
+
+      // var allNode = { projectId: "", projectName: "所有项目" };
+
+      // organizedata.value.unshift(allNode);
+      nextTick(() => {
+        mytree.value!.setCurrentKey(organizedata.value[0].projectId);
+        listUriParams.projectId = organizedata.value[0].projectId;
+
+        FetchDataList(listUriParams);
+      });
+      showasideing.value = false;
+    })
+    .catch((err: any) => {
+      showasideing.value = false;
+    });
+};
 
 //event handles
-
+const leftRowClick = (data: any) => {
+  if (
+    data.projectId == 0 ||
+    data.projectId == undefined ||
+    data.projectId == ""
+  )
+    return;
+  listUriParams.projectId = data.projectId;
+  FetchDataList(listUriParams);
+};
 const ClkAddData = () => {
+  let curNode = mytree.value!.getCurrentNode();
+  if (curNode != null) {
+    formInstance.value.projectId = curNode.projectId;
+    formInstance.value.projectName = curNode.projectName;
+    if (
+      curNode.projectId == 0 ||
+      curNode.projectId == "" ||
+      curNode.projectId == undefined
+    )
+      return;
+  } else {
+    return;
+  }
   dialogIsAdd.value = true;
   dialogAddVisible.value = true;
   SubMitLoading.value = false;
 };
-const ClkTopData = () => {
-  if (selectData.value.length > 1) {
-    ElMessage.error("上下移动一次只能一条");
-  }
-  //找到所在index
-  let index = -1;
-  for (let i = 0; i < tableData.value.list.length; i++) {
-    if (
-      tableData.value.list[i].constructionId ==
-      selectData.value[0].constructionId
-    ) {
-      index = i;
-      break;
-    }
-  }
-  console.log("-----------", index);
-  //修改值
-  if (index <= 0) return;
-  let top = tableData.value.list[index - 1].sort;
-  let down = tableData.value.list[index].sort;
-  tableData.value.list[index - 1].sort = down;
-  tableData.value.list[index].sort = top;
-  tableData.value.list[index].cmd = "edit";
-  tableData.value.list[index - 1].cmd = "edit";
-  console.log(
-    "aaaaaaaa",
-    tableData.value.list[index],
-    tableData.value.list[index - 1]
-  );
-  //走接口
-  PushDataRow([tableData.value.list[index], tableData.value.list[index - 1]]);
-};
-const ClkDownData = () => {
-  if (selectData.value.length > 1) {
-    ElMessage.error("上下移动一次只能一条");
-  }
-  //找到所在index
-  let index = -1;
-  for (let i = 0; i < tableData.value.list.length; i++) {
-    if (
-      tableData.value.list[i].constructionId ==
-      selectData.value[0].constructionId
-    ) {
-      index = i;
-      break;
-    }
-  }
-  console.log("-----------", index);
-  //修改值
-  if (index == tableData.value.list.length - 1) return;
-  let top = tableData.value.list[index].sort;
-  let down = tableData.value.list[index + 1].sort;
-  tableData.value.list[index].sort = down;
-  tableData.value.list[index + 1].sort = top;
-  tableData.value.list[index + 1].cmd = "edit";
-  tableData.value.list[index].cmd = "edit";
-  console.log(
-    "aaaaaaaa",
-    tableData.value.list[index],
-    tableData.value.list[index + 1]
-  );
-  //走接口
-  PushDataRow([tableData.value.list[index], tableData.value.list[index + 1]]);
-};
-const ClkMergeData = () => {
-  //组织提交参数
-  let requestParams = new Array<baseObject>();
-  for (let i = 0; i < selectData.value.length; i++) {
-    selectData.value[i].ismerge = 1;
-    selectData.value[i].cmd = "edit";
-    requestParams.push(selectData.value[i]);
-  }
-  console.log("-----------", requestParams);
-  //走接口
-  PushDataRow(requestParams);
-};
-const ClkSeparateData = () => {
-  //组织提交参数
-  let requestParams = new Array<baseObject>();
-  for (let i = 0; i < selectData.value.length; i++) {
-    selectData.value[i].ismerge = 0;
-    selectData.value[i].cmd = "edit";
-    requestParams.push(selectData.value[i]);
-  }
-  console.log("-----------", requestParams);
-  //走接口
-  PushDataRow(requestParams);
-};
-
-const HandleCurrentChange = (val: number) => {
-  listUriParams.page = val;
-  FetchDataList(listUriParams);
-};
 
 function ClkEditData(row: baseObject) {
   tools_objToobj(row, formInstance.value);
-
+  let curNode = mytree.value!.getCurrentNode();
+  if (curNode != null) {
+    formInstance.value.projectId = curNode.projectId;
+    formInstance.value.projectName = curNode.projectName;
+    if (
+      curNode.projectId == 0 ||
+      curNode.projectId == "" ||
+      curNode.projectId == undefined
+    )
+      return;
+  } else {
+    return;
+  }
   dialogIsAdd.value = false;
   SubMitLoading.value = false;
   dialogAddVisible.value = true;
@@ -267,7 +270,7 @@ function ClkEditData(row: baseObject) {
   //formInstance.value.groupcity = [formInstance.value.province, formInstance.value.city, formInstance.value.region]
 }
 const onCancel = () => {
-  dialogAddVisible.value == false;
+  dialogAddVisible.value = false;
 };
 
 /**
@@ -286,6 +289,7 @@ const OnSubmit = () => {
   } else {
     formInstance.value.cmd = "edit";
   }
+  formInstance.value.children = [];
   //console.log(",,,,,,,,,,,,,,,,", formInstance.value.province)
   PushDataRow([formInstance.value]);
 };
@@ -295,6 +299,7 @@ function SelectionChange(selection: Array<baseObject>) {
 }
 function DeleteRow(row: any) {
   row.cmd = "delete";
+  row.children = [];
   PushDataRow([row]);
 }
 
@@ -321,30 +326,6 @@ const FetchDataList = async (row: any) => {
       pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
       pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
       tableData.value.list = resdata["list"];
-
-      // tools_sort_map_loop<baseObject>(
-      //   tableData.value.list,
-      //   0,
-      //   (a: baseObject): number => {
-      //     return a.sort;
-      //   }
-      // );
-
-      let groups: baseObject = { first: 1 };
-      for (let i = 0; i < tableData.value.list.length; i++) {
-        if (tableData.value.list[i].ismerge != 1) {
-          groups = tableData.value.list[i];
-        } else {
-          if (groups != undefined && groups.first == undefined) {
-            if (groups.children == undefined) {
-              groups.children = new Array<baseObject>();
-            }
-            groups.children.push(tableData.value.list[i]);
-            tableData.value.list.splice(i, 1);
-            i--;
-          }
-        }
-      }
       loading.value = false;
     })
     .catch((err: any) => {
@@ -352,7 +333,8 @@ const FetchDataList = async (row: any) => {
     });
 };
 function PageLoaded() {
-  FetchDataList(listUriParams);
+  FetchProjectDataList(listUriParams);
+  //
 }
 PageLoaded();
 </script>
