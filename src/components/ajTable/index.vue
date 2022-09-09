@@ -1,31 +1,15 @@
 <template>
   <el-dialog v-model="dialogAddVisible" title="新增" width="50%">
-    <el-form :model="formInstance" label-width="120px">
-      <el-form-item label="项目id">
-        <el-input v-model="formInstance.projectId" disabled />
-      </el-form-item>
-      <el-form-item label="项目名称">
-        <el-input v-model="formInstance.projectName" disabled />
-      </el-form-item>
-      <el-form-item label="名称">
-        <el-input v-model="formInstance.nodeName" />
-      </el-form-item>
-      <el-form-item label="序号">
-        <el-input v-model="formInstance.sort" />
-      </el-form-item>
-      <el-form-item label="备注">
-        <el-input v-model="formInstance.comment" />
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"
-          ><span v-if="dialogIsAdd == true">保存增加</span
-          ><span v-else>保存修改</span>
-        </el-button>
-        <el-button @click="onCancel">取消</el-button>
-      </el-form-item>
-    </el-form>
+    <slot name="formitem"></slot>
+    <el-form-item>
+      <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"
+        ><span v-if="dialogIsAdd == true">保存增加</span
+        ><span v-else>保存修改</span>
+      </el-button>
+      <el-button @click="onCancel">取消</el-button>
+    </el-form-item>
   </el-dialog>
+
   <el-container>
     <el-aside width="200px" v-loading="showasideing">
       <el-container>
@@ -42,7 +26,7 @@
             node-key="projectId"
             :highlight-current="true"
             :data="organizedata"
-            :props="groupsProps"
+            :props="props.GroupsProps"
             @node-click="leftRowClick"
           ></el-tree>
         </el-main>
@@ -51,8 +35,23 @@
     </el-aside>
     <el-container>
       <el-main class="nopadding">
-        <el-button type="primary" @click="ClkAddData">新增</el-button>
-
+        <el-space>
+          <el-button type="primary" @click="ClkAddData">新增</el-button>
+          <template
+            v-if="props.ImportUri != undefined && props.ImportUri != ''"
+          >
+            <el-upload
+              :action="props.ImportUri"
+              multiple
+              :on-exceed="handleExceed"
+              :on-error="handleError"
+              :on-success="handleSuccess"
+              :on-change="handleChange"
+            >
+              <el-button type="primary">导入</el-button>
+            </el-upload>
+          </template>
+        </el-space>
         <div ref="mainframe" :style="{ height: '100%', overflow: 'hidden' }">
           <div
             class="scTable-table"
@@ -68,9 +67,7 @@
               :height="tableData.tableHeight"
               @selection-change="SelectionChange"
             >
-              <el-table-column prop="nodeName" label="名称" />
-              <el-table-column prop="sort" label="序号" />
-              <el-table-column prop="comment" label="备注" />
+              <slot name="tableitem"></slot>
 
               <el-table-column label="操作" fixed="right" width="150">
                 <template #default="scope">
@@ -103,7 +100,7 @@
 </template>
     
     <script lang="ts" setup>
-import { computed, nextTick, ref, watch, defineProps } from "vue";
+import { computed, nextTick, ref, watch, defineProps, defineExpose } from "vue";
 import {
   tools_objToobj,
   tools_sort_map_loop,
@@ -118,20 +115,26 @@ import {
  * api call
  */
 
-import { ElMessage } from "element-plus";
+import {
+  ElMessage,
+  UploadFile,
+  UploadFiles,
+  UploadProps,
+  UploadRawFile,
+} from "element-plus";
 
 interface baseObject {
   [key: string]: any;
 }
-const groupsProps = {
-  value: "projectId",
-  label: "projectName",
-  emitPath: false,
-  checkStrictly: true,
-};
+const SubMitLoading = ref(false);
+const dialogIsAdd = ref(true);
 let planAreas = ref(new Map<string, baseObject>());
 const organizedata = ref(new Array<baseObject>());
 let organizedata2 = new Array<any>();
+let getDialogAddVisible = (value: any) => {
+  if (value != null) dialogAddVisible.value = value;
+  return dialogAddVisible.value;
+};
 function getAllAreas(
   areas: Array<baseObject>,
   result: Map<string, baseObject>
@@ -142,6 +145,7 @@ function getAllAreas(
     result.set(areas[i].code, { code: areas[i].code, name: areas[i].name });
   }
 }
+
 /**
  * need to change
  * api call
@@ -153,19 +157,70 @@ const mytree = ref<baseObject>("");
 const filterText = ref("");
 const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
-const dialogAddVisible = ref(false);
-const dialogIsAdd = ref(true);
+let dialogAddVisible = ref(false);
 const loading = ref(false);
 const pageInfo = ref<baseObject>({});
-const SubMitLoading = ref(false);
-const formInstance = ref<baseObject>({});
+
 const listUriParams = {} as baseObject;
 const tableData = ref<baseObject>({});
 const selectData = ref(new Array<baseObject>());
 const props = defineProps({
-  MainContentFetchList: () => {},
-  LeftTreeFetchList: () => {},
-  MainContentPushRow: () => {},
+  MainContentFetchList: {
+    type: Function,
+    default: null,
+  },
+  LeftTreeFetchList: {
+    type: Function,
+    default: null,
+  },
+  MainContentPushRow: {
+    type: Function,
+    default: null,
+  },
+  GetTreePrimeId: {
+    type: Function,
+    default: null,
+  },
+  GetTreePrimeName: {
+    type: Function,
+    default: null,
+  },
+  GroupsProps: {
+    type: Object,
+    required: true,
+  },
+  GetDialogAddVisible: {
+    type: Function,
+    default: null,
+  },
+  GetFormInstance: {
+    type: Function,
+    default: null,
+  },
+  OnOpenDialog: {
+    type: Function,
+    default: null,
+  },
+  OnCancelDialog: {
+    type: Function,
+    default: null,
+  },
+  ImportUri: {
+    type: String,
+    default: "",
+  },
+  MaxFileNums: {
+    type: Number,
+    default: 0,
+  },
+  MaxFileSize: {
+    type: Number,
+    default: 0,
+  },
+  FilesExts: {
+    type: Array,
+    default: undefined,
+  },
 });
 //
 tableData.value.tableHeight = computed({
@@ -185,30 +240,75 @@ tableData.value.tablePackageHeight = computed({
 watch(filterText, (newValue, oldValue) => {
   organizedata.value = organizedata2.filter((data) => {
     if (newValue) {
-      return data.projectName.toLowerCase().includes(newValue);
+      return props
+        .GetTreePrimeName(data, null)
+        .toLowerCase()
+        .includes(newValue);
     } else {
       return true;
     }
   });
-  // var allNode = { id: "", projectName: "所有项目" };
-  // organizedata.value.unshift(allNode);
 });
+const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
+  ElMessage.error(
+    "文件超过限制：文件不能超过 " +
+      props.MaxFileNums +
+      ",单文件大小不能超过 " +
+      props.MaxFileSize +
+      "M"
+  );
+};
+
+const handleChange: UploadProps["onChange"] = (
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  const fileSuffix = uploadFile.name.substring(
+    uploadFile.name.lastIndexOf(".") + 1
+  );
+  const whiteList = props.WhiteList;
+  const isSuffix = whiteList.indexOf(fileSuffix.toLowerCase()) === -1;
+  const isLt10M = uploadFile?.size / 1024 / 1024 > props.MaxFileSize;
+  console.log("ggggggggggg:", uploadFile);
+  if (isSuffix) {
+    ElMessage.error("上传文件只能是 " + whiteList + "格式");
+    return;
+  }
+  if (isLt10M) {
+    ElMessage.error("上传文件大小不能超过 " + props.MaxFileSize + "MB");
+    return;
+  }
+};
+const handleSuccess: UploadProps["onSuccess"] = (
+  error: Error,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  ElMessage.success("导入成功");
+};
+const handleError: UploadProps["onError"] = (
+  error: Error,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  ElMessage.error("发生错误：" + error);
+};
 const FetchLeftTreeDataList = async (row: any) => {
   showasideing.value = true;
-
-  console.log("aaaaaaaaaa");
 
   props
     .LeftTreeFetchList(row)
     .then((response: any) => {
       organizedata.value = organizedata2 = response["list"];
 
-      // var allNode = { projectId: "", projectName: "所有项目" };
-
-      // organizedata.value.unshift(allNode);
       nextTick(() => {
-        mytree.value!.setCurrentKey(organizedata.value[0].projectId);
-        listUriParams.projectId = organizedata.value[0].projectId;
+        mytree.value!.setCurrentKey(
+          props.GetTreePrimeId(organizedata.value[0], null)
+        );
+        props.GetTreePrimeId(
+          listUriParams,
+          props.GetTreePrimeId(organizedata.value[0], null)
+        );
 
         FetchDataList(listUriParams);
       });
@@ -222,43 +322,68 @@ const FetchLeftTreeDataList = async (row: any) => {
 //event handles
 const leftRowClick = (data: any) => {
   if (
-    data.projectId == 0 ||
-    data.projectId == undefined ||
-    data.projectId == ""
+    props.GetTreePrimeId(data) == 0 ||
+    props.GetTreePrimeId(data) == undefined ||
+    props.GetTreePrimeId(data) == ""
   )
     return;
-  listUriParams.projectId = data.projectId;
+  props.GetTreePrimeId(listUriParams, props.GetTreePrimeId(data, null));
   FetchDataList(listUriParams);
 };
 const ClkAddData = () => {
   let curNode = mytree.value!.getCurrentNode();
+  props.GetFormInstance("SET", "new", null);
   if (curNode != null) {
-    formInstance.value.projectId = curNode.projectId;
-    formInstance.value.projectName = curNode.projectName;
+    props.GetFormInstance(
+      "SET",
+      "primeid",
+      props.GetTreePrimeId(curNode, null)
+    );
+
+    props.GetFormInstance("SET", "name", props.GetTreePrimeName(curNode, null));
+
     if (
-      curNode.projectId == 0 ||
-      curNode.projectId == "" ||
-      curNode.projectId == undefined
+      props.GetTreePrimeId(curNode, null) == 0 ||
+      props.GetTreePrimeId(curNode, null) == "" ||
+      props.GetTreePrimeId(curNode, null) == undefined
     )
       return;
   } else {
     return;
   }
   dialogIsAdd.value = true;
-  dialogAddVisible.value = true;
-  SubMitLoading.value = false;
-};
+  getDialogAddVisible(true);
 
+  SubMitLoading.value = false;
+  props.OnOpenDialog();
+};
+const onCancel = () => {
+  props.GetDialogAddVisible(false);
+  props.OnCancelDialog();
+};
 function ClkEditData(row: baseObject) {
-  tools_objToobj(row, formInstance.value);
+  props.GetFormInstance("SET", "*", row);
+  //tools_objToobj(row, props.FormInstance.value);
   let curNode = mytree.value!.getCurrentNode();
   if (curNode != null) {
-    formInstance.value.projectId = curNode.projectId;
-    formInstance.value.projectName = curNode.projectName;
+    props.GetFormInstance(
+      "SET",
+      "primeid",
+      props.GetTreePrimeId(curNode, null)
+    );
+    // props.GetTreePrimeId(
+    //   props.FormInstance.value,
+    //   props.GetTreePrimeId(curNode, null)
+    // );
+    props.GetFormInstance("SET", "name", props.GetTreePrimeName(curNode, null));
+    // props.GetTreePrimeName(
+    //   props.FormInstance.value,
+    //   props.GetTreePrimeName(curNode, null)
+    // );
     if (
-      curNode.projectId == 0 ||
-      curNode.projectId == "" ||
-      curNode.projectId == undefined
+      props.GetTreePrimeId(curNode, null) == 0 ||
+      props.GetTreePrimeId(curNode, null) == "" ||
+      props.GetTreePrimeId(curNode, null) == undefined
     )
       return;
   } else {
@@ -266,39 +391,30 @@ function ClkEditData(row: baseObject) {
   }
   dialogIsAdd.value = false;
   SubMitLoading.value = false;
-  dialogAddVisible.value = true;
-  /**
-   * need to change
-   * api call
-   */
-  //formInstance.value.groupcity = [formInstance.value.province, formInstance.value.city, formInstance.value.region]
+  getDialogAddVisible(true);
+  props.OnOpenDialog();
 }
-const onCancel = () => {
-  dialogAddVisible.value = false;
-};
 
 /**
  * need to change
  * api call
  */
-let cityOnChange = () => {
-  formInstance.value.province = formInstance.value.groupcity[0];
-  formInstance.value.city = formInstance.value.groupcity[1];
-  formInstance.value.region = formInstance.value.groupcity[2];
-};
+
 const OnSubmit = () => {
   SubMitLoading.value = true;
   if (dialogIsAdd.value == true) {
-    formInstance.value.cmd = "add";
+    props.GetFormInstance("SET", "cmd", "add");
+    //props.FormInstance.value?.cmd = "add";
   } else {
-    formInstance.value.cmd = "edit";
+    props.GetFormInstance("SET", "cmd", "edit");
+    //props.FormInstance.value?.cmd = "edit";
   }
-  formInstance.value.children = [];
-  //console.log(",,,,,,,,,,,,,,,,", formInstance.value.province)
-  PushDataRow([formInstance.value]);
+  props.GetFormInstance("SET", "children", []);
+  // props.FormInstance.value.children = [];
+
+  PushDataRow([props.GetFormInstance("SELECT", "", "")]);
 };
 function SelectionChange(selection: Array<baseObject>) {
-  console.log(selection);
   selectData.value = selection;
 }
 function DeleteRow(row: any) {
@@ -314,7 +430,7 @@ const PushDataRow = async (body: any) => {
     .then((response: any) => {
       FetchDataList(listUriParams);
       loading.value = false;
-      dialogAddVisible.value = false;
+      getDialogAddVisible(false);
     })
     .catch((err: any) => {
       loading.value = false;
@@ -340,11 +456,15 @@ const FetchDataList = async (row: any) => {
       });
   }
 };
+const ExportDataList = () => {
+  return tableData.value.list;
+};
 function PageLoaded() {
   FetchLeftTreeDataList(listUriParams);
   //
 }
 PageLoaded();
+defineExpose({ ExportDataList });
 type functree = (query: any) => any;
 </script>
     <style scoped>
