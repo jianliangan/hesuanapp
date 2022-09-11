@@ -11,7 +11,11 @@
   </el-dialog>
 
   <el-container>
-    <el-aside width="200px" v-loading="showasideing">
+    <el-aside
+      width="200px"
+      v-loading="showasideing"
+      v-if="props?.HasTree == true"
+    >
       <el-container>
         <el-header>
           <el-input
@@ -26,7 +30,7 @@
             node-key="projectId"
             :highlight-current="true"
             :data="organizedata"
-            :props="props.GroupsProps"
+            :props="props?.GroupsProps"
             @node-click="leftRowClick"
           ></el-tree>
         </el-main>
@@ -38,15 +42,19 @@
         <el-space>
           <el-button type="primary" @click="ClkAddData">新增</el-button>
           <template
-            v-if="props.ImportUri != undefined && props.ImportUri != ''"
+            v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
           >
             <el-upload
-              :action="props.ImportUri"
-              multiple
-              :on-exceed="handleExceed"
+              :accept="props.FilesExts"
+              :maxSize="props.MaxFileSize"
+              :limit="1"
+              :data="listUriParams"
+              :show-file-list="false"
+              :action="props?.ImportUri"
               :on-error="handleError"
               :on-success="handleSuccess"
               :on-change="handleChange"
+              auto-upload
             >
               <el-button type="primary">导入</el-button>
             </el-upload>
@@ -92,6 +100,16 @@
                 </template>
               </el-table-column>
             </el-table>
+          </div>
+          <div class="scTable-page" v-if="HasPage == true">
+            <el-pagination
+              layout="prev, pager, next"
+              :total="pageInfo.itemTotal"
+              :page-size="pageInfo.pageSize"
+              small
+              background
+              @current-change="HandleCurrentChange"
+            />
           </div>
         </div>
       </el-main>
@@ -153,7 +171,7 @@ function getAllAreas(
 //getAllAreas(chinaAreas, planAreas.value)
 
 // do not use same name with ref
-const mytree = ref<baseObject>("");
+const mytree = ref<baseObject>({});
 const filterText = ref("");
 const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
@@ -218,8 +236,28 @@ const props = defineProps({
     default: 0,
   },
   FilesExts: {
-    type: Array,
-    default: undefined,
+    type: String,
+    default: ".xls, .xlsx",
+  },
+  HasTree: {
+    type: Boolean,
+    default: false,
+  },
+  HasPage: {
+    type: Boolean,
+    default: false,
+  },
+  TreeSelectNode: {
+    type: Function,
+    default: null,
+  },
+  PreSubmit: {
+    type: Function,
+    default: null,
+  },
+  FirstGetTree: {
+    type: Function,
+    default: null,
   },
 });
 //
@@ -249,12 +287,16 @@ watch(filterText, (newValue, oldValue) => {
     }
   });
 });
+const HandleCurrentChange = (val: number) => {
+  listUriParams.page = val;
+  FetchDataList(listUriParams);
+};
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
     "文件超过限制：文件不能超过 " +
-      props.MaxFileNums +
+      props?.MaxFileNums +
       ",单文件大小不能超过 " +
-      props.MaxFileSize +
+      props?.MaxFileSize +
       "M"
   );
 };
@@ -263,21 +305,18 @@ const handleChange: UploadProps["onChange"] = (
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
-  const fileSuffix = uploadFile.name.substring(
-    uploadFile.name.lastIndexOf(".") + 1
-  );
-  const whiteList = props.WhiteList;
-  const isSuffix = whiteList.indexOf(fileSuffix.toLowerCase()) === -1;
-  const isLt10M = uploadFile?.size / 1024 / 1024 > props.MaxFileSize;
-  console.log("ggggggggggg:", uploadFile);
-  if (isSuffix) {
-    ElMessage.error("上传文件只能是 " + whiteList + "格式");
-    return;
-  }
-  if (isLt10M) {
-    ElMessage.error("上传文件大小不能超过 " + props.MaxFileSize + "MB");
-    return;
-  }
+  // const fileSuffix = uploadFile.name.substring(
+  //   uploadFile.name.lastIndexOf(".") + 1
+  // );
+  // console.log("ggggggggggg:", uploadFile);
+  // if (isSuffix) {
+  //   ElMessage.error("上传文件只能是 " + whiteList + "格式");
+  //   return;
+  // }
+  // if (isLt10M) {
+  //   ElMessage.error("上传文件大小不能超过 " + props?.MaxFileSize + "MB");
+  //   return;
+  // }
 };
 const handleSuccess: UploadProps["onSuccess"] = (
   error: Error,
@@ -293,7 +332,7 @@ const handleError: UploadProps["onError"] = (
 ) => {
   ElMessage.error("发生错误：" + error);
 };
-const FetchLeftTreeDataList = async (row: any) => {
+const FetchLeftTreeDataList = async (row: baseObject) => {
   showasideing.value = true;
 
   props
@@ -302,13 +341,13 @@ const FetchLeftTreeDataList = async (row: any) => {
       organizedata.value = organizedata2 = response["list"];
 
       nextTick(() => {
-        mytree.value!.setCurrentKey(
-          props.GetTreePrimeId(organizedata.value[0], null)
-        );
-        props.GetTreePrimeId(
-          listUriParams,
-          props.GetTreePrimeId(organizedata.value[0], null)
-        );
+        if (props.GetTreePrimeId)
+          mytree.value!.setCurrentKey(
+            props?.GetTreePrimeId(organizedata.value[0], null)
+          );
+
+        if (props.TreeSelectNode && props?.GetTreePrimeId)
+          props.TreeSelectNode(listUriParams, organizedata.value[0]);
 
         FetchDataList(listUriParams);
       });
@@ -321,78 +360,73 @@ const FetchLeftTreeDataList = async (row: any) => {
 
 //event handles
 const leftRowClick = (data: any) => {
-  if (
-    props.GetTreePrimeId(data) == 0 ||
-    props.GetTreePrimeId(data) == undefined ||
-    props.GetTreePrimeId(data) == ""
-  )
-    return;
-  props.GetTreePrimeId(listUriParams, props.GetTreePrimeId(data, null));
-  FetchDataList(listUriParams);
-};
-const ClkAddData = () => {
-  let curNode = mytree.value!.getCurrentNode();
-  props.GetFormInstance("SET", "new", null);
-  if (curNode != null) {
-    props.GetFormInstance(
-      "SET",
-      "primeid",
-      props.GetTreePrimeId(curNode, null)
-    );
-
-    props.GetFormInstance("SET", "name", props.GetTreePrimeName(curNode, null));
-
-    if (
-      props.GetTreePrimeId(curNode, null) == 0 ||
-      props.GetTreePrimeId(curNode, null) == "" ||
-      props.GetTreePrimeId(curNode, null) == undefined
-    )
-      return;
-  } else {
+  if (!props?.HasTree) {
     return;
   }
+  if (props.GetTreePrimeId) {
+    if (
+      props?.GetTreePrimeId(data) == 0 ||
+      props?.GetTreePrimeId(data) == undefined ||
+      props?.GetTreePrimeId(data) == ""
+    )
+      return;
+  }
+  if (props.TreeSelectNode) {
+    props.TreeSelectNode(listUriParams, data);
+  }
+
+  FetchDataList(listUriParams);
+};
+const priInstanData = () => {
+  if (props?.HasTree) {
+    let curNode = mytree.value!.getCurrentNode();
+    if (curNode != null) {
+      if (props.GetFormInstance && props.GetTreePrimeId)
+        props?.GetFormInstance(
+          "SET",
+          "primeid",
+          props?.GetTreePrimeId(curNode, null)
+        );
+      if (props.GetFormInstance && props.GetTreePrimeName)
+        props?.GetFormInstance(
+          "SET",
+          "name",
+          props?.GetTreePrimeName(curNode, null)
+        );
+      if (props.GetTreePrimeId) {
+        if (
+          props?.GetTreePrimeId(curNode, null) == 0 ||
+          props?.GetTreePrimeId(curNode, null) == "" ||
+          props?.GetTreePrimeId(curNode, null) == undefined
+        )
+          return;
+      }
+    } else {
+      return;
+    }
+  }
+};
+const ClkAddData = () => {
+  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
+  priInstanData();
   dialogIsAdd.value = true;
   getDialogAddVisible(true);
 
   SubMitLoading.value = false;
-  props.OnOpenDialog();
+  if (props.OnOpenDialog) props?.OnOpenDialog("add");
 };
 const onCancel = () => {
-  props.GetDialogAddVisible(false);
-  props.OnCancelDialog();
+  if (props.GetDialogAddVisible) props?.GetDialogAddVisible(false);
+  if (props.OnCancelDialog) props?.OnCancelDialog();
 };
 function ClkEditData(row: baseObject) {
-  props.GetFormInstance("SET", "*", row);
-  //tools_objToobj(row, props.FormInstance.value);
-  let curNode = mytree.value!.getCurrentNode();
-  if (curNode != null) {
-    props.GetFormInstance(
-      "SET",
-      "primeid",
-      props.GetTreePrimeId(curNode, null)
-    );
-    // props.GetTreePrimeId(
-    //   props.FormInstance.value,
-    //   props.GetTreePrimeId(curNode, null)
-    // );
-    props.GetFormInstance("SET", "name", props.GetTreePrimeName(curNode, null));
-    // props.GetTreePrimeName(
-    //   props.FormInstance.value,
-    //   props.GetTreePrimeName(curNode, null)
-    // );
-    if (
-      props.GetTreePrimeId(curNode, null) == 0 ||
-      props.GetTreePrimeId(curNode, null) == "" ||
-      props.GetTreePrimeId(curNode, null) == undefined
-    )
-      return;
-  } else {
-    return;
-  }
+  if (props.GetFormInstance) props?.GetFormInstance("SET", "*", row);
+  priInstanData();
   dialogIsAdd.value = false;
   SubMitLoading.value = false;
   getDialogAddVisible(true);
-  props.OnOpenDialog();
+
+  if (props.OnOpenDialog) props?.OnOpenDialog("edit");
 }
 
 /**
@@ -401,18 +435,23 @@ function ClkEditData(row: baseObject) {
  */
 
 const OnSubmit = () => {
-  SubMitLoading.value = true;
-  if (dialogIsAdd.value == true) {
-    props.GetFormInstance("SET", "cmd", "add");
-    //props.FormInstance.value?.cmd = "add";
-  } else {
-    props.GetFormInstance("SET", "cmd", "edit");
-    //props.FormInstance.value?.cmd = "edit";
+  if (props.PreSubmit) {
+    if (props.PreSubmit() == false) {
+      return;
+    }
   }
-  props.GetFormInstance("SET", "children", []);
-  // props.FormInstance.value.children = [];
 
-  PushDataRow([props.GetFormInstance("SELECT", "", "")]);
+  SubMitLoading.value = true;
+
+  if (dialogIsAdd.value == true) {
+    if (props.GetFormInstance) props?.GetFormInstance("SET", "cmd", "add");
+  } else {
+    if (props.GetFormInstance) props?.GetFormInstance("SET", "cmd", "edit");
+  }
+  if (props.GetFormInstance) props?.GetFormInstance("SET", "children", []);
+
+  if (props.GetFormInstance)
+    PushDataRow([props?.GetFormInstance("SELECT", "", "")]);
 };
 function SelectionChange(selection: Array<baseObject>) {
   selectData.value = selection;
@@ -431,18 +470,22 @@ const PushDataRow = async (body: any) => {
       FetchDataList(listUriParams);
       loading.value = false;
       getDialogAddVisible(false);
+      SubMitLoading.value = false;
     })
     .catch((err: any) => {
       loading.value = false;
+      SubMitLoading.value = false;
     });
 };
+
 /**
  * need to change
  * api call
  */
 const FetchDataList = async (row: any) => {
   loading.value = true;
-  if (props != undefined && props.MainContentFetchList != undefined) {
+
+  if (props.MainContentFetchList)
     props
       .MainContentFetchList(row)
       .then((resdata: any) => {
@@ -454,13 +497,18 @@ const FetchDataList = async (row: any) => {
       .catch((err: any) => {
         loading.value = false;
       });
-  }
 };
 const ExportDataList = () => {
   return tableData.value.list;
 };
 function PageLoaded() {
-  FetchLeftTreeDataList(listUriParams);
+  if (props?.HasTree == true) {
+    if (props.FirstGetTree) props.FirstGetTree(listUriParams);
+    FetchLeftTreeDataList(listUriParams);
+  } else {
+    FetchDataList(listUriParams);
+  }
+
   //
 }
 PageLoaded();

@@ -16,3 +16,10 @@ export const ProjectPushRow = (body: any) => {
         }
     })
 }
+export const ProjectFetchTree = (query: any) => {
+    return request({
+        url: '/project/tree',
+        method: 'get',
+        params: query
+    })
+}

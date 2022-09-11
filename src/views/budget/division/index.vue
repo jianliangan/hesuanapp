@@ -1,7 +1,8 @@
 <template>
   <aj-table
     ref="ajtable"
-    :LeftTreeFetchList="ProjectFetchList"
+    :HasTree="true"
+    :LeftTreeFetchList="ProjectFetchTree"
     :MainContentPushRow="projectIndexPushRow"
     :MainContentFetchList="projectIndexFetchList"
     :GetTreePrimeId="getTreePrimeId"
@@ -13,7 +14,9 @@
     ImportUri="http://localhost:8001/budget/import/"
     MaxFileNums="1"
     MaxFileSize="20"
-    :FilesExts="['pdf', 'doc', 'docx']"
+    :PreSubmit="preSubmit"
+    :TreeSelectNode="treeSelectNode"
+    :FirstGetTree="firstGetTree"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
@@ -51,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ProjectFetchList } from "@/api/model/project";
+import { ProjectFetchTree } from "@/api/model/project";
 import {
   ProjectIndexPushRow,
   ProjectIndexFetchList,
@@ -70,7 +73,7 @@ const groupsProps2 = {
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
-let projectFetchList = ProjectFetchList;
+
 let projectIndexFetchList = ProjectIndexFetchList;
 let projectIndexPushRow = ProjectIndexPushRow;
 let getTreePrimeId = (item: baseObject, value: Object) => {
@@ -78,11 +81,20 @@ let getTreePrimeId = (item: baseObject, value: Object) => {
 
   return item.projectId;
 };
+const firstGetTree = (requestlist: baseObject) => {
+  requestlist.rootid = 0;
+};
+let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
+  requestvar.projectId = treenode.projectId;
+};
+
 let getTreePrimeName = (item: baseObject, value: Object) => {
   if (value != null) item.projectName = value;
   return item.projectName;
 };
-
+const preSubmit = () => {
+  return true;
+};
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
@@ -109,7 +121,9 @@ const groupsProps = {
   emitPath: false,
   checkStrictly: true,
 };
-const onOpenDialog = () => {
+const onOpenDialog = (type: String) => {
+  if (!formInstance.value.parentId)
+    formInstance.value.parentId = formInstance.value.ownId;
   tableData2.value = ajtable.value.ExportDataList();
   console.log("ddddddddddd", tableData2.value);
 };
