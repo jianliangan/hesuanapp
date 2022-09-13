@@ -9,6 +9,8 @@
     :OnCancelDialog="onCancelDialog"
     :HasPage="true"
     :PreSubmit="preSubmit"
+    :PreFirstGetData="preFirstGetData"
+    :BtnNew="false"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
@@ -136,7 +138,9 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
   if (value != null) item.projectName = value;
   return item.projectName;
 };
-
+const preFirstGetData = (requestlist: baseObject) => {
+  requestlist.ownId = 0;
+};
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {

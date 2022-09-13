@@ -44,7 +44,6 @@
         :height="tableData.tableHeight"
         @selection-change="SelectionChange"
       >
-        <el-table-column type="selection" width="55" />
         <el-table-column prop="sortR" label="序号" fixed />
         <el-table-column prop="constructionName" label="工程名称" />
         <el-table-column prop="projectId" label="项目id" />

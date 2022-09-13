@@ -3,8 +3,8 @@
     ref="ajtable"
     :HasTree="true"
     :LeftTreeFetchList="ProjectFetchList"
-    :MainContentPushRow="projectIndexPushRow"
-    :MainContentFetchList="projectIndexFetchList"
+    :MainContentPushRow="ProjectPushRow"
+    :MainContentFetchList="ProjectFetchTree"
     :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName"
     :GroupsProps="groupsProps"
@@ -13,8 +13,9 @@
     :OnOpenDialog="onOpenDialog"
     :OnCancelDialog="onCancelDialog"
     :PreSubmit="preSubmit"
-    :AddlistUriParams="addlistUriParams"
-    :FirstGetTree="firstGetTree"
+    :PreFirstGetData="preFirstGetData"
+    :TableKey="tableKey"
+    :BtnNew="false"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
@@ -48,11 +49,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ProjectFetchList } from "@/api/model/project";
 import {
-  ProjectIndexPushRow,
-  ProjectIndexFetchList,
-} from "@/api/model/projectindex";
+  ProjectFetchList,
+  ProjectPushRow,
+  ProjectFetchTree,
+} from "@/api/model/project";
+
 import { tools_objToobj } from "@/components/jrTools";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
@@ -61,9 +63,7 @@ interface baseObject {
 }
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
-let projectFetchList = ProjectFetchList;
-let projectIndexFetchList = ProjectIndexFetchList;
-let projectIndexPushRow = ProjectIndexPushRow;
+const tableKey = "projectName";
 const tableData2 = ref(new Array<baseObject>());
 const groupsProps2 = {
   value: "projectId",
@@ -74,8 +74,8 @@ const groupsProps2 = {
 const onOpenDialog = (type: String) => {
   tableData2.value = ajtable.value.ExportDataList();
 };
-const firstGetTree = (requestlist: baseObject) => {
-  requestlist.rootid = 0;
+const preFirstGetData = (requestlist: baseObject) => {
+  requestlist.ownId = 0;
 };
 const preSubmit = () => {
   console.log("ccccccccc", formInstance.value);
@@ -102,14 +102,10 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
   return item.projectName;
 };
 let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
-  requestvar.projectId = treenode.projectId;
-  requestvar.rootid = treenode.projectId;
+  requestvar.ownId = treenode.projectId;
+  requestvar.rootId = treenode.projectId;
 };
-let addlistUriParams = (item: baseObject) => {
-  //提交前加參數的
-  item.rootid = formInstance.value.ownId;
-  return;
-};
+
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {

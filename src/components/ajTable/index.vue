@@ -40,7 +40,36 @@
     <el-container>
       <el-main class="nopadding">
         <el-space>
-          <el-button type="primary" @click="ClkAddData">新增</el-button>
+          <el-button
+            type="primary"
+            @click="ClkAddData"
+            v-if="props.BtnNew == true"
+            >新增</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkUpMove"
+            v-if="props.BtnUpMove == true"
+            >上移</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkDownMove"
+            v-if="props.BtnDownMove == true"
+            >下移</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkInsert"
+            v-if="props.BtnInsert == true"
+            >插入</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkSign"
+            v-if="props.BtnSign == true"
+            >标记</el-button
+          >
           <template
             v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
           >
@@ -66,14 +95,17 @@
             :style="{ height: tableData.tablePackageHeight }"
           >
             <el-table
+              ref="myeltable"
               v-loading="loading"
               :data="tableData.list"
-              row-key="nodeName"
+              :row-key="props.TableKey"
               border
               default-expand-all
               stripe
               :height="tableData.tableHeight"
               @selection-change="SelectionChange"
+              :highlight-current-row="props.HighlightCurrentRow"
+              @current-change="currentChange"
             >
               <slot name="tableitem"></slot>
 
@@ -144,6 +176,7 @@ import {
 interface baseObject {
   [key: string]: any;
 }
+const myeltable = ref<baseObject>({});
 const SubMitLoading = ref(false);
 const dialogIsAdd = ref(true);
 let planAreas = ref(new Map<string, baseObject>());
@@ -178,6 +211,7 @@ const mainframe = ref<baseObject>({});
 let dialogAddVisible = ref(false);
 const loading = ref(false);
 const pageInfo = ref<baseObject>({});
+let currentRow: baseObject;
 
 const listUriParams = {} as baseObject;
 const tableData = ref<baseObject>({});
@@ -255,7 +289,39 @@ const props = defineProps({
     type: Function,
     default: null,
   },
-  FirstGetTree: {
+  PreFirstGetData: {
+    type: Function,
+    default: null,
+  },
+  TableKey: {
+    type: String,
+    default: "",
+  },
+  HighlightCurrentRow: {
+    type: Boolean,
+    default: true,
+  },
+  BtnUpMove: {
+    type: Boolean,
+    default: false,
+  },
+  BtnDownMove: {
+    type: Boolean,
+    default: false,
+  },
+  BtnInsert: {
+    type: Boolean,
+    default: false,
+  },
+  BtnSign: {
+    type: Boolean,
+    default: false,
+  },
+  BtnNew: {
+    type: Boolean,
+    default: false,
+  },
+  GetMainPrimeId: {
     type: Function,
     default: null,
   },
@@ -406,7 +472,109 @@ const priInstanData = () => {
     }
   }
 };
+const currentChange = (newRow: baseObject, oldRow: baseObject) => {
+  currentRow = newRow;
+  console.log("change ", newRow, oldRow);
+};
 const ClkAddData = () => {
+  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
+  priInstanData();
+  dialogIsAdd.value = true;
+  getDialogAddVisible(true);
+
+  SubMitLoading.value = false;
+  if (props.OnOpenDialog) props?.OnOpenDialog("add");
+};
+const upAllMove = (cmd: String) => {
+  if (!currentRow) {
+    ElMessage.error("没有选中行");
+    return;
+  }
+  let primeId = props.GetMainPrimeId(currentRow);
+  let index = tableData.value.map.get(primeId);
+  if (cmd == "up" && index == 0) return;
+  if (cmd == "down" && index == tableData.value.list.length - 1) return;
+  //更新数据
+  let fromindex = 0;
+  let toindex = 0;
+  if (cmd == "up") {
+    fromindex = index;
+    toindex = index - 1;
+  } else {
+    fromindex = index;
+    toindex = index + 1;
+  }
+  tableData.value.list[fromindex].old_sort =
+    tableData.value.list[fromindex].sort;
+  tableData.value.list[fromindex].old_sortR =
+    tableData.value.list[fromindex].sortR;
+
+  tableData.value.list[toindex].old_sort = tableData.value.list[toindex].sort;
+  tableData.value.list[toindex].old_sortR = tableData.value.list[toindex].sortR;
+
+  tableData.value.list[fromindex].sortR =
+    tableData.value.list[toindex].old_sortR;
+  tableData.value.list[fromindex].sort = tableData.value.list[toindex].old_sort;
+
+  tableData.value.list[toindex].sortR =
+    tableData.value.list[fromindex].old_sortR;
+
+  tableData.value.list[toindex].sort = tableData.value.list[fromindex].old_sort;
+
+  //结束
+
+  tableData.value.list[toindex].cmd = "edit";
+  tableData.value.list[fromindex].cmd = "edit";
+  loading.value = true;
+
+  props
+    .MainContentPushRow([
+      tableData.value.list[toindex],
+      tableData.value.list[fromindex],
+    ])
+    .then((response: any) => {
+      loading.value = false;
+      tableData.value.map.set(
+        props.GetMainPrimeId(tableData.value.list[toindex]),
+        fromindex
+      );
+      tableData.value.map.set(
+        props.GetMainPrimeId(tableData.value.list[fromindex]),
+        toindex
+      );
+      tools_sort_map_loop<baseObject>(
+        tableData.value.list,
+        0,
+        (a: baseObject): number => {
+          return a.sort;
+        }
+      );
+    })
+    .catch((err: any) => {
+      loading.value = false;
+      //恢复状态
+      tableData.value.list[fromindex].sortR =
+        tableData.value.list[fromindex].old_sortR;
+      tableData.value.list[toindex].sortR =
+        tableData.value.list[toindex].old_sortR;
+
+      tableData.value.list[fromindex].sort =
+        tableData.value.list[fromindex].old_sort;
+      tableData.value.list[toindex].sort =
+        tableData.value.list[toindex].old_sort;
+    });
+};
+const ClkUpMove = () => {
+  upAllMove("up");
+};
+const ClkDownMove = () => {
+  upAllMove("down");
+};
+const ClkInsert = () => {
+  if (!currentRow) {
+    ElMessage.error("没有选中行");
+    return;
+  }
   if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
   priInstanData();
   dialogIsAdd.value = true;
@@ -492,6 +660,14 @@ const FetchDataList = async (row: any) => {
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
         pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
         tableData.value.list = resdata["list"];
+        tableData.value.map = new Map<any, baseObject>();
+        for (let i = 0; i < tableData.value.list.length; i++) {
+          tableData.value.map.set(
+            props.GetMainPrimeId(tableData.value.list[i]),
+            i
+          );
+        }
+        console.log("tttttttttt", tableData.value.map);
         loading.value = false;
       })
       .catch((err: any) => {
@@ -502,8 +678,8 @@ const ExportDataList = () => {
   return tableData.value.list;
 };
 function PageLoaded() {
+  if (props.PreFirstGetData) props.PreFirstGetData(listUriParams);
   if (props?.HasTree == true) {
-    if (props.FirstGetTree) props.FirstGetTree(listUriParams);
     FetchLeftTreeDataList(listUriParams);
   } else {
     FetchDataList(listUriParams);

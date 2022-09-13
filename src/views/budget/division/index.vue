@@ -3,8 +3,8 @@
     ref="ajtable"
     :HasTree="true"
     :LeftTreeFetchList="ProjectFetchTree"
-    :MainContentPushRow="projectIndexPushRow"
-    :MainContentFetchList="projectIndexFetchList"
+    :MainContentPushRow="BudgetDivisionPushRow"
+    :MainContentFetchList="BudgetDivisionList"
     :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName"
     :GroupsProps="groupsProps"
@@ -16,39 +16,80 @@
     MaxFileSize="20"
     :PreSubmit="preSubmit"
     :TreeSelectNode="treeSelectNode"
-    :FirstGetTree="firstGetTree"
+    :PreFirstGetData="preFirstGetData"
+    TableKey="name"
+    :HighlightCurrentRow="true"
+    :BtnUpMove="true"
+    :BtnDownMove="true"
+    :BtnInsert="true"
+    :BtnSign="true"
+    :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
-        <el-form-item label="项目id">
-          <el-input v-model="formInstance.projectId" disabled />
+        <el-form-item label="成本科目">
+          <el-input v-model="formInstance.subject" />
         </el-form-item>
-        <el-form-item label="项目名称">
-          <el-input v-model="formInstance.projectName" disabled />
+        <el-form-item label="编码">
+          <el-input v-model="formInstance.code" />
         </el-form-item>
-        <el-form-item label="上级名称">
-          <el-cascader
-            v-model="formInstance.parentId"
-            :options="tableData2"
-            :props="groupsProps2"
-            clearable
-          />
+
+        <el-form-item label="类别">
+          <el-input v-model="formInstance.category" />
         </el-form-item>
         <el-form-item label="名称">
-          <el-input v-model="formInstance.nodeName" />
+          <el-input v-model="formInstance.name" />
         </el-form-item>
-        <el-form-item label="序号">
-          <el-input v-model="formInstance.sort" />
+        <el-form-item label="项目特征">
+          <el-input v-model="formInstance.distinction" />
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="formInstance.comment" />
+        <el-form-item label="单位">
+          <el-input v-model="formInstance.unit" />
+        </el-form-item>
+        <el-form-item label="含量">
+          <el-input v-model="formInstance.have" />
+        </el-form-item>
+        <el-form-item label="招标工程量">
+          <el-input v-model="formInstance.workAmount" />
+        </el-form-item>
+        <el-form-item label="综合单价">
+          <el-input v-model="formInstance.synthesisUnitprice" />
+        </el-form-item>
+        <el-form-item label="综合合价">
+          <el-input v-model="formInstance.synthesisSumprice" />
+        </el-form-item>
+        <el-form-item label="管理费单价">
+          <el-input v-model="formInstance.manageUnitprice" />
+        </el-form-item>
+        <el-form-item label="利润单价">
+          <el-input v-model="formInstance.profitUnitprice" />
+        </el-form-item>
+        <el-form-item label="管理费合价">
+          <el-input v-model="formInstance.manageSumprice" />
+        </el-form-item>
+        <el-form-item label="利润合价">
+          <el-input v-model="formInstance.profitSumprice" />
         </el-form-item>
       </el-form>
     </template>
     <template v-slot:tableitem>
-      <el-table-column prop="nodeName" label="名称" />
-      <el-table-column prop="sort" label="序号" />
-      <el-table-column prop="comment" label="备注" />
+      <el-table-column prop="sortR" label="序号" />
+      <el-table-column prop="name" label="名称" />
+      <el-table-column prop="subject" label="成本科目" />
+      <el-table-column prop="code" label="编码" />
+      <el-table-column prop="category" label="类别" />
+
+      <el-table-column prop="distinction" label="项目特征" />
+      <el-table-column prop="unit" label="单位" />
+      <el-table-column prop="have" label="含量" />
+      <el-table-column prop="workAmount" label="招标工程量" />
+      <el-table-column prop="synthesisUnitprice" label="综合单价" />
+      <el-table-column prop="synthesisSumprice" label="综合合价" />
+      <el-table-column prop="manageUnitprice" label="管理费单价" />
+      <el-table-column prop="profitUnitprice" label="利润单价" />
+      <el-table-column prop="manageSumprice" label="管理费合价" />
+      <el-table-column prop="profitSumprice" label="利润合价" />
     </template>
   </aj-table>
 </template>
@@ -56,9 +97,9 @@
 <script lang="ts" setup>
 import { ProjectFetchTree } from "@/api/model/project";
 import {
-  ProjectIndexPushRow,
-  ProjectIndexFetchList,
-} from "@/api/model/projectindex";
+  BudgetDivisionPushRow,
+  BudgetDivisionList,
+} from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref } from "vue";
 interface baseObject {
@@ -73,18 +114,19 @@ const groupsProps2 = {
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
-
-let projectIndexFetchList = ProjectIndexFetchList;
-let projectIndexPushRow = ProjectIndexPushRow;
+let getMainPrimeId = (item: baseObject) => {
+  return item.divisionId;
+};
 let getTreePrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.projectId = value;
 
   return item.projectId;
 };
-const firstGetTree = (requestlist: baseObject) => {
-  requestlist.rootid = 0;
+const preFirstGetData = (requestlist: baseObject) => {
+  requestlist.rootId = 0;
 };
 let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
+  requestvar.rootId = "";
   requestvar.projectId = treenode.projectId;
 };
 
