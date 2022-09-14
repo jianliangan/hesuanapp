@@ -21,6 +21,7 @@
     "element-plus": "^2.2.10",
     "handsontable": "^12.1.2",
     "nprogress": "^0.2.0",
+    "numbro": "^2.3.6",
     "sortable.js": "^0.3.0",
     "typescript": "^4.7.4",
     "v-fit-columns": "^0.2.0",

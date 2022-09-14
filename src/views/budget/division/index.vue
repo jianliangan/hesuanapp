@@ -1,5 +1,5 @@
 <template>
-  <aj-table
+  <aj-hot-table
     ref="ajtable"
     :HasTree="true"
     :LeftTreeFetchList="ProjectFetchTree"
@@ -25,6 +25,7 @@
     :BtnSign="true"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
+    :GetInitHotTable="getInitHotTable"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
@@ -73,28 +74,94 @@
         </el-form-item>
       </el-form>
     </template>
-    <template v-slot:tableitem>
-      <el-table-column prop="sortR" label="序号" />
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="subject" label="成本科目" />
-      <el-table-column prop="code" label="编码" />
-      <el-table-column prop="category" label="类别" />
 
-      <el-table-column prop="distinction" label="项目特征" />
-      <el-table-column prop="unit" label="单位" />
-      <el-table-column prop="have" label="含量" />
-      <el-table-column prop="workAmount" label="招标工程量" />
-      <el-table-column prop="synthesisUnitprice" label="综合单价" />
-      <el-table-column prop="synthesisSumprice" label="综合合价" />
-      <el-table-column prop="manageUnitprice" label="管理费单价" />
-      <el-table-column prop="profitUnitprice" label="利润单价" />
-      <el-table-column prop="manageSumprice" label="管理费合价" />
-      <el-table-column prop="profitSumprice" label="利润合价" />
+    <template v-slot:tableitem>
+      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="120" data="subject" title="成本科目" />
+      <hot-column width="120" data="code" title="编码" />
+      <hot-column width="120" data="category" title="类别" />
+
+      <hot-column width="120" data="distinction" title="项目特征" />
+      <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="120" data="have" type="numeric" title="含量" />
+      <hot-column
+        width="120"
+        data="workAmount"
+        type="numeric"
+        title="招标工程量"
+      />
+      <hot-column
+        width="120"
+        data="synthesisUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="综合单价"
+      />
+      <hot-column
+        width="120"
+        data="synthesisSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="综合合价"
+      />
+      <hot-column
+        width="120"
+        data="manageUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="管理费单价"
+      />
+      <hot-column
+        width="120"
+        data="profitUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="利润单价"
+      />
+      <hot-column
+        width="120"
+        data="manageSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="管理费合价"
+      />
+      <hot-column
+        width="120"
+        data="profitSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="利润合价"
+      />
+      <!-- <hot-column
+        title="Product name"
+        data="productName"
+        width="120"
+        read-only="true"
+      ></hot-column>
+      <hot-column
+        title="Price in Japan"
+        type="numeric"
+        :numeric-format="formatJP"
+        data="JP_price"
+        width="120"
+      ></hot-column>
+      <hot-column
+        title="Price in Turkey"
+        data="TR_price"
+        type="numeric"
+        :numeric-format="formatJP"
+        width="120"
+      ></hot-column> -->
     </template>
-  </aj-table>
+  </aj-hot-table>
 </template>
 
 <script lang="ts" setup>
+import numbro from "numbro";
+
+import { registerAllModules } from "handsontable/registry";
+import "handsontable/dist/handsontable.min.css";
+
 import { ProjectFetchTree } from "@/api/model/project";
 import {
   BudgetDivisionPushRow,
@@ -102,14 +169,25 @@ import {
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref } from "vue";
+import AjTable from "@/components/ajTable/index.vue";
+
+registerAllModules();
+var languages = require("numbro/dist/languages.min.js");
+numbro.registerLanguage(languages["zh-CN"]);
+
 interface baseObject {
   [key: string]: any;
 }
+
 const groupsProps2 = {
   value: "indexId",
   label: "nodeName",
   emitPath: false,
   checkStrictly: true,
+};
+const formatJP = {
+  pattern: "0,0.00 $",
+  culture: "ja-JP",
 };
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
@@ -133,6 +211,33 @@ let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
 let getTreePrimeName = (item: baseObject, value: Object) => {
   if (value != null) item.projectName = value;
   return item.projectName;
+};
+const getInitHotTable = () => {
+  return {
+    cmd: null,
+    sortR: 1,
+    children: null,
+    divisionId: 1,
+    subject: "",
+    code: null,
+    category: "",
+    name: "",
+    distinction: "",
+    unit: "",
+    have: 0,
+    workAmount: 0,
+    synthesisUnitprice: 0,
+    synthesisSumprice: 0,
+    manageUnitprice: 0,
+    profitUnitprice: 0,
+    manageSumprice: 0,
+    profitSumprice: 0,
+    sort: 0,
+    projectId: 3,
+    isTotal: true,
+    parentId: null,
+    primeId: 1,
+  };
 };
 const preSubmit = () => {
   return true;
