@@ -4,7 +4,7 @@
     :HasTree="true"
     :LeftTreeFetchList="ProjectFetchTree"
     :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionList"
+    :MainContentFetchList="BudgetDivisionTree"
     :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName"
     :GroupsProps="groupsProps"
@@ -26,6 +26,8 @@
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
+    :AddComment="addComment"
+    :GetComments="getComments"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
@@ -76,6 +78,7 @@
     </template>
 
     <template v-slot:tableitem>
+      <hot-column width="0" data="divisionId" title="" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
@@ -165,12 +168,11 @@ import "handsontable/dist/handsontable.min.css";
 import { ProjectFetchTree } from "@/api/model/project";
 import {
   BudgetDivisionPushRow,
-  BudgetDivisionList,
+  BudgetDivisionTree,
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref } from "vue";
-import AjTable from "@/components/ajTable/index.vue";
-
+const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 numbro.registerLanguage(languages["zh-CN"]);
@@ -192,7 +194,8 @@ const formatJP = {
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
-let getMainPrimeId = (item: baseObject) => {
+let getMainPrimeId = (item: baseObject, value: Object) => {
+  if (value != null) item.divisionId = value;
   return item.divisionId;
 };
 let getTreePrimeId = (item: baseObject, value: Object) => {
@@ -212,12 +215,22 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
   if (value != null) item.projectName = value;
   return item.projectName;
 };
+const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
+  cell.push({
+    row: i,
+    col: 5,
+    comment: { value: row.distinction },
+  });
+};
+const getComments = () => {
+  return [5];
+};
 const getInitHotTable = () => {
   return {
     cmd: null,
-    sortR: 1,
-    children: null,
-    divisionId: 1,
+    sortR: 0,
+    children: [],
+    divisionId: 0,
     subject: "",
     code: null,
     category: "",
@@ -233,10 +246,9 @@ const getInitHotTable = () => {
     manageSumprice: 0,
     profitSumprice: 0,
     sort: 0,
-    projectId: 3,
-    isTotal: true,
+    projectId: 0,
     parentId: null,
-    primeId: 1,
+    primeId: 0,
   };
 };
 const preSubmit = () => {

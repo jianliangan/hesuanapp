@@ -60,15 +60,27 @@
           >
           <el-button
             type="primary"
-            @click="ClkInsert"
+            @click="ClkPreInsert"
             v-if="props.BtnInsert == true"
-            >插入</el-button
+            >前增加</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkBackInsert"
+            v-if="props.BtnInsert == true"
+            >后增加</el-button
           >
           <el-button
             type="primary"
             @click="ClkSign"
             v-if="props.BtnSign == true"
             >标记</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkUnSign"
+            v-if="props.BtnSign == true"
+            >取消标记</el-button
           >
           <template
             v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
@@ -180,6 +192,8 @@ import {
   UploadProps,
   UploadRawFile,
 } from "element-plus";
+import Big from "big.js";
+import { RowsSpan } from "hyperformula/typings/Span";
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
@@ -371,26 +385,111 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+  AddComment: {
+    type: Function,
+    default: null,
+  },
+  GetComments: {
+    type: Function,
+    default: null,
+  },
 });
+const myRender = () => {
+  let hot = myHotTable.value.hotInstance;
+  let rows = hot.countRows();
+  let cols = hot.countCols();
+  let primeId = 0;
+  for (let j = 0; j < rows; j++) {
+    primeId = hot.getCopyableText(j, 0, j, 0);
+    let maprow = tableData.value.map.get(primeId);
+    let istag = false;
+    if (maprow && maprow.tag == 1) {
+      for (let i = 0; i < cols; i++) {
+        hot.setCellMeta(j, i, "className", "mytagrow");
+      }
+      istag = true;
+    } else {
+      for (let i = 0; i < cols; i++) {
+        hot.setCellMeta(j, i, "className", "");
+      }
+    }
+    for (let i = 0; i < cols; i++) {
+      if (props.GetComments().indexOf(i) != -1) {
+        let className = "truncate";
+        if (istag) {
+          className += " mytagrow";
+        }
+
+        hot.setCellMeta(j, i, "className", className);
+      }
+    }
+  }
+  hot.render();
+};
 let settings = ref({
+  outsideClickDeselects: false,
+  manualRowMove: true,
   nestedRows: true,
   rowHeaders: true,
   colHeaders: true,
   contextMenu: true,
   comments: true,
   height: "auto",
-  licenseKey: "non-commercial-and-evaluation",
+  licenseKey: "d50be-b4e43-2af78-46c17-f1be1",
   data: [props.GetInitHotTable()],
   cell: [],
-  cells: function (row, col) {
-    var cp = {};
-    if (col === 4) {
-      cp.className = "truncate";
-    }
-    return cp;
+  // cells: function (row, col, prop) {
+  //   console.log(row, col, prop);
+  //   var cp = {};
+  //   if (props.GetComments().indexOf(col) != -1) {
+  //     cp.className += "truncate";
+  //   }
+  //   //mytagrow
+  //   //let primeId;
+  //   //if (col == 0) primeId = this.instance.getCopyableText(row, 0, row, 0);
+  //   // let maprow = tableData.value.map.get(primeId);
+  //   // if (maprow && maprow.tag == 1) {
+  //   //   console.log("dddddddddddddaaaaaaaaaaaaaaa", row, col);
+  //   //     cp.className += " mytagrow";
+  //   // }
+  //   return cp;
+  // },
+
+  //afterLoadData: function (sourceData, initialLoad, source) {
+  //beforeRender: function () {
+  //beforeViewRender: function () {
+  afterUpdateSettings: function () {
+    myRender();
+  },
+  afterChange: (changes: []) => {
+    if (changes == null) return;
+    let hot = myHotTable.value.hotInstance;
+
+    console.log("cccccccccc", changes);
+
+    changes.forEach(([row, prop, oldValue, newValue]) => {
+      if (oldValue === newValue) {
+        return;
+      }
+      let primeId = hot.getCopyableText(row, 0, row, 0);
+      let tmp = tableData.value.map.get(primeId);
+      let tmpp: baseObject = {};
+      tools_objToobj(tmp, tmpp);
+      delete tmpp.children;
+      tmpp.cmd = "edit";
+      PushDataRow([tmpp], () => {
+        myLoadData(tableData.value.list);
+      });
+    });
+  },
+  hiddenColumns: {
+    columns: [0],
+    copyPasteEnabled: true,
+    indicators: true,
   },
 });
 //
+
 tableData.value.tableHeight = computed({
   get() {
     let tt = tableData.value.tablePackageHeight;
@@ -550,79 +649,125 @@ const ClkAddData = () => {
   if (props.OnOpenDialog) props?.OnOpenDialog("add");
 };
 const upAllMove = (cmd: String) => {
-  if (!currentRow) {
-    ElMessage.error("没有选中行");
+  let hot = myHotTable.value.hotInstance;
+  let plugin = hot.getPlugin("manualRowMove");
+
+  let selectR = hot.getSelected()[0][0];
+  let selectC = hot.getSelected()[0][1];
+  let toR = 0;
+  //找位置
+  let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
+  let selectRow = tableData.value.map.get(selectId);
+  if (selectRow == undefined) {
+    ElMessage.info("没有选择行");
     return;
   }
-  let primeId = props.GetMainPrimeId(currentRow);
-  let index = tableData.value.map.get(primeId);
-  if (cmd == "up" && index == 0) return;
-  if (cmd == "down" && index == settings.value.data.length - 1) return;
-  //更新数据
-  let fromindex = 0;
-  let toindex = 0;
-  if (cmd == "up") {
-    fromindex = index;
-    toindex = index - 1;
+  let toRow: baseObject;
+  let brotherRows: baseObject;
+  if (!selectRow.parentId) {
+    brotherRows = tableData.value.list;
   } else {
-    fromindex = index;
-    toindex = index + 1;
+    brotherRows = tableData.value.map.get(selectRow.parentId).children;
   }
-  settings.value.data[fromindex].old_sort = settings.value.data[fromindex].sort;
-  settings.value.data[fromindex].old_sortR =
-    settings.value.data[fromindex].sortR;
+  if (brotherRows == undefined) {
+    ElMessage.info("父行有问题");
+    return;
+  }
 
-  settings.value.data[toindex].old_sort = settings.value.data[toindex].sort;
-  settings.value.data[toindex].old_sortR = settings.value.data[toindex].sortR;
+  let i = 0;
+  if (cmd == "up") {
+    i = selectR - 1;
+  } else {
+    i = selectR + 1;
+  }
+  while (1) {
+    if (cmd == "up") {
+      if (i < 0) break;
+    }
+    let id = hot.getCopyableText(i, 0, i, 0);
+    let row = tableData.value.map.get(id);
+    if (!row) {
+      break;
+    }
+    if (!toRow && row.__level == selectRow.__level) {
+      toRow = row;
+    }
+    if (row.__level < selectRow.__level) {
+      break;
+    }
+    if (cmd == "up") {
+      i--;
+    } else {
+      i++;
+    }
+  }
 
-  settings.value.data[fromindex].sortR = settings.value.data[toindex].old_sortR;
-  settings.value.data[fromindex].sort = settings.value.data[toindex].old_sort;
+  //找选中行的索引
+  let selectIndex = 0;
+  for (let i = selectR - 1; i >= 0; i--) {
+    let id = hot.getCopyableText(i, 0, i, 0);
+    let row = tableData.value.map.get(id);
+    if (!row) {
+      break;
+    }
+    if (row.__level == selectRow.__level) {
+      selectIndex++;
+    } else if (row.__level < selectRow.__level) {
+      break;
+    }
+  }
+  if (toRow == undefined) {
+    ElMessage.info("没有找到目标");
+    return;
+  }
+  console.log("ffffff", toRow);
+  //换sort
+  toRow.old_sort = toRow.sort;
+  toRow.old_sortR = toRow.sortR;
+  selectRow.old_sort = selectRow.sort;
+  selectRow.old_sortR = selectRow.sortR;
 
-  settings.value.data[toindex].sortR = settings.value.data[fromindex].old_sortR;
+  selectRow.sortR = toRow.old_sortR;
+  selectRow.sort = toRow.old_sort;
 
-  settings.value.data[toindex].sort = settings.value.data[fromindex].old_sort;
-
-  //结束
-
-  settings.value.data[toindex].cmd = "edit";
-  settings.value.data[fromindex].cmd = "edit";
+  toRow.sortR = selectRow.old_sortR;
+  toRow.sort = selectRow.old_sort;
+  //post
+  toRow.cmd = "edit";
+  selectRow.cmd = "edit";
   loading.value = true;
-
+  let postToRow: baseObject = {};
+  let postSelectRow: baseObject = {};
+  tools_objToobj(toRow, postToRow);
+  tools_objToobj(selectRow, postSelectRow);
+  delete postToRow.children;
+  delete postSelectRow.children;
+  console.log("bbbbbbbbb", postToRow, postSelectRow);
   props
-    .MainContentPushRow([
-      settings.value.data[toindex],
-      settings.value.data[fromindex],
-    ])
+    .MainContentPushRow([postToRow, postSelectRow])
     .then((response: any) => {
       loading.value = false;
-      tableData.value.map.set(
-        props.GetMainPrimeId(settings.value.data[toindex]),
-        fromindex
-      );
-      tableData.value.map.set(
-        props.GetMainPrimeId(settings.value.data[fromindex]),
-        toindex
-      );
-      tools_sort_map_loop<baseObject>(
-        settings.value.data,
-        0,
-        (a: baseObject): number => {
-          return a.sort;
+      //array换位置
+      console.log("rrrrrrrrrrrrr", selectIndex);
+
+      if (cmd == "up") {
+        if (selectIndex > 0) {
+          let tmp = brotherRows.splice(selectIndex, 1);
+          brotherRows.splice(selectIndex - 1, 0, ...tmp);
         }
-      );
+      } else {
+        if (selectIndex < brotherRows.length - 1) {
+          let tmp = brotherRows.splice(selectIndex + 1, 1);
+          brotherRows.splice(selectIndex, 0, ...tmp);
+        }
+      }
+
+      myLoadData(tableData.value.list);
     })
     .catch((err: any) => {
       loading.value = false;
-      //恢复状态
-      settings.value.data[fromindex].sortR =
-        settings.value.data[fromindex].old_sortR;
-      settings.value.data[toindex].sortR =
-        settings.value.data[toindex].old_sortR;
-
-      settings.value.data[fromindex].sort =
-        settings.value.data[fromindex].old_sort;
-      settings.value.data[toindex].sort = settings.value.data[toindex].old_sort;
     });
+  ///////////////////////////////
 };
 const ClkUpMove = () => {
   upAllMove("up");
@@ -630,18 +775,168 @@ const ClkUpMove = () => {
 const ClkDownMove = () => {
   upAllMove("down");
 };
-const ClkInsert = () => {
-  if (!currentRow) {
-    ElMessage.error("没有选中行");
+const allSign = (cmd: string) => {
+  let hot = myHotTable.value.hotInstance;
+  let plugin = hot.getPlugin("manualRowMove");
+
+  let selectR = hot.getSelected()[0][0];
+  let selectC = hot.getSelected()[0][1];
+  let toR = 0;
+  //找位置
+  let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
+  let selectRow = tableData.value.map.get(selectId);
+  if (selectRow == undefined) {
+    ElMessage.info("没有选择行");
     return;
   }
-  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
-  priInstanData();
-  dialogIsAdd.value = true;
-  getDialogAddVisible(true);
+  let postSelectRow: baseObject = {};
+  selectRow.cmd = "edit";
+  if (cmd == "sign") selectRow.tag = 1;
+  else selectRow.tag = 0;
+  tools_objToobj(selectRow, postSelectRow);
+  delete postSelectRow.children;
 
-  SubMitLoading.value = false;
-  if (props.OnOpenDialog) props?.OnOpenDialog("add");
+  props
+    .MainContentPushRow([postSelectRow])
+    .then((response: any) => {
+      loading.value = false;
+      myRender();
+      //loaddata
+    })
+    .catch((err: any) => {
+      loading.value = false;
+    });
+};
+const ClkSign = () => {
+  allSign("sign");
+};
+const ClkUnSign = () => {
+  allSign("unsign");
+};
+const allInstert = (cmd: string) => {
+  let hot = myHotTable.value.hotInstance;
+
+  let selectR = hot.getSelected()[0][0];
+  let selectC = hot.getSelected()[0][1];
+  let toR = 0;
+  //找位置
+  let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
+  let selectRow = tableData.value.map.get(selectId);
+  if (selectRow == undefined) {
+    ElMessage.info("没有选择行");
+    return;
+  }
+  let toRow: baseObject;
+  let brotherRows: baseObject;
+  if (!selectRow.parentId) {
+    brotherRows = tableData.value.list;
+  } else {
+    brotherRows = tableData.value.map.get(selectRow.parentId).children;
+  }
+  if (brotherRows == undefined) {
+    ElMessage.info("父行有问题");
+    return;
+  }
+
+  let i = 0;
+  if (cmd == "up") {
+    i = selectR - 1;
+  } else {
+    i = selectR + 1;
+  }
+  while (1) {
+    if (cmd == "up") {
+      if (i < 0) break;
+    }
+    let id = hot.getCopyableText(i, 0, i, 0);
+    let row = tableData.value.map.get(id);
+    if (!row) {
+      break;
+    }
+    if (!toRow && row.__level == selectRow.__level) {
+      toRow = row;
+    }
+    if (row.__level < selectRow.__level) {
+      break;
+    }
+    if (cmd == "up") {
+      i--;
+    } else {
+      i++;
+    }
+  }
+
+  //找选中行的索引
+  let selectIndex = 0;
+  for (let i = selectR - 1; i >= 0; i--) {
+    let id = hot.getCopyableText(i, 0, i, 0);
+    let row = tableData.value.map.get(id);
+    if (!row) {
+      break;
+    }
+    if (row.__level == selectRow.__level) {
+      selectIndex++;
+    } else if (row.__level < selectRow.__level) {
+      break;
+    }
+  }
+  let toSort = 0;
+  if (toRow == undefined) {
+    if (cmd == "up") {
+      toSort = 0;
+    } else {
+      Big.DP = 10;
+      Big.RM = Big.roundHalfUp;
+      let tmp = new Big(selectRow.sort);
+
+      toSort = tmp.add(1).toString();
+      console.log("aaaaaaaaaaaaaaaddddddddddddddwww", toSort, selectRow.sort);
+    }
+  } else {
+    toSort = toRow.sort;
+  }
+
+  //求sort
+  let row = props.GetInitHotTable();
+
+  Big.DP = 10;
+  Big.RM = Big.roundHalfUp;
+
+  let selectSort = new Big(selectRow.sort);
+  let toRowSort = new Big(toSort);
+  row.sort = selectSort.add(toRowSort).div(2).toString();
+  row.cmd = "add";
+  row.parentId = selectRow.parentId;
+  row.projectId = selectRow.projectId;
+  //post
+  console.log("aaaaaaaaaaaaaaadddddddddddddd", row.sort);
+  loading.value = true;
+
+  props
+    .MainContentPushRow([row])
+    .then((response: any) => {
+      loading.value = false;
+
+      console.log("rrrrrrrrrrrrr", response);
+      props.GetMainPrimeId(row, response);
+      if (cmd == "up") {
+        brotherRows.splice(selectIndex, 0, row);
+      } else {
+        brotherRows.splice(selectIndex + 1, 0, row);
+      }
+      myLoadData(tableData.value.list);
+    })
+    .catch((err: any) => {
+      loading.value = false;
+    });
+  ///////////////////////////////
+  //////////////////////////
+};
+const ClkPreInsert = () => {
+  allInstert("up");
+};
+const ClkBackInsert = () => {
+  allInstert("down");
 };
 const onCancel = () => {
   if (props.GetDialogAddVisible) props?.GetDialogAddVisible(false);
@@ -690,22 +985,35 @@ function DeleteRow(row: any) {
   PushDataRow([row]);
 }
 
-const PushDataRow = async (body: any) => {
+const PushDataRow = async (body: any, ...args: Function[]) => {
   loading.value = true;
+  let cb: Function = args[0];
   props
     .MainContentPushRow(body)
     .then((response: any) => {
-      FetchDataList(listUriParams);
       loading.value = false;
-      getDialogAddVisible(false);
+
       SubMitLoading.value = false;
+
+      if (cb) cb(response);
     })
     .catch((err: any) => {
       loading.value = false;
       SubMitLoading.value = false;
     });
 };
-
+const filterRow = (
+  rows: Array<baseObject>,
+  lists: Map<Object, baseObject>,
+  level: number
+) => {
+  if (rows.length > 0) level++;
+  for (let i = 0; i < rows.length; i++) {
+    rows[i].__level = level;
+    lists.set(props.GetMainPrimeId(rows[i]), rows[i]);
+    filterRow(rows[i].children, lists, level);
+  }
+};
 /**
  * need to change
  * api call
@@ -719,38 +1027,39 @@ const FetchDataList = async (row: any) => {
       .then((resdata: any) => {
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
         pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
-        // settings.value.data.splice(0);
-        settings.value.cell = new Array<baseObject>();
 
-        for (let i = 0; i < resdata["list"].length; i++) {
-          if (resdata["list"][i]["children"])
-            resdata["list"][i]["__children"] = resdata["list"][i]["children"];
-          settings.value.cell.push({
-            row: i,
-            col: 4,
-            comment: { value: resdata["list"][i].distinction },
-          });
-        }
-        console.log("aaaaaaaaaaaaa", resdata["list"]);
-        myHotTable.value.hotInstance.loadData(resdata["list"]);
+        tableData.value.list = resdata["list"];
 
-        tableData.value.map = new Map<any, baseObject>();
+        myLoadData(tableData.value.list);
+        //////////////////////
 
-        for (let i = 0; i < settings.value.data.length; i++) {
-          tableData.value.map.set(
-            props.GetMainPrimeId(settings.value.data[i]),
-            i
-          );
-        }
-
+        /////////////////////
         loading.value = false;
       })
       .catch((err: any) => {
         loading.value = false;
       });
 };
+const myLoadData = (listData: Array<baseObject>) => {
+  tableData.value.map = new Map<Object, baseObject>();
+  filterRow(listData, tableData.value.map, 0);
+  let indexi = 0;
+  settings.value.cell = new Array<baseObject>();
+  for (let [key, value] of tableData.value.map) {
+    if (value["children"]) {
+      value["__children"] = value["children"];
+    }
+    console.log("6666666666666666666", value);
+    props.AddComment(settings.value.cell, indexi, value);
+    indexi++;
+  }
+  myHotTable.value.hotInstance.loadData(listData);
+
+  myRender();
+};
+
 const ExportDataList = () => {
-  return settings.value.data;
+  return tableData.value.list;
 };
 function PageLoaded() {
   if (props.PreFirstGetData) props.PreFirstGetData(listUriParams);
@@ -786,6 +1095,9 @@ body .handsontable .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   height: 20px;
+}
+body .handsontable .mytagrow {
+  background: yellow;
 }
 </style>
   
