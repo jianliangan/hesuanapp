@@ -207,8 +207,8 @@ const preFirstGetData = (requestlist: baseObject) => {
   requestlist.rootId = 0;
 };
 let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
-  requestvar.rootId = "";
-  requestvar.projectId = treenode.projectId;
+  delete requestvar.rootId;
+  requestvar.ownId = treenode.projectId;
 };
 
 let getTreePrimeName = (item: baseObject, value: Object) => {
@@ -230,7 +230,7 @@ const getInitHotTable = () => {
     cmd: null,
     sortR: 0,
     children: [],
-    divisionId: 0,
+    divisionId: "",
     subject: "",
     code: null,
     category: "",
@@ -246,9 +246,8 @@ const getInitHotTable = () => {
     manageSumprice: 0,
     profitSumprice: 0,
     sort: 0,
-    projectId: 0,
-    parentId: null,
-    primeId: 0,
+    ownId: "",
+    parentId: "",
   };
 };
 const preSubmit = () => {
@@ -259,7 +258,7 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
     if (field == "new") {
       formInstance.value = {};
     } else if (field == "primeid") {
-      formInstance.value.projectId = value;
+      formInstance.value.divisionId = value;
     } else if (field == "name") {
       formInstance.value.projectName = value;
     } else if (field == "*") {

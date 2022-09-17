@@ -424,14 +424,13 @@ let settings = ref({
     if (changes == null) return;
     let hot = myHotTable.value.hotInstance;
 
-    console.log("cccccccccc", changes);
-
     changes.forEach(([row, prop, oldValue, newValue]) => {
       if (oldValue === newValue) {
         return;
       }
       let primeId = hot.getCopyableText(row, 0, row, 0);
       let tmp = tableData.value.map.get(primeId);
+
       let tmpp: baseObject = {};
       tools_objToobj(tmp, tmpp);
       delete tmpp.children;
@@ -868,7 +867,7 @@ const allInstert = (cmd: string) => {
   row.sort = selectSort.add(toRowSort).div(2).toString();
   row.cmd = "add";
   row.parentId = selectRow.parentId;
-  row.projectId = selectRow.projectId;
+  row.ownId = selectRow.ownId;
   //post
   console.log("aaaaaaaaaaaaaaadddddddddddddd", row.sort);
   loading.value = true;
@@ -885,6 +884,7 @@ const allInstert = (cmd: string) => {
       } else {
         brotherRows.splice(selectIndex + 1, 0, row);
       }
+      console.log("rrrrrrrrrrrrrrrr d ", tableData.value.list);
       myLoadData(tableData.value.list);
     })
     .catch((err: any) => {
@@ -949,6 +949,8 @@ function DeleteRow(row: any) {
 const PushDataRow = async (body: any, ...args: Function[]) => {
   loading.value = true;
   let cb: Function = args[0];
+
+  console.log("cccccccccc", body);
   props
     .MainContentPushRow(body)
     .then((response: any) => {
@@ -1020,7 +1022,7 @@ const myLoadData = (listData: Array<baseObject>) => {
 
   myHotTable.value.hotInstance.loadData(listData);
 
-  //myRender();
+  myRender();
 };
 
 const ExportDataList = () => {

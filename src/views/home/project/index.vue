@@ -10,7 +10,7 @@
     :HasPage="true"
     :PreSubmit="preSubmit"
     :PreFirstGetData="preFirstGetData"
-    :BtnNew="false"
+    :BtnNew="true"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">

@@ -15,7 +15,7 @@
     :PreSubmit="preSubmit"
     :PreFirstGetData="preFirstGetData"
     :TableKey="tableKey"
-    :BtnNew="false"
+    :BtnNew="true"
   >
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
