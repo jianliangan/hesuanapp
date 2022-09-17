@@ -38,7 +38,7 @@
       <slot></slot>
     </el-aside>
     <el-container>
-      <el-main class="nopadding">
+      <el-header>
         <el-space>
           <el-button
             type="primary"
@@ -101,64 +101,22 @@
             </el-upload>
           </template>
         </el-space>
-        <div ref="mainframe" :style="{ height: '100%', overflow: 'hidden' }">
-          <div
-            class="scTable-table"
-            :style="{ height: tableData.tablePackageHeight }"
-          >
-            <!-- <el-table
-              ref="myeltable"
-              v-loading="loading"
-              :data="tableData.list"
-              :row-key="props.TableKey"
-              border
-              default-expand-all
-              stripe
-              :height="tableData.tableHeight"
-              @selection-change="SelectionChange"
-              :highlight-current-row="props.HighlightCurrentRow"
-              @current-change="currentChange"
-            > -->
-
-            <hot-table :settings="settings" ref="myHotTable">
-              <slot name="tableitem"></slot>
-            </hot-table>
-            <!-- <el-table-column label="操作" fixed="right" width="150">
-                <template #default="scope">
-                  <el-popconfirm
-                    title="确定删除吗"
-                    @confirm="DeleteRow(scope.row)"
-                  >
-                    <template #reference>
-                      <el-button link type="primary" size="small">
-                        删除
-                      </el-button>
-                    </template>
-                  </el-popconfirm>
-                  <span>
-                    <el-button
-                      text
-                      type="primary"
-                      @click.stop="ClkEditData(scope.row)"
-                      >编辑</el-button
-                    >
-                  </span>
-                </template>
-              </el-table-column>
-            </el-table> -->
-          </div>
-          <div class="scTable-page" v-if="HasPage == true">
-            <el-pagination
-              layout="prev, pager, next"
-              :total="pageInfo.itemTotal"
-              :page-size="pageInfo.pageSize"
-              small
-              background
-              @current-change="HandleCurrentChange"
-            />
-          </div>
-        </div>
+      </el-header>
+      <el-main>
+        <hot-table :settings="settings" style="height: 100%" ref="myHotTable">
+          <slot name="tableitem"></slot>
+        </hot-table>
       </el-main>
+      <el-footer v-if="HasPage == true">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="pageInfo.itemTotal"
+          :page-size="pageInfo.pageSize"
+          small
+          background
+          @current-change="HandleCurrentChange"
+        />
+      </el-footer>
     </el-container>
   </el-container>
 </template>
@@ -424,6 +382,7 @@ const myRender = () => {
       }
     }
   }
+  console.log("1111111111111111111111");
   hot.render();
 };
 let settings = ref({
@@ -487,6 +446,8 @@ let settings = ref({
     copyPasteEnabled: true,
     indicators: true,
   },
+  width: "100%",
+  height: "100%",
 });
 //
 
@@ -1027,8 +988,11 @@ const FetchDataList = async (row: any) => {
       .then((resdata: any) => {
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
         pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
-
-        tableData.value.list = resdata["list"];
+        if (!resdata["list"] || resdata["list"].length == 0) {
+          tableData.value.list = [props.GetInitHotTable()];
+        } else {
+          tableData.value.list = resdata["list"];
+        }
 
         myLoadData(tableData.value.list);
         //////////////////////
@@ -1049,13 +1013,14 @@ const myLoadData = (listData: Array<baseObject>) => {
     if (value["children"]) {
       value["__children"] = value["children"];
     }
-    console.log("6666666666666666666", value);
+
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
+
   myHotTable.value.hotInstance.loadData(listData);
 
-  myRender();
+  //myRender();
 };
 
 const ExportDataList = () => {
@@ -1098,6 +1063,9 @@ body .handsontable .truncate {
 }
 body .handsontable .mytagrow {
   background: yellow;
+}
+.el-main {
+  padding: 0px;
 }
 </style>
   
