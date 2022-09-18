@@ -11,101 +11,132 @@
   </el-dialog>
 
   <el-container>
-    <el-header>
-      <el-space>
-        <el-button
-          type="primary"
-          @click="ClkAddData"
-          v-if="props.BtnNew == true"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkUpMove"
-          v-if="props.BtnUpMove == true"
-          >上移</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkDownMove"
-          v-if="props.BtnDownMove == true"
-          >下移</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkInsert"
-          v-if="props.BtnInsert == true"
-          >插入</el-button
-        >
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true"
-          >标记</el-button
-        >
-        <template
-          v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
-        >
-          <el-upload
-            :accept="props.FilesExts"
-            :maxSize="props.MaxFileSize"
-            :limit="1"
-            :data="listUriParams"
-            :show-file-list="false"
-            :action="props?.ImportUri"
-            :on-error="handleError"
-            :on-success="handleSuccess"
-            :on-change="handleChange"
-            auto-upload
+    <el-aside
+      width="200px"
+      v-loading="showasideing"
+      v-if="props?.HasTree == true"
+    >
+      <el-container>
+        <el-header>
+          <el-input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            clearable
+          ></el-input>
+        </el-header>
+        <el-main class="nopadding">
+          <el-tree
+            ref="mytree"
+            node-key="projectId"
+            :highlight-current="true"
+            :data="organizedata"
+            :props="props?.GroupsProps"
+            @node-click="leftRowClick"
+          ></el-tree>
+        </el-main>
+      </el-container>
+      <slot></slot>
+    </el-aside>
+    <el-container>
+      <el-header>
+        <el-space>
+          <el-button
+            type="primary"
+            @click="ClkAddData"
+            v-if="props.BtnNew == true"
+            >新增</el-button
           >
-            <el-button type="primary">导入</el-button>
-          </el-upload>
-        </template>
-      </el-space>
-    </el-header>
-
-    <el-main>
-      <el-table
-        ref="myeltable"
-        v-loading="loading"
-        :data="tableData.list"
-        :row-key="props.TableKey"
-        border
-        default-expand-all
-        stripe
-        height="100%"
-        @selection-change="SelectionChange"
-        :highlight-current-row="props.HighlightCurrentRow"
-        @current-change="currentChange"
-      >
-        <slot name="tableitem"></slot>
-
-        <el-table-column label="操作" fixed="right" width="150">
-          <template #default="scope">
-            <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)">
-              <template #reference>
-                <el-button link type="primary" size="small"> 删除 </el-button>
-              </template>
-            </el-popconfirm>
-            <span>
-              <el-button
-                text
-                type="primary"
-                @click.stop="ClkEditData(scope.row)"
-                >编辑</el-button
-              >
-            </span>
+          <el-button
+            type="primary"
+            @click="ClkUpMove"
+            v-if="props.BtnUpMove == true"
+            >上移</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkDownMove"
+            v-if="props.BtnDownMove == true"
+            >下移</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkInsert"
+            v-if="props.BtnInsert == true"
+            >插入</el-button
+          >
+          <el-button
+            type="primary"
+            @click="ClkSign"
+            v-if="props.BtnSign == true"
+            >标记</el-button
+          >
+          <template
+            v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
+          >
+            <el-upload
+              :accept="props.FilesExts"
+              :maxSize="props.MaxFileSize"
+              :limit="1"
+              :data="listUriParams"
+              :show-file-list="false"
+              :action="props?.ImportUri"
+              :on-error="handleError"
+              :on-success="handleSuccess"
+              :on-change="handleChange"
+              auto-upload
+            >
+              <el-button type="primary">导入</el-button>
+            </el-upload>
           </template>
-        </el-table-column>
-      </el-table>
-    </el-main>
-    <el-footer v-if="HasPage == true">
-      <el-pagination
-        layout="prev, pager, next"
-        :total="pageInfo.itemTotal"
-        :page-size="pageInfo.pageSize"
-        small
-        background
-        @current-change="HandleCurrentChange"
-      />
-    </el-footer>
+        </el-space>
+      </el-header>
+
+      <el-main>
+        <el-table
+          ref="myeltable"
+          v-loading="loading"
+          :data="tableData.list"
+          :row-key="props.TableKey"
+          border
+          default-expand-all
+          stripe
+          :height="tableData.tableHeight"
+          @selection-change="SelectionChange"
+          :highlight-current-row="props.HighlightCurrentRow"
+          @current-change="currentChange"
+        >
+          <slot name="tableitem"></slot>
+
+          <el-table-column label="操作" fixed="right" width="150">
+            <template #default="scope">
+              <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)">
+                <template #reference>
+                  <el-button link type="primary" size="small"> 删除 </el-button>
+                </template>
+              </el-popconfirm>
+              <span>
+                <el-button
+                  text
+                  type="primary"
+                  @click.stop="ClkEditData(scope.row)"
+                  >编辑</el-button
+                >
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-main>
+      <el-footer v-if="HasPage == true">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="pageInfo.itemTotal"
+          :page-size="pageInfo.pageSize"
+          small
+          background
+          @current-change="HandleCurrentChange"
+        />
+      </el-footer>
+    </el-container>
   </el-container>
 </template>
     
@@ -115,6 +146,15 @@ import {
   tools_objToobj,
   tools_sort_map_loop,
 } from "@/components/jrTools/index";
+/**
+ * need to change
+ * api call
+ */
+//import chinaAreas from '@/components/chinaareas/index'
+/**
+ * need to change
+ * api call
+ */
 
 import {
   ElMessage,
@@ -155,7 +195,7 @@ function getAllAreas(
 //getAllAreas(chinaAreas, planAreas.value)
 
 // do not use same name with ref
-
+const mytree = ref<baseObject>({});
 const filterText = ref("");
 const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
@@ -276,10 +316,6 @@ const props = defineProps({
     type: Function,
     default: null,
   },
-  PreInstanData: {
-    type: Function,
-    default: null,
-  },
 });
 //
 tableData.value.tableHeight = computed({
@@ -353,14 +389,87 @@ const handleError: UploadProps["onError"] = (
 ) => {
   ElMessage.error("发生错误：" + error);
 };
+const FetchLeftTreeDataList = async (row: baseObject) => {
+  showasideing.value = true;
 
+  props
+    .LeftTreeFetchList(row)
+    .then((response: any) => {
+      organizedata.value = organizedata2 = response["list"];
+
+      nextTick(() => {
+        if (props.GetTreePrimeId)
+          mytree.value!.setCurrentKey(
+            props?.GetTreePrimeId(organizedata.value[0], null)
+          );
+
+        if (props.TreeSelectNode && props?.GetTreePrimeId)
+          props.TreeSelectNode(listUriParams, organizedata.value[0]);
+
+        FetchDataList(listUriParams);
+      });
+      showasideing.value = false;
+    })
+    .catch((err: any) => {
+      showasideing.value = false;
+    });
+};
+
+//event handles
+const leftRowClick = (data: any) => {
+  if (!props?.HasTree) {
+    return;
+  }
+  if (props.GetTreePrimeId) {
+    if (
+      props?.GetTreePrimeId(data) == 0 ||
+      props?.GetTreePrimeId(data) == undefined ||
+      props?.GetTreePrimeId(data) == ""
+    )
+      return;
+  }
+  if (props.TreeSelectNode) {
+    props.TreeSelectNode(listUriParams, data);
+  }
+
+  FetchDataList(listUriParams);
+};
+const priInstanData = () => {
+  if (props?.HasTree) {
+    let curNode = mytree.value!.getCurrentNode();
+    if (curNode != null) {
+      if (props.GetFormInstance && props.GetTreePrimeId)
+        props?.GetFormInstance(
+          "SET",
+          "primeid",
+          props?.GetTreePrimeId(curNode, null)
+        );
+      if (props.GetFormInstance && props.GetTreePrimeName)
+        props?.GetFormInstance(
+          "SET",
+          "name",
+          props?.GetTreePrimeName(curNode, null)
+        );
+      if (props.GetTreePrimeId) {
+        if (
+          props?.GetTreePrimeId(curNode, null) == 0 ||
+          props?.GetTreePrimeId(curNode, null) == "" ||
+          props?.GetTreePrimeId(curNode, null) == undefined
+        )
+          return;
+      }
+    } else {
+      return;
+    }
+  }
+};
 const currentChange = (newRow: baseObject, oldRow: baseObject) => {
   currentRow = newRow;
   console.log("change ", newRow, oldRow);
 };
 const ClkAddData = () => {
   if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
-  if (props.PreInstanData && props.PreInstanData() == false) return;
+  priInstanData();
   dialogIsAdd.value = true;
   getDialogAddVisible(true);
 
@@ -458,7 +567,7 @@ const ClkInsert = () => {
     return;
   }
   if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
-  if (props.PreInstanData && props.PreInstanData() == false) return;
+  priInstanData();
   dialogIsAdd.value = true;
   getDialogAddVisible(true);
 
@@ -471,7 +580,7 @@ const onCancel = () => {
 };
 function ClkEditData(row: baseObject) {
   if (props.GetFormInstance) props?.GetFormInstance("SET", "*", row);
-  if (props.PreInstanData && props.PreInstanData() == false) return;
+  priInstanData();
   dialogIsAdd.value = false;
   SubMitLoading.value = false;
   getDialogAddVisible(true);
@@ -559,12 +668,19 @@ const FetchDataList = async (row: any) => {
 const ExportDataList = () => {
   return tableData.value.list;
 };
-function PageLoaded(uri: baseObject) {
-  tools_objToobj(uri, listUriParams);
-  FetchDataList(uri);
+function PageLoaded() {
+  if (props.PreFirstGetData) props.PreFirstGetData(listUriParams);
+  if (props?.HasTree == true) {
+    FetchLeftTreeDataList(listUriParams);
+  } else {
+    FetchDataList(listUriParams);
+  }
+
   //
 }
-defineExpose({ PageLoaded, ExportDataList });
+PageLoaded();
+defineExpose({ ExportDataList });
+type functree = (query: any) => any;
 </script>
     <style scoped>
 .scTable-table {

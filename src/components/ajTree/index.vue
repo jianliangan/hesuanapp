@@ -19,9 +19,8 @@
     </el-main>
   </el-container>
 </template>
-    
-    <script lang="ts" setup>
-import { nextTick, ref, watch, defineProps } from "vue";
+<script lang="ts" setup>
+import { nextTick, ref, watch, defineProps, defineExpose } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -38,7 +37,6 @@ let organizedata2 = new Array<any>();
 const mytree = ref<baseObject>({});
 const filterText = ref("");
 const showasideing = ref(false);
-const loading = ref(false);
 
 const listUriParams = {} as baseObject;
 const props = defineProps({
@@ -61,6 +59,10 @@ const props = defineProps({
   },
 
   TreeSelectNode: {
+    type: Function,
+    default: null,
+  },
+  FetchDataList: {
     type: Function,
     default: null,
   },
@@ -96,6 +98,7 @@ const FetchLeftTreeDataList = async (row: baseObject) => {
 
         if (props.TreeSelectNode && props?.GetTreePrimeId)
           props.TreeSelectNode(listUriParams, organizedata.value[0]);
+        props.FetchDataList(listUriParams);
       });
       showasideing.value = false;
     })
@@ -117,13 +120,17 @@ const leftRowClick = (data: any) => {
   if (props.TreeSelectNode) {
     props.TreeSelectNode(listUriParams, data);
   }
+  if (props.FetchDataList) {
+    props.FetchDataList(listUriParams);
+  }
 };
-
-function PageLoaded() {
-  if (props.PreFirstGetData) props.PreFirstGetData(listUriParams);
-  FetchLeftTreeDataList(listUriParams);
-}
-PageLoaded();
+let GetCurrentNode = () => {
+  return mytree.value!.getCurrentNode();
+};
+let PageLoaded = (uri: baseObject) => {
+  FetchLeftTreeDataList(uri);
+};
+defineExpose({ PageLoaded, GetCurrentNode });
 </script>
 
 <style>

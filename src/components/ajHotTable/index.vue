@@ -1,106 +1,75 @@
 <template>
   <el-container>
-    <el-aside
-      width="200px"
-      v-loading="showasideing"
-      v-if="props?.HasTree == true"
-    >
-      <el-container>
-        <el-header>
-          <el-input
-            placeholder="输入关键字进行过滤"
-            v-model="filterText"
-            clearable
-          ></el-input>
-        </el-header>
-        <el-main class="nopadding">
-          <el-tree
-            ref="mytree"
-            node-key="projectId"
-            :highlight-current="true"
-            :data="organizedata"
-            :props="props?.GroupsProps"
-            @node-click="leftRowClick"
-          ></el-tree>
-        </el-main>
-      </el-container>
-      <slot></slot>
-    </el-aside>
-    <el-container>
-      <el-header>
-        <el-space>
-          <el-button
-            type="primary"
-            @click="ClkUpMove"
-            v-if="props.BtnUpMove == true"
-            >上移</el-button
+    <el-header>
+      <el-space>
+        <el-button
+          type="primary"
+          @click="ClkUpMove"
+          v-if="props.BtnUpMove == true"
+          >上移</el-button
+        >
+        <el-button
+          type="primary"
+          @click="ClkDownMove"
+          v-if="props.BtnDownMove == true"
+          >下移</el-button
+        >
+        <el-button
+          type="primary"
+          @click="ClkPreInsert"
+          v-if="props.BtnInsert == true"
+          >前增加</el-button
+        >
+        <el-button
+          type="primary"
+          @click="ClkBackInsert"
+          v-if="props.BtnInsert == true"
+          >后增加</el-button
+        >
+        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true"
+          >标记</el-button
+        >
+        <el-button
+          type="primary"
+          @click="ClkUnSign"
+          v-if="props.BtnSign == true"
+          >取消标记</el-button
+        >
+        <template
+          v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
+        >
+          <el-upload
+            :accept="props.FilesExts"
+            :maxSize="props.MaxFileSize"
+            :limit="1"
+            :data="listUriParams"
+            :show-file-list="false"
+            :action="props?.ImportUri"
+            :on-error="handleError"
+            :on-success="handleSuccess"
+            :on-change="handleChange"
+            auto-upload
           >
-          <el-button
-            type="primary"
-            @click="ClkDownMove"
-            v-if="props.BtnDownMove == true"
-            >下移</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkPreInsert"
-            v-if="props.BtnInsert == true"
-            >前增加</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkBackInsert"
-            v-if="props.BtnInsert == true"
-            >后增加</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkSign"
-            v-if="props.BtnSign == true"
-            >标记</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkUnSign"
-            v-if="props.BtnSign == true"
-            >取消标记</el-button
-          >
-          <template
-            v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
-          >
-            <el-upload
-              :accept="props.FilesExts"
-              :maxSize="props.MaxFileSize"
-              :limit="1"
-              :data="listUriParams"
-              :show-file-list="false"
-              :action="props?.ImportUri"
-              :on-error="handleError"
-              :on-success="handleSuccess"
-              :on-change="handleChange"
-              auto-upload
-            >
-              <el-button type="primary">导入</el-button>
-            </el-upload>
-          </template>
-        </el-space>
-      </el-header>
-      <el-main>
-        <hot-table :settings="settings" style="height: 100%" ref="myHotTable">
-          <slot name="tableitem"></slot>
-        </hot-table>
-      </el-main>
-      <el-footer v-if="HasPage == true">
-        <el-pagination
-          layout="prev, pager, next"
-          :total="pageInfo.itemTotal"
-          :page-size="pageInfo.pageSize"
-          small
-          background
-          @current-change="HandleCurrentChange"
-        />
-      </el-footer>
-    </el-container>
+            <el-button type="primary">导入</el-button>
+          </el-upload>
+        </template>
+      </el-space>
+    </el-header>
+    <el-main>
+      <hot-table :settings="settings" style="height: 100%" ref="myHotTable">
+        <slot name="tableitem"></slot>
+      </hot-table>
+    </el-main>
+    <el-footer v-if="HasPage == true">
+      <el-pagination
+        layout="prev, pager, next"
+        :total="pageInfo.itemTotal"
+        :page-size="pageInfo.pageSize"
+        small
+        background
+        @current-change="HandleCurrentChange"
+      />
+    </el-footer>
   </el-container>
 </template>
     
@@ -134,8 +103,6 @@ interface baseObject {
 const myHotTable = ref<baseObject>({});
 
 let planAreas = ref(new Map<string, baseObject>());
-const organizedata = ref(new Array<baseObject>());
-let organizedata2 = new Array<any>();
 
 numbro.registerLanguage(languages["zh-CN"]);
 
@@ -155,9 +122,6 @@ function getAllAreas(
  * api call
  */
 
-const mytree = ref<baseObject>({});
-const filterText = ref("");
-const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
 
 const loading = ref(false);
@@ -174,25 +138,10 @@ const props = defineProps({
     type: Function,
     default: null,
   },
-  LeftTreeFetchList: {
-    type: Function,
-    default: null,
-  },
+
   MainContentPushRow: {
     type: Function,
     default: null,
-  },
-  GetTreePrimeId: {
-    type: Function,
-    default: null,
-  },
-  GetTreePrimeName: {
-    type: Function,
-    default: null,
-  },
-  GroupsProps: {
-    type: Object,
-    required: true,
   },
 
   ImportUri: {
@@ -211,26 +160,12 @@ const props = defineProps({
     type: String,
     default: ".xls, .xlsx",
   },
-  HasTree: {
-    type: Boolean,
-    default: false,
-  },
+
   HasPage: {
     type: Boolean,
     default: false,
   },
-  TreeSelectNode: {
-    type: Function,
-    default: null,
-  },
-  PreSubmit: {
-    type: Function,
-    default: null,
-  },
-  PreFirstGetData: {
-    type: Function,
-    default: null,
-  },
+
   TableKey: {
     type: String,
     default: "",
@@ -392,18 +327,7 @@ tableData.value.tablePackageHeight = computed({
   },
   set() {},
 });
-watch(filterText, (newValue, oldValue) => {
-  organizedata.value = organizedata2.filter((data) => {
-    if (newValue) {
-      return props
-        .GetTreePrimeName(data, null)
-        .toLowerCase()
-        .includes(newValue);
-    } else {
-      return true;
-    }
-  });
-});
+
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
   FetchDataList(listUriParams);
@@ -435,51 +359,6 @@ const handleError: UploadProps["onError"] = (
   uploadFiles: UploadFiles
 ) => {
   ElMessage.error("发生错误：" + error);
-};
-const FetchLeftTreeDataList = async (row: baseObject) => {
-  showasideing.value = true;
-
-  props
-    .LeftTreeFetchList(row)
-    .then((response: any) => {
-      organizedata.value = organizedata2 = response["list"];
-
-      nextTick(() => {
-        if (props.GetTreePrimeId)
-          mytree.value!.setCurrentKey(
-            props?.GetTreePrimeId(organizedata.value[0], null)
-          );
-
-        if (props.TreeSelectNode && props?.GetTreePrimeId)
-          props.TreeSelectNode(listUriParams, organizedata.value[0]);
-
-        FetchDataList(listUriParams);
-      });
-      showasideing.value = false;
-    })
-    .catch((err: any) => {
-      showasideing.value = false;
-    });
-};
-
-//event handles
-const leftRowClick = (data: any) => {
-  if (!props?.HasTree) {
-    return;
-  }
-  if (props.GetTreePrimeId) {
-    if (
-      props?.GetTreePrimeId(data) == 0 ||
-      props?.GetTreePrimeId(data) == undefined ||
-      props?.GetTreePrimeId(data) == ""
-    )
-      return;
-  }
-  if (props.TreeSelectNode) {
-    props.TreeSelectNode(listUriParams, data);
-  }
-
-  FetchDataList(listUriParams);
 };
 
 const currentChange = (newRow: baseObject, oldRow: baseObject) => {
@@ -878,22 +757,12 @@ const myLoadData = (listData: Array<baseObject>) => {
   myRender();
 };
 
-const ExportDataList = () => {
-  return tableData.value.list;
-};
-function PageLoaded() {
-  if (props.PreFirstGetData) props.PreFirstGetData(listUriParams);
-  if (props?.HasTree == true) {
-    FetchLeftTreeDataList(listUriParams);
-  } else {
-    FetchDataList(listUriParams);
-  }
-
+let PageLoaded = (uri: baseObject) => {
+  tools_objToobj(uri, listUriParams);
+  FetchDataList(uri);
   //
-}
-PageLoaded();
-defineExpose({ ExportDataList });
-type functree = (query: any) => any;
+};
+defineExpose({ PageLoaded });
 </script>
     <style scoped>
 .scTable-table {

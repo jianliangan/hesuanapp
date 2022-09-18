@@ -1,5 +1,6 @@
 <template>
   <aj-table
+    ref="ajtable"
     :MainContentPushRow="ProjectPushRow"
     :MainContentFetchList="ProjectFetchList"
     :GetTreePrimeId="getTreePrimeId"
@@ -9,7 +10,6 @@
     :OnCancelDialog="onCancelDialog"
     :HasPage="true"
     :PreSubmit="preSubmit"
-    :PreFirstGetData="preFirstGetData"
     :BtnNew="true"
   >
     <template v-slot:formitem>
@@ -99,7 +99,7 @@
 import { ProjectFetchList, ProjectPushRow } from "@/api/model/project";
 import chinaAreas from "@/components/chinaareas/index";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 interface baseObject {
   [key: string]: any;
 }
@@ -107,6 +107,7 @@ const groupsProps = {
   value: "code",
   label: "name",
 };
+const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 let projectFetchList = ProjectFetchList;
 let planAreas = new Map<string, baseObject>();
@@ -129,26 +130,11 @@ let cityOnChange = () => {
 const preSubmit = () => {
   return true;
 };
-let getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.projectId = value;
 
-  return item.projectId;
-};
-let getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.projectName = value;
-  return item.projectName;
-};
-const preFirstGetData = (requestlist: baseObject) => {
-  requestlist.ownId = "0";
-};
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
       formInstance.value = {};
-    } else if (field == "primeid") {
-      formInstance.value.projectId = value;
-    } else if (field == "name") {
-      formInstance.value.projectName = value;
     } else if (field == "*") {
       tools_objToobj(value, formInstance.value);
     } else if (field == "cmd") {
@@ -167,4 +153,11 @@ const onOpenDialog = (type: String) => {
 const onCancelDialog = () => {
   return;
 };
+function PageLoaded(uri: baseObject) {
+  ajtable.value.PageLoaded(uri);
+}
+
+nextTick(() => {
+  PageLoaded({ ownId: "0" });
+});
 </script>
