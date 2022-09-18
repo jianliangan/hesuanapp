@@ -360,32 +360,36 @@ const myRender = () => {
   for (let j = 0; j < rows; j++) {
     primeId = hot.getCopyableText(j, 0, j, 0);
     let maprow = tableData.value.map.get(primeId);
-    let istag = false;
-    if (maprow && maprow.tag == 1) {
-      for (let i = 0; i < cols; i++) {
-        hot.setCellMeta(j, i, "className", "mytagrow");
+
+    //以行遍历
+    if (maprow) {
+      let classall = "";
+      if (maprow.tag == 1) {
+        classall = "mytagrow";
       }
-      istag = true;
+      if (maprow.source == "project") {
+        classall += " sourceproject_" + maprow.__level;
+      } else if (maprow.children.length > 0) {
+        classall += " sourceproject_" + maprow.__level;
+      }
+      for (let i = 0; i < cols; i++) {
+        if (props.GetComments().indexOf(i) != -1) {
+          classall += " truncate";
+        }
+        hot.setCellMeta(j, i, "className", classall);
+      }
     } else {
       for (let i = 0; i < cols; i++) {
         hot.setCellMeta(j, i, "className", "");
       }
     }
-    for (let i = 0; i < cols; i++) {
-      if (props.GetComments().indexOf(i) != -1) {
-        let className = "truncate";
-        if (istag) {
-          className += " mytagrow";
-        }
-
-        hot.setCellMeta(j, i, "className", className);
-      }
-    }
   }
-  console.log("1111111111111111111111");
   hot.render();
 };
+// hot.getPlugin('nestedRows').collapsingUI.collapseChildren(5); 可以手动展开
 let settings = ref({
+  manualColumnResize: true,
+  rowHeaderWidth: 80,
   outsideClickDeselects: false,
   manualRowMove: true,
   nestedRows: true,
@@ -618,6 +622,10 @@ const upAllMove = (cmd: String) => {
   //找位置
   let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
   let selectRow = tableData.value.map.get(selectId);
+  if (selectRow.source == "project") {
+    ElMessage.info("项目属性不能操作");
+    return;
+  }
   if (selectRow == undefined) {
     ElMessage.info("没有选择行");
     return;
@@ -745,6 +753,10 @@ const allSign = (cmd: string) => {
   //找位置
   let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
   let selectRow = tableData.value.map.get(selectId);
+  if (selectRow.source == "project") {
+    ElMessage.info("项目属性不能操作");
+    return;
+  }
   if (selectRow == undefined) {
     ElMessage.info("没有选择行");
     return;
@@ -782,6 +794,10 @@ const allInstert = (cmd: string) => {
   //找位置
   let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
   let selectRow = tableData.value.map.get(selectId);
+  if (selectRow.source == "project") {
+    ElMessage.info("项目属性不能操作");
+    return;
+  }
   if (selectRow == undefined) {
     ElMessage.info("没有选择行");
     return;
@@ -1063,6 +1079,28 @@ body .handsontable .truncate {
   text-overflow: ellipsis;
   height: 20px;
 }
+body .handsontable .sourceproject_1 {
+  background: rgb(164, 147, 232);
+}
+body .handsontable .sourceproject_2 {
+  background: rgb(212, 203, 252);
+}
+body .handsontable .sourceproject_3 {
+  background: rgb(240, 236, 254);
+}
+body .handsontable .sourceproject_4 {
+  background: rgb(246, 245, 252);
+}
+body .handsontable .sourceproject_5 {
+  background: rgb(252, 204, 190);
+}
+body .handsontable .sourceproject_6 {
+  background: rgb(253, 226, 218);
+}
+body .handsontable .sourceproject_7 {
+  background: rgb(251, 242, 239);
+}
+
 body .handsontable .mytagrow {
   background: yellow;
 }

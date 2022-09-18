@@ -79,6 +79,7 @@
 
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
+      <hot-column width="120" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
@@ -204,11 +205,12 @@ let getTreePrimeId = (item: baseObject, value: Object) => {
   return item.projectId;
 };
 const preFirstGetData = (requestlist: baseObject) => {
-  requestlist.rootId = 0;
+  requestlist.rootId = "0";
 };
 let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
   delete requestvar.rootId;
-  requestvar.ownId = treenode.projectId;
+  requestvar.ownId = treenode.ownId;
+  requestvar.selectId = treenode.projectId;
 };
 
 let getTreePrimeName = (item: baseObject, value: Object) => {
@@ -218,17 +220,18 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
-    col: 5,
+    col: 6,
     comment: { value: row.distinction },
   });
 };
 const getComments = () => {
-  return [5];
+  return [6];
 };
 const getInitHotTable = () => {
   return {
     cmd: null,
     sortR: 0,
+    projectName: "",
     children: [],
     divisionId: "",
     subject: "",

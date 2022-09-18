@@ -19,7 +19,7 @@ export const BudgetDivisionPushRow = (body: any) => {
 
 export const BudgetDivisionTree = (query: any) => {
     return request({
-        url: '/budget/division/tree',
+        url: '/budget/tree2',
         method: 'get',
         params: query
     })

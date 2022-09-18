@@ -75,7 +75,7 @@ const onOpenDialog = (type: String) => {
   tableData2.value = ajtable.value.ExportDataList();
 };
 const preFirstGetData = (requestlist: baseObject) => {
-  requestlist.ownId = 0;
+  requestlist.ownId = "0";
 };
 const preSubmit = () => {
   console.log("ccccccccc", formInstance.value);

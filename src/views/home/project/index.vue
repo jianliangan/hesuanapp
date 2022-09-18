@@ -139,7 +139,7 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
   return item.projectName;
 };
 const preFirstGetData = (requestlist: baseObject) => {
-  requestlist.ownId = 0;
+  requestlist.ownId = "0";
 };
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
