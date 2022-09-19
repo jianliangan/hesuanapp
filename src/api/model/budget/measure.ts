@@ -16,3 +16,28 @@ export const BudgetMeasurePushRow = (body: any) => {
         }
     })
 }
+
+export const BudgetMeasureTree = (query: any) => {
+    return request({
+        url: '/budget/measure/tree2',
+        method: 'get',
+        params: query
+    })
+}
+export const BudgetMeasureMachineTree = (query: any) => {
+    return request({
+        url: '/budget/measure/machine/tree',
+        method: 'get',
+        params: query
+    })
+}
+export const BudgetMeasureMachinePushRow = (body: any) => {
+    return request({
+        url: '/budget/measure/machine/push',
+        method: 'post',
+        data: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

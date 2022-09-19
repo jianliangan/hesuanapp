@@ -14,19 +14,24 @@
           v-if="props.BtnDownMove == true"
           >下移</el-button
         >
-        <el-button type="primary" @click="ClkDel" v-if="props.BtnInsert == true"
-          >删除</el-button
-        >
+        <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
+          <template #reference>
+            <el-button type="primary" v-if="props.BtnDel == true"
+              >删除</el-button
+            >
+          </template>
+        </el-popconfirm>
+
         <el-button
           type="primary"
           @click="ClkInsertChildren"
-          v-if="props.BtnDel == true"
+          v-if="props.BtnInsertChildren == true"
           >增加子项</el-button
         >
         <el-button
           type="primary"
           @click="ClkPreInsert"
-          v-if="props.BtnInsertChildren == true"
+          v-if="props.BtnInsert == true"
           >前增加</el-button
         >
         <el-button
@@ -421,7 +426,19 @@ const currentChange = (newRow: baseObject, oldRow: baseObject) => {
   currentRow = newRow;
   console.log("change ", newRow, oldRow);
 };
-
+const findSelectRowBrother = (selectRow: baseObject) => {
+  let brotherRows: baseObject;
+  if (!selectRow.parentId) {
+    brotherRows = tableData.value.list;
+  } else {
+    if (tableData.value.map.get(selectRow.parentId)) {
+      brotherRows = tableData.value.map.get(selectRow.parentId).children;
+    } else {
+      brotherRows = tableData.value.list;
+    }
+  }
+  return brotherRows;
+};
 const upAllMove = (cmd: String) => {
   let hot = myHotTable.value.hotInstance;
   let plugin = hot.getPlugin("manualRowMove");
@@ -444,16 +461,8 @@ const upAllMove = (cmd: String) => {
     return;
   }
   let toRow: baseObject;
-  let brotherRows: baseObject;
-  if (!selectRow.parentId) {
-    brotherRows = tableData.value.list;
-  } else {
-    if (tableData.value.map.get(selectRow.parentId)) {
-      brotherRows = tableData.value.map.get(selectRow.parentId).children;
-    } else {
-      brotherRows = tableData.value.list;
-    }
-  }
+  let brotherRows: baseObject = findSelectRowBrother(selectRow);
+
   if (brotherRows == undefined) {
     ElMessage.info("父行有问题");
     return;
@@ -488,19 +497,8 @@ const upAllMove = (cmd: String) => {
   }
 
   //找选中行的索引
-  let selectIndex = 0;
-  for (let i = selectR - 1; i >= 0; i--) {
-    let id = hot.getCopyableText(i, 0, i, 0);
-    let row = tableData.value.map.get(id);
-    if (!row) {
-      break;
-    }
-    if (row.__level == selectRow.__level) {
-      selectIndex++;
-    } else if (row.__level < selectRow.__level) {
-      break;
-    }
-  }
+  let selectIndex = findSelectIndex(selectR, selectRow);
+
   if (toRow == undefined) {
     ElMessage.info("没有找到目标");
     return;
@@ -560,9 +558,26 @@ const ClkUpMove = () => {
 const ClkDownMove = () => {
   upAllMove("down");
 };
+const findSelectIndex = (selectR: number, selectRow: baseObject) => {
+  let selectIndex = 0;
+  let hot = myHotTable.value.hotInstance;
+  for (let i = selectR - 1; i >= 0; i--) {
+    let id = hot.getCopyableText(i, 0, i, 0);
+    let row = tableData.value.map.get(id);
+    if (!row) {
+      break;
+    }
+    if (row.__level == selectRow.__level) {
+      selectIndex++;
+    } else if (row.__level < selectRow.__level) {
+      break;
+    }
+  }
+  return selectIndex;
+};
 const allSign = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
-  let plugin = hot.getPlugin("manualRowMove");
+
   if (!hot.getSelected()) {
     ElMessage.info("需要先选中一行");
     return;
@@ -582,7 +597,18 @@ const allSign = (cmd: string) => {
     return;
   }
   let postSelectRow: baseObject = {};
-  selectRow.cmd = "edit";
+  if (cmd == "delete") {
+    selectRow.cmd = "delete";
+  } else {
+    selectRow.cmd = "edit";
+  }
+  let brotherRows: baseObject;
+  let selectIndex = 0;
+  if (cmd == "delete") {
+    brotherRows = findSelectRowBrother(selectRow);
+    selectIndex = findSelectIndex(selectR, selectRow);
+    brotherRows;
+  }
   if (cmd == "sign") selectRow.tag = 1;
   else selectRow.tag = 0;
   tools_objToobj(selectRow, postSelectRow);
@@ -592,6 +618,10 @@ const allSign = (cmd: string) => {
     .MainContentPushRow([postSelectRow])
     .then((response: any) => {
       loading.value = false;
+      if (cmd == "delete") {
+        brotherRows.splice(selectIndex, 1);
+        myLoadData(tableData.value.list);
+      }
       myRender();
       //loaddata
     })
@@ -601,6 +631,9 @@ const allSign = (cmd: string) => {
 };
 const ClkSign = () => {
   allSign("sign");
+};
+const ClkDel = () => {
+  allSign("delete");
 };
 const ClkUnSign = () => {
   allSign("unsign");
@@ -620,103 +653,126 @@ const allInstert = (cmd: string) => {
 
   //找位置
   if (tableData.value.map && tableData.value.map.size > 0) {
-    console.log("666666666666");
     let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
     let selectRow = tableData.value.map.get(selectId);
-    if (selectRow.source == "project") {
-      ElMessage.info("项目属性不能操作");
-      return;
+    if (cmd != "children") {
+      if (selectRow.source == "project") {
+        ElMessage.info("项目属性不能操作");
+        return;
+      }
     }
+
     if (selectRow == undefined) {
       ElMessage.info("没有选择行");
       return;
     }
     let toRow: baseObject;
 
-    if (selectRow.parentId) {
-      if (tableData.value.map.get(selectRow.parentId)) {
-        brotherRows = tableData.value.map.get(selectRow.parentId).children;
+    if (cmd != "children") {
+      if (selectRow.parentId) {
+        if (tableData.value.map.get(selectRow.parentId)) {
+          brotherRows = tableData.value.map.get(selectRow.parentId).children;
+        } else {
+          brotherRows = tableData.value.list;
+        }
       } else {
+        if (tableData.value.empty) tableData.value.list.splice(0);
         brotherRows = tableData.value.list;
       }
     } else {
-      if (tableData.value.empty) tableData.value.list.splice(0);
-      brotherRows = tableData.value.list;
+      brotherRows = selectRow.children;
     }
     if (brotherRows == undefined) {
       ElMessage.info("父行有问题");
       return;
     }
-
-    let i = 0;
-    if (cmd == "up") {
-      i = selectR - 1;
-    } else {
-      i = selectR + 1;
-    }
-    while (1) {
-      if (cmd == "up") {
-        if (i < 0) break;
-      }
-      let id = hot.getCopyableText(i, 0, i, 0);
-      let row = tableData.value.map.get(id);
-      if (!row) {
-        break;
-      }
-      if (!toRow && row.__level == selectRow.__level) {
-        toRow = row;
-      }
-      if (row.__level < selectRow.__level) {
-        break;
-      }
-      if (cmd == "up") {
-        i--;
-      } else {
-        i++;
-      }
-    }
-
-    //找选中行的索引
-
-    for (let i = selectR - 1; i >= 0; i--) {
-      let id = hot.getCopyableText(i, 0, i, 0);
-      let row = tableData.value.map.get(id);
-      if (!row) {
-        break;
-      }
-      if (row.__level == selectRow.__level) {
-        selectIndex++;
-      } else if (row.__level < selectRow.__level) {
-        break;
-      }
-    }
     let toSort = 0;
-    if (toRow == undefined) {
+    if (cmd != "children") {
+      let i = 0;
       if (cmd == "up") {
-        toSort = 0;
+        i = selectR - 1;
       } else {
-        Big.DP = 10;
-        Big.RM = Big.roundHalfUp;
-        let tmp = new Big(selectRow.sort);
-
-        toSort = tmp.add(1).toString();
+        i = selectR + 1;
       }
-    } else {
-      toSort = toRow.sort;
-    }
+      while (1) {
+        if (cmd == "up") {
+          if (i < 0) break;
+        }
+        let id = hot.getCopyableText(i, 0, i, 0);
+        let row = tableData.value.map.get(id);
+        if (!row) {
+          break;
+        }
+        if (!toRow && row.__level == selectRow.__level) {
+          toRow = row;
+        }
+        if (row.__level < selectRow.__level) {
+          break;
+        }
+        if (cmd == "up") {
+          i--;
+        } else {
+          i++;
+        }
+      }
 
+      //找选中行的索引
+
+      for (let i = selectR - 1; i >= 0; i--) {
+        let id = hot.getCopyableText(i, 0, i, 0);
+        let row = tableData.value.map.get(id);
+        if (!row) {
+          break;
+        }
+        if (row.__level == selectRow.__level) {
+          selectIndex++;
+        } else if (row.__level < selectRow.__level) {
+          break;
+        }
+      }
+      toSort = 0;
+      if (toRow == undefined) {
+        if (cmd == "up") {
+          toSort = 0;
+        } else {
+          Big.DP = 10;
+          Big.RM = Big.roundHalfUp;
+          let tmp = new Big(selectRow.sort);
+
+          toSort = tmp.add(1).toString();
+        }
+      } else {
+        toSort = toRow.sort;
+      }
+    }
     //求sort
     row = props.GetInitHotTable();
 
     Big.DP = 10;
     Big.RM = Big.roundHalfUp;
+    if (cmd == "children") {
+      if (brotherRows.length > 0) {
+        let selectSort = new Big(brotherRows[0].sort);
+        let toRowSort = new Big(0);
+        row.sort = selectSort.add(toRowSort).div(2).toString();
+        row.cmd = "add";
+        row.parentId = selectId;
+        row.ownId = selectId;
+      } else {
+        row.sort = 1;
+        row.cmd = "add";
+        row.parentId = selectId;
+        row.ownId = selectId;
+      }
+    } else {
+      let selectSort = new Big(selectRow.sort);
+      let toRowSort = new Big(toSort);
 
-    let selectSort = new Big(selectRow.sort);
-    let toRowSort = new Big(toSort);
-    row.sort = selectSort.add(toRowSort).div(2).toString();
-    row.cmd = "add";
-    row.parentId = selectRow.parentId;
-    row.ownId = selectRow.ownId;
+      row.sort = selectSort.add(toRowSort).div(2).toString();
+      row.cmd = "add";
+      row.parentId = selectRow.parentId;
+      row.ownId = selectRow.ownId;
+    }
   } else {
     row = tableData.value.list[0];
     row.sort = 1;
