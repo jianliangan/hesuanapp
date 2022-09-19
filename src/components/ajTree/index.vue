@@ -20,7 +20,16 @@
   </el-container>
 </template>
 <script lang="ts" setup>
-import { nextTick, ref, watch, defineProps, defineExpose } from "vue";
+import {
+  nextTick,
+  ref,
+  watch,
+  defineProps,
+  defineExpose,
+  onMounted,
+  defineEmits,
+} from "vue";
+import { tools_objToobj } from "../jrTools";
 
 interface baseObject {
   [key: string]: any;
@@ -58,11 +67,7 @@ const props = defineProps({
     required: true,
   },
 
-  TreeSelectNode: {
-    type: Function,
-    default: null,
-  },
-  FetchDataList: {
+  AfterSelected: {
     type: Function,
     default: null,
   },
@@ -95,10 +100,7 @@ const FetchLeftTreeDataList = async (row: baseObject) => {
           mytree.value!.setCurrentKey(
             props?.GetTreePrimeId(organizedata.value[0], null)
           );
-
-        if (props.TreeSelectNode && props?.GetTreePrimeId)
-          props.TreeSelectNode(listUriParams, organizedata.value[0]);
-        props.FetchDataList(listUriParams);
+        props.AfterSelected(organizedata.value[0]);
       });
       showasideing.value = false;
     })
@@ -117,17 +119,16 @@ const leftRowClick = (data: any) => {
     )
       return;
   }
-  if (props.TreeSelectNode) {
-    props.TreeSelectNode(listUriParams, data);
-  }
-  if (props.FetchDataList) {
-    props.FetchDataList(listUriParams);
+
+  if (props.AfterSelected) {
+    props.AfterSelected(data);
   }
 };
 let GetCurrentNode = () => {
   return mytree.value!.getCurrentNode();
 };
 let PageLoaded = (uri: baseObject) => {
+  tools_objToobj(uri, listUriParams);
   FetchLeftTreeDataList(uri);
 };
 defineExpose({ PageLoaded, GetCurrentNode });

@@ -232,10 +232,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  TreeSelectNode: {
-    type: Function,
-    default: null,
-  },
+
   PreSubmit: {
     type: Function,
     default: null,
@@ -310,7 +307,7 @@ watch(filterText, (newValue, oldValue) => {
 });
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
-  FetchDataList(listUriParams);
+  AfterSelected(listUriParams);
 };
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
@@ -517,7 +514,7 @@ const PushDataRow = async (body: any) => {
   props
     .MainContentPushRow(body)
     .then((response: any) => {
-      FetchDataList(listUriParams);
+      AfterSelected(listUriParams);
       loading.value = false;
       getDialogAddVisible(false);
       SubMitLoading.value = false;
@@ -532,7 +529,7 @@ const PushDataRow = async (body: any) => {
  * need to change
  * api call
  */
-const FetchDataList = async (row: any) => {
+const AfterSelected = async (row: any) => {
   loading.value = true;
 
   if (props.MainContentFetchList)
@@ -561,7 +558,7 @@ const ExportDataList = () => {
 };
 function PageLoaded(uri: baseObject) {
   tools_objToobj(uri, listUriParams);
-  FetchDataList(uri);
+  AfterSelected(uri);
   //
 }
 defineExpose({ PageLoaded, ExportDataList });

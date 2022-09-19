@@ -24,3 +24,20 @@ export const BudgetDivisionTree = (query: any) => {
         params: query
     })
 }
+export const BudgetDivisionMachineTree = (query: any) => {
+    return request({
+        url: '/budget/division/machine/tree',
+        method: 'get',
+        params: query
+    })
+}
+export const BudgetDivisionMachinePushRow = (body: any) => {
+    return request({
+        url: '/budget/division/machine/push',
+        method: 'post',
+        data: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

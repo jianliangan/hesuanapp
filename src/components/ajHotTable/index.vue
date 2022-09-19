@@ -14,10 +14,19 @@
           v-if="props.BtnDownMove == true"
           >下移</el-button
         >
+        <el-button type="primary" @click="ClkDel" v-if="props.BtnInsert == true"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          @click="ClkInsertChildren"
+          v-if="props.BtnDel == true"
+          >增加子项</el-button
+        >
         <el-button
           type="primary"
           @click="ClkPreInsert"
-          v-if="props.BtnInsert == true"
+          v-if="props.BtnInsertChildren == true"
           >前增加</el-button
         >
         <el-button
@@ -99,7 +108,7 @@ var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
   [key: string]: any;
 }
-
+var firstApiLoad = true;
 const myHotTable = ref<baseObject>({});
 
 let planAreas = ref(new Map<string, baseObject>());
@@ -194,6 +203,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  BtnInsertChildren: {
+    type: Boolean,
+    default: false,
+  },
+  BtnDel: {
+    type: Boolean,
+    default: false,
+  },
   GetMainPrimeId: {
     type: Function,
     default: null,
@@ -210,6 +227,11 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+
+  AfterSelected: {
+    type: Function,
+    default: null,
+  },
 });
 const myRender = () => {
   let hot = myHotTable.value.hotInstance;
@@ -218,6 +240,13 @@ const myRender = () => {
   let primeId = 0;
   for (let j = 0; j < rows; j++) {
     primeId = hot.getCopyableText(j, 0, j, 0);
+    if (!primeId) {
+      console.log("rrrrrrrrttttttttt");
+      for (let i = 0; i < cols; i++) {
+        hot.setCellMeta(j, i, "className", "onlyRead");
+      }
+      continue;
+    }
     let maprow = tableData.value.map.get(primeId);
 
     //以行遍历
@@ -281,7 +310,30 @@ let settings = ref({
   //beforeRender: function () {
   //beforeViewRender: function () {
   afterUpdateSettings: function () {
+    if (firstApiLoad) {
+      console.log("dddddddd3333333");
+      let hot = myHotTable.value.hotInstance;
+      hot.selectCell(0, 0);
+      firstApiLoad = false;
+    }
     myRender();
+  },
+  afterSelection: (
+    row: any,
+    column: any,
+    row2: any,
+    column2: any,
+    preventScrolling: any,
+    selectionLayerLevel: any
+  ) => {
+    console.log("00000000000000000000");
+    let hot = myHotTable.value.hotInstance;
+    let primeId = hot.getCopyableText(row, 0, row, 0);
+    let tmp;
+    if (tableData.value.map) {
+      tmp = tableData.value.map.get(primeId);
+    }
+    if (props.AfterSelected) props.AfterSelected(tmp);
   },
   afterChange: (changes: []) => {
     if (changes == null) return;
@@ -292,6 +344,10 @@ let settings = ref({
         return;
       }
       let primeId = hot.getCopyableText(row, 0, row, 0);
+      if (!primeId) {
+        ElMessage.info("此行不能编辑，请先增加");
+        return;
+      }
       let tmp = tableData.value.map.get(primeId);
 
       let tmpp: baseObject = {};
@@ -330,7 +386,7 @@ tableData.value.tablePackageHeight = computed({
 
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
-  FetchDataList(listUriParams);
+  LoadData(listUriParams);
 };
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
@@ -369,7 +425,10 @@ const currentChange = (newRow: baseObject, oldRow: baseObject) => {
 const upAllMove = (cmd: String) => {
   let hot = myHotTable.value.hotInstance;
   let plugin = hot.getPlugin("manualRowMove");
-
+  if (!hot.getSelected()) {
+    ElMessage.info("需要先选中一行");
+    return;
+  }
   let selectR = hot.getSelected()[0][0];
   let selectC = hot.getSelected()[0][1];
   let toR = 0;
@@ -389,7 +448,11 @@ const upAllMove = (cmd: String) => {
   if (!selectRow.parentId) {
     brotherRows = tableData.value.list;
   } else {
-    brotherRows = tableData.value.map.get(selectRow.parentId).children;
+    if (tableData.value.map.get(selectRow.parentId)) {
+      brotherRows = tableData.value.map.get(selectRow.parentId).children;
+    } else {
+      brotherRows = tableData.value.list;
+    }
   }
   if (brotherRows == undefined) {
     ElMessage.info("父行有问题");
@@ -500,7 +563,10 @@ const ClkDownMove = () => {
 const allSign = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
   let plugin = hot.getPlugin("manualRowMove");
-
+  if (!hot.getSelected()) {
+    ElMessage.info("需要先选中一行");
+    return;
+  }
   let selectR = hot.getSelected()[0][0];
   let selectC = hot.getSelected()[0][1];
   let toR = 0;
@@ -541,102 +607,123 @@ const ClkUnSign = () => {
 };
 const allInstert = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
-
+  if (!hot.getSelected()) {
+    ElMessage.info("需要先选中一行");
+    return;
+  }
   let selectR = hot.getSelected()[0][0];
   let selectC = hot.getSelected()[0][1];
   let toR = 0;
-  //找位置
-  let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
-  let selectRow = tableData.value.map.get(selectId);
-  if (selectRow.source == "project") {
-    ElMessage.info("项目属性不能操作");
-    return;
-  }
-  if (selectRow == undefined) {
-    ElMessage.info("没有选择行");
-    return;
-  }
-  let toRow: baseObject;
   let brotherRows: baseObject;
-  if (!selectRow.parentId) {
-    brotherRows = tableData.value.list;
-  } else {
-    brotherRows = tableData.value.map.get(selectRow.parentId).children;
-  }
-  if (brotherRows == undefined) {
-    ElMessage.info("父行有问题");
-    return;
-  }
-
-  let i = 0;
-  if (cmd == "up") {
-    i = selectR - 1;
-  } else {
-    i = selectR + 1;
-  }
-  while (1) {
-    if (cmd == "up") {
-      if (i < 0) break;
-    }
-    let id = hot.getCopyableText(i, 0, i, 0);
-    let row = tableData.value.map.get(id);
-    if (!row) {
-      break;
-    }
-    if (!toRow && row.__level == selectRow.__level) {
-      toRow = row;
-    }
-    if (row.__level < selectRow.__level) {
-      break;
-    }
-    if (cmd == "up") {
-      i--;
-    } else {
-      i++;
-    }
-  }
-
-  //找选中行的索引
   let selectIndex = 0;
-  for (let i = selectR - 1; i >= 0; i--) {
-    let id = hot.getCopyableText(i, 0, i, 0);
-    let row = tableData.value.map.get(id);
-    if (!row) {
-      break;
+  let row;
+
+  //找位置
+  if (tableData.value.map && tableData.value.map.size > 0) {
+    console.log("666666666666");
+    let selectId = hot.getCopyableText(selectR, 0, selectR, 0);
+    let selectRow = tableData.value.map.get(selectId);
+    if (selectRow.source == "project") {
+      ElMessage.info("项目属性不能操作");
+      return;
     }
-    if (row.__level == selectRow.__level) {
-      selectIndex++;
-    } else if (row.__level < selectRow.__level) {
-      break;
+    if (selectRow == undefined) {
+      ElMessage.info("没有选择行");
+      return;
     }
-  }
-  let toSort = 0;
-  if (toRow == undefined) {
-    if (cmd == "up") {
-      toSort = 0;
+    let toRow: baseObject;
+
+    if (selectRow.parentId) {
+      if (tableData.value.map.get(selectRow.parentId)) {
+        brotherRows = tableData.value.map.get(selectRow.parentId).children;
+      } else {
+        brotherRows = tableData.value.list;
+      }
     } else {
-      Big.DP = 10;
-      Big.RM = Big.roundHalfUp;
-      let tmp = new Big(selectRow.sort);
-
-      toSort = tmp.add(1).toString();
+      if (tableData.value.empty) tableData.value.list.splice(0);
+      brotherRows = tableData.value.list;
     }
+    if (brotherRows == undefined) {
+      ElMessage.info("父行有问题");
+      return;
+    }
+
+    let i = 0;
+    if (cmd == "up") {
+      i = selectR - 1;
+    } else {
+      i = selectR + 1;
+    }
+    while (1) {
+      if (cmd == "up") {
+        if (i < 0) break;
+      }
+      let id = hot.getCopyableText(i, 0, i, 0);
+      let row = tableData.value.map.get(id);
+      if (!row) {
+        break;
+      }
+      if (!toRow && row.__level == selectRow.__level) {
+        toRow = row;
+      }
+      if (row.__level < selectRow.__level) {
+        break;
+      }
+      if (cmd == "up") {
+        i--;
+      } else {
+        i++;
+      }
+    }
+
+    //找选中行的索引
+
+    for (let i = selectR - 1; i >= 0; i--) {
+      let id = hot.getCopyableText(i, 0, i, 0);
+      let row = tableData.value.map.get(id);
+      if (!row) {
+        break;
+      }
+      if (row.__level == selectRow.__level) {
+        selectIndex++;
+      } else if (row.__level < selectRow.__level) {
+        break;
+      }
+    }
+    let toSort = 0;
+    if (toRow == undefined) {
+      if (cmd == "up") {
+        toSort = 0;
+      } else {
+        Big.DP = 10;
+        Big.RM = Big.roundHalfUp;
+        let tmp = new Big(selectRow.sort);
+
+        toSort = tmp.add(1).toString();
+      }
+    } else {
+      toSort = toRow.sort;
+    }
+
+    //求sort
+    row = props.GetInitHotTable();
+
+    Big.DP = 10;
+    Big.RM = Big.roundHalfUp;
+
+    let selectSort = new Big(selectRow.sort);
+    let toRowSort = new Big(toSort);
+    row.sort = selectSort.add(toRowSort).div(2).toString();
+    row.cmd = "add";
+    row.parentId = selectRow.parentId;
+    row.ownId = selectRow.ownId;
   } else {
-    toSort = toRow.sort;
+    row = tableData.value.list[0];
+    row.sort = 1;
+    row.cmd = "add";
+    row.parentId = listUriParams.selectId;
+    row.ownId = listUriParams.selectId;
   }
-
-  //求sort
-  let row = props.GetInitHotTable();
-
-  Big.DP = 10;
-  Big.RM = Big.roundHalfUp;
-
-  let selectSort = new Big(selectRow.sort);
-  let toRowSort = new Big(toSort);
-  row.sort = selectSort.add(toRowSort).div(2).toString();
-  row.cmd = "add";
-  row.parentId = selectRow.parentId;
-  row.ownId = selectRow.ownId;
   //post
 
   loading.value = true;
@@ -647,10 +734,12 @@ const allInstert = (cmd: string) => {
       loading.value = false;
 
       props.GetMainPrimeId(row, response);
-      if (cmd == "up") {
-        brotherRows.splice(selectIndex, 0, row);
-      } else {
-        brotherRows.splice(selectIndex + 1, 0, row);
+      if (brotherRows) {
+        if (cmd == "up") {
+          brotherRows.splice(selectIndex, 0, row);
+        } else {
+          brotherRows.splice(selectIndex + 1, 0, row);
+        }
       }
 
       myLoadData(tableData.value.list);
@@ -667,7 +756,9 @@ const ClkPreInsert = () => {
 const ClkBackInsert = () => {
   allInstert("down");
 };
-
+const ClkInsertChildren = () => {
+  allInstert("children");
+};
 /**
  * need to change
  * api call
@@ -713,7 +804,7 @@ const filterRow = (
  * need to change
  * api call
  */
-const FetchDataList = async (row: any) => {
+const LoadData = async (row: any) => {
   loading.value = true;
 
   if (props.MainContentFetchList)
@@ -727,7 +818,6 @@ const FetchDataList = async (row: any) => {
         } else {
           tableData.value.list = resdata["list"];
         }
-
         myLoadData(tableData.value.list);
         //////////////////////
 
@@ -740,7 +830,9 @@ const FetchDataList = async (row: any) => {
 };
 const myLoadData = (listData: Array<baseObject>) => {
   tableData.value.map = new Map<Object, baseObject>();
-  filterRow(listData, tableData.value.map, 0);
+  if (props.GetMainPrimeId(listData[0])) {
+    filterRow(listData, tableData.value.map, 0);
+  }
   let indexi = 0;
   settings.value.cell = new Array<baseObject>();
   for (let [key, value] of tableData.value.map) {
@@ -759,7 +851,8 @@ const myLoadData = (listData: Array<baseObject>) => {
 
 let PageLoaded = (uri: baseObject) => {
   tools_objToobj(uri, listUriParams);
-  FetchDataList(uri);
+  firstApiLoad = true;
+  LoadData(uri);
   //
 };
 defineExpose({ PageLoaded });
@@ -809,6 +902,9 @@ body .handsontable .sourceproject_7 {
 
 body .handsontable .mytagrow {
   background: yellow;
+}
+body .handsontable .onlyRead {
+  background: rgb(227, 229, 230);
 }
 .el-main {
   padding: 0px;

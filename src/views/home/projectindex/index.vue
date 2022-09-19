@@ -6,9 +6,8 @@
         :LeftTreeFetchList="ProjectFetchList"
         :GroupsProps="groupsProps"
         :GetTreePrimeName="getTreePrimeName"
-        :FetchDataList="fetchDataList"
+        :AfterSelected="afterSelected"
         :GetTreePrimeId="getTreePrimeId"
-        :TreeSelectNode="treeSelectNode"
       ></aj-Tree>
     </el-aside>
     <aj-table
@@ -87,13 +86,13 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
   if (value != null) item.projectName = value;
   return item.projectName;
 };
-let treeSelectNode = (requestvar: baseObject, treenode: baseObject) => {
-  requestvar.ownId = treenode.projectId;
-  requestvar.rootId = treenode.projectId;
-};
-const fetchDataList = (requestlist: baseObject) => {
+
+const afterSelected = (selected: baseObject) => {
   //链接右侧
-  ajtable.value.PageLoaded(requestlist);
+  ajtable.value.PageLoaded({
+    ownId: selected.projectId,
+    rootId: selected.projectId,
+  });
 };
 /**
  * main
@@ -155,7 +154,6 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
 };
 
 function PageLoaded(uri: baseObject) {
-  console.log(ajtree.value);
   ajtree.value.PageLoaded(uri);
 }
 
