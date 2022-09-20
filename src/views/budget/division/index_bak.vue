@@ -266,7 +266,6 @@ const onOpenDialog = (type: String) => {
   if (!formInstance.value.parentId)
     formInstance.value.parentId = formInstance.value.ownId;
   tableData2.value = ajtable.value.ExportDataList();
-  console.log("ddddddddddd", tableData2.value);
 };
 const onCancelDialog = () => {
   return;

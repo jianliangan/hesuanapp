@@ -1,9 +1,8 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetMeasurePushRow"
-    :MainContentFetchList="BudgetMeasureTree"
-    ImportUri="http://localhost:8001/budget/import/"
+    :MainContentPushRow="BudgetOtherPushRow"
+    :MainContentFetchList="BudgetOtherList"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
@@ -13,7 +12,6 @@
     :BtnInsert="true"
     :BtnSign="true"
     :BtnDel="true"
-    :BtnInsertChildren="true"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
@@ -22,63 +20,14 @@
     :AfterSelected="afterSelected"
   >
     <template v-slot:tableitem>
-      <hot-column width="0" data="measureId" title="" />
-      <hot-column width="120" data="projectName" title="项目相关" />
+      <hot-column width="0" data="otherId" title="" />
       <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="subject" title="成本科目" />
-      <hot-column width="120" data="code" title="编码" />
-      <hot-column width="120" data="category" title="类别" />
-
-      <hot-column width="120" data="distinction" title="项目特征" />
-      <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="workAmount"
-        type="numeric"
-        title="招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="synthesisUnitprice"
+        data="cost"
         type="numeric"
         :numeric-format="formatJP"
-        title="综合单价"
-      />
-      <hot-column
-        width="120"
-        data="synthesisSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="综合合价"
-      />
-      <hot-column
-        width="120"
-        data="manageUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费单价"
-      />
-      <hot-column
-        width="120"
-        data="profitUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润单价"
-      />
-      <hot-column
-        width="120"
-        data="manageSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费合价"
-      />
-      <hot-column
-        width="120"
-        data="profitSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润合价"
+        title="费用"
       />
     </template>
   </aj-hot-table>
@@ -89,10 +38,7 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import {
-  BudgetMeasurePushRow,
-  BudgetMeasureTree,
-} from "@/api/model/budget/measure";
+import { BudgetOtherPushRow, BudgetOtherList } from "@/api/model/budget/other";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
@@ -127,8 +73,8 @@ const ajhottable = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.measureId = value;
-  return item.measureId;
+  if (value != null) item.otherId = value;
+  return item.otherId;
 };
 const afterSelected = (selected: baseObject) => {
   props.AfterSelected(selected);
@@ -136,34 +82,21 @@ const afterSelected = (selected: baseObject) => {
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
-    col: 6,
-    comment: { value: row.distinction },
+    col: 1,
+    comment: { value: row.name },
   });
 };
 const getComments = () => {
-  return [6];
+  return [1];
 };
 const getInitHotTable = () => {
   return {
     cmd: null,
     sortR: 0,
     projectName: "",
-    children: [],
-    measureId: "",
-    subject: "",
-    code: null,
-    category: "",
+    otherId: "",
     name: "",
-    distinction: "",
-    unit: "",
-    have: 0,
-    workAmount: 0,
-    synthesisUnitprice: 0,
-    synthesisSumprice: 0,
-    manageUnitprice: 0,
-    profitUnitprice: 0,
-    manageSumprice: 0,
-    profitSumprice: 0,
+    cost: 0,
     sort: 0,
     ownId: "",
     parentId: "",

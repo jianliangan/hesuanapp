@@ -246,7 +246,6 @@ const myRender = () => {
   for (let j = 0; j < rows; j++) {
     primeId = hot.getCopyableText(j, 0, j, 0);
     if (!primeId) {
-      console.log("rrrrrrrrttttttttt");
       for (let i = 0; i < cols; i++) {
         hot.setCellMeta(j, i, "className", "onlyRead");
       }
@@ -262,7 +261,7 @@ const myRender = () => {
       }
       if (maprow.source == "project") {
         classall += " sourceproject_" + maprow.__level;
-      } else if (maprow.children.length > 0) {
+      } else if (maprow.children && maprow.children.length > 0) {
         classall += " sourceproject_" + maprow.__level;
       }
       for (let i = 0; i < cols; i++) {
@@ -294,29 +293,9 @@ let settings = ref({
   licenseKey: "d50be-b4e43-2af78-46c17-f1be1",
   data: [props.GetInitHotTable()],
   cell: [],
-  // cells: function (row, col, prop) {
-  //   console.log(row, col, prop);
-  //   var cp = {};
-  //   if (props.GetComments().indexOf(col) != -1) {
-  //     cp.className += "truncate";
-  //   }
-  //   //mytagrow
-  //   //let primeId;
-  //   //if (col == 0) primeId = this.instance.getCopyableText(row, 0, row, 0);
-  //   // let maprow = tableData.value.map.get(primeId);
-  //   // if (maprow && maprow.tag == 1) {
-  //   //   console.log("dddddddddddddaaaaaaaaaaaaaaa", row, col);
-  //   //     cp.className += " mytagrow";
-  //   // }
-  //   return cp;
-  // },
 
-  //afterLoadData: function (sourceData, initialLoad, source) {
-  //beforeRender: function () {
-  //beforeViewRender: function () {
   afterUpdateSettings: function () {
     if (firstApiLoad) {
-      console.log("dddddddd3333333");
       let hot = myHotTable.value.hotInstance;
       hot.selectCell(0, 0);
       firstApiLoad = false;
@@ -331,7 +310,6 @@ let settings = ref({
     preventScrolling: any,
     selectionLayerLevel: any
   ) => {
-    console.log("00000000000000000000");
     let hot = myHotTable.value.hotInstance;
     let primeId = hot.getCopyableText(row, 0, row, 0);
     let tmp;
@@ -413,6 +391,8 @@ const handleSuccess: UploadProps["onSuccess"] = (
   uploadFiles: UploadFiles
 ) => {
   ElMessage.success("导入成功");
+  firstApiLoad = true;
+  LoadData(listUriParams);
 };
 const handleError: UploadProps["onError"] = (
   error: Error,
@@ -463,7 +443,7 @@ const upAllMove = (cmd: String) => {
   let toRow: baseObject;
   let brotherRows: baseObject = findSelectRowBrother(selectRow);
 
-  if (brotherRows == undefined) {
+  if (!brotherRows) {
     ElMessage.info("父行有问题");
     return;
   }
@@ -503,7 +483,7 @@ const upAllMove = (cmd: String) => {
     ElMessage.info("没有找到目标");
     return;
   }
-  console.log("ffffff", toRow);
+
   //换sort
   toRow.old_sort = toRow.sort;
   toRow.old_sortR = toRow.sortR;
@@ -531,7 +511,6 @@ const upAllMove = (cmd: String) => {
     .then((response: any) => {
       loading.value = false;
       //array换位置
-      console.log("rrrrrrrrrrrrr", selectIndex);
 
       if (cmd == "up") {
         if (selectIndex > 0) {
@@ -607,7 +586,6 @@ const allSign = (cmd: string) => {
   if (cmd == "delete") {
     brotherRows = findSelectRowBrother(selectRow);
     selectIndex = findSelectIndex(selectR, selectRow);
-    brotherRows;
   }
   if (cmd == "sign") selectRow.tag = 1;
   else selectRow.tag = 0;
@@ -619,7 +597,7 @@ const allSign = (cmd: string) => {
     .then((response: any) => {
       loading.value = false;
       if (cmd == "delete") {
-        brotherRows.splice(selectIndex, 1);
+        if (brotherRows) brotherRows.splice(selectIndex, 1);
         myLoadData(tableData.value.list);
       }
       myRender();
@@ -682,7 +660,7 @@ const allInstert = (cmd: string) => {
     } else {
       brotherRows = selectRow.children;
     }
-    if (brotherRows == undefined) {
+    if (!brotherRows) {
       ElMessage.info("父行有问题");
       return;
     }
@@ -849,6 +827,7 @@ const filterRow = (
   lists: Map<Object, baseObject>,
   level: number
 ) => {
+  if (!rows) return;
   if (rows.length > 0) level++;
   for (let i = 0; i < rows.length; i++) {
     rows[i].__level = level;
@@ -874,6 +853,7 @@ const LoadData = async (row: any) => {
         } else {
           tableData.value.list = resdata["list"];
         }
+
         myLoadData(tableData.value.list);
         //////////////////////
 
@@ -886,20 +866,22 @@ const LoadData = async (row: any) => {
 };
 const myLoadData = (listData: Array<baseObject>) => {
   tableData.value.map = new Map<Object, baseObject>();
+  console.log("6666666666666", listData);
   if (props.GetMainPrimeId(listData[0])) {
     filterRow(listData, tableData.value.map, 0);
   }
   let indexi = 0;
   settings.value.cell = new Array<baseObject>();
+  console.log("77777777777777777777777");
   for (let [key, value] of tableData.value.map) {
     if (value["children"]) {
       value["__children"] = value["children"];
     }
-
+    console.log("888888888888888888888888888");
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
-
+  console.log("9999999999999999999999999", listData);
   myHotTable.value.hotInstance.loadData(listData);
 
   myRender();

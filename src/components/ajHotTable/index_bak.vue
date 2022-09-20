@@ -325,26 +325,7 @@ let settings = ref({
   licenseKey: "d50be-b4e43-2af78-46c17-f1be1",
   data: [props.GetInitHotTable()],
   cell: [],
-  // cells: function (row, col, prop) {
-  //   console.log(row, col, prop);
-  //   var cp = {};
-  //   if (props.GetComments().indexOf(col) != -1) {
-  //     cp.className += "truncate";
-  //   }
-  //   //mytagrow
-  //   //let primeId;
-  //   //if (col == 0) primeId = this.instance.getCopyableText(row, 0, row, 0);
-  //   // let maprow = tableData.value.map.get(primeId);
-  //   // if (maprow && maprow.tag == 1) {
-  //   //   console.log("dddddddddddddaaaaaaaaaaaaaaa", row, col);
-  //   //     cp.className += " mytagrow";
-  //   // }
-  //   return cp;
-  // },
 
-  //afterLoadData: function (sourceData, initialLoad, source) {
-  //beforeRender: function () {
-  //beforeViewRender: function () {
   afterUpdateSettings: function () {
     myRender();
   },

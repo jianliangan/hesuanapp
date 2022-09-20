@@ -285,7 +285,7 @@ const OnSubmit = () => {
   } else {
     formInstance.value.cmd = "edit";
   }
-  //console.log(",,,,,,,,,,,,,,,,", formInstance.value.province)
+
   PushDataRow([formInstance.value]);
 };
 function SelectionChange(selection: Array<baseObject>) {
