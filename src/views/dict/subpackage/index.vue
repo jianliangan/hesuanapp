@@ -1,12 +1,5 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <com-left
-        ref="comleft"
-        @init="init"
-        :AfterSelected="leftAfterSelected"
-      ></com-left>
-    </el-aside>
     <el-container direction="vertical">
       <el-main>
         <div style="height: 300px">
@@ -21,7 +14,6 @@
   </el-container>
 </template>
 <script lang="ts" setup>
-import comLeft from "./components/comLeft.vue";
 import comMain from "./components/comMain.vue";
 import comDown from "./components/comDown.vue";
 import { ref, nextTick, onMounted } from "vue";
@@ -31,7 +23,7 @@ interface baseObject {
 /**
  * comleft
  */
-const comleft = ref<baseObject>({});
+
 const leftAfterSelected = (selected: baseObject) => {
   commain.value.PageLoaded({
     ownId: selected.ownId,
@@ -40,9 +32,9 @@ const leftAfterSelected = (selected: baseObject) => {
 };
 const mainAfterSelected = (selected: baseObject) => {
   comdown.value.PageLoaded({
-    ownId: selected.measureId,
-    selectId: selected.measureId,
-    rootId: selected.measureId,
+    ownId: selected.id,
+    selectId: selected.id,
+    rootId: selected.id,
   });
 };
 /**
@@ -58,7 +50,7 @@ const init = () => {
   alert();
 };
 function PageLoaded(uri: baseObject) {
-  comleft.value.PageLoaded(uri);
+  commain.value.PageLoaded(uri);
 }
 
 const childMounted = () => {

@@ -1,9 +1,8 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionTree"
-    ImportUri="http://localhost:8001/budget/import/"
+    :MainContentPushRow="ActualMeasurePushRow"
+    :MainContentFetchList="ActualMeasureTree"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
@@ -22,7 +21,7 @@
     :AfterSelected="afterSelected"
   >
     <template v-slot:tableitem>
-      <hot-column width="0" data="divisionId" title="" />
+      <hot-column width="0" data="measureId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
@@ -34,51 +33,64 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="workAmount"
         type="numeric"
         title="招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
+        data="budgetWorkAmount"
         type="numeric"
-        :numeric-format="formatJP"
-        title="综合单价"
+        title="预算工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisSumprice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="综合合价"
+        title="成本单价"
       />
       <hot-column
         width="120"
-        data="budgetManageUnitprice"
+        data="costSumprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="管理费单价"
+        title="成本合价"
       />
       <hot-column
         width="120"
-        data="budgetProfitUnitprice"
+        data="costManprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="利润单价"
+        title="成本人工费"
       />
       <hot-column
         width="120"
-        data="budgetManageSumprice"
+        data="costMaterialsprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="管理费合价"
+        title="成本材料费"
       />
       <hot-column
         width="120"
-        data="budgetProfitSumprice"
+        data="costMechanicsprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="利润合价"
+        title="成本机械费"
+      />
+      <hot-column
+        width="120"
+        data="costDeviceprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="成本设备费"
+      />
+      <hot-column
+        width="120"
+        data="costSubpackageprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="专业分包费"
       />
     </template>
   </aj-hot-table>
@@ -89,11 +101,10 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import { ProjectFetchTree } from "@/api/model/project";
 import {
-  BudgetDivisionPushRow,
-  BudgetDivisionTree,
-} from "@/api/model/budget/division";
+  ActualMeasurePushRow,
+  ActualMeasureTree,
+} from "@/api/model/actual/measure";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
@@ -128,8 +139,8 @@ const ajhottable = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.divisionId = value;
-  return item.divisionId;
+  if (value != null) item.measureId = value;
+  return item.measureId;
 };
 const afterSelected = (selected: baseObject) => {
   props.AfterSelected(selected);
@@ -151,20 +162,24 @@ const getInitHotTable = () => {
     projectName: "",
     children: [],
     divisionId: "",
+    name: "",
     subject: "",
     code: null,
     category: "",
-    name: "",
+
     distinction: "",
     unit: "",
     have: 0,
+    workAmount: 0,
     budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    budgetManageUnitprice: 0,
-    budgetProfitUnitprice: 0,
-    budgetManageSumprice: 0,
-    budgetProfitSumprice: 0,
+
+    costUnitprice: 0,
+    costSumprice: 0,
+    costManprice: 0,
+    costMaterialsprice: 0,
+    costMechanicsprice: 0,
+    costDeviceprice: 0,
+    costSubpackageprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

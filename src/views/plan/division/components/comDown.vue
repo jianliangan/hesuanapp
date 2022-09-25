@@ -1,9 +1,8 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionTree"
-    ImportUri="http://localhost:8001/budget/import/"
+    :MainContentPushRow="PlanDivisionMachinePushRow"
+    :MainContentFetchList="PlanDivisionMachineTree"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
@@ -12,8 +11,6 @@
     :BtnDownMove="true"
     :BtnInsert="true"
     :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="true"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
@@ -22,63 +19,34 @@
     :AfterSelected="afterSelected"
   >
     <template v-slot:tableitem>
-      <hot-column width="0" data="divisionId" title="" />
-      <hot-column width="120" data="projectName" title="项目相关" />
-      <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="subject" title="成本科目" />
+      <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />
-
-      <hot-column width="120" data="distinction" title="项目特征" />
+      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="120" data="type" title="规格型号" />
       <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="have" type="numeric" title="含量" />
+      <hot-column width="120" data="have" title="含量" />
+      <hot-column width="120" data="count" type="numeric" title="数量" />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="price"
         type="numeric"
-        title="招标工程量"
+        :numeric-format="formatJP"
+        title="市场价"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
+        data="combinedPrice"
         type="numeric"
         :numeric-format="formatJP"
-        title="综合单价"
+        title="合价"
       />
+      <hot-column width="120" data="taxRate" type="numeric" title="税率" />
       <hot-column
         width="120"
-        data="budgetSynthesisSumprice"
+        data="referenceValue"
         type="numeric"
-        :numeric-format="formatJP"
-        title="综合合价"
-      />
-      <hot-column
-        width="120"
-        data="budgetManageUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费单价"
-      />
-      <hot-column
-        width="120"
-        data="budgetProfitUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润单价"
-      />
-      <hot-column
-        width="120"
-        data="budgetManageSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费合价"
-      />
-      <hot-column
-        width="120"
-        data="budgetProfitSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润合价"
+        title="参考值"
       />
     </template>
   </aj-hot-table>
@@ -89,13 +57,12 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import { ProjectFetchTree } from "@/api/model/project";
 import {
-  BudgetDivisionPushRow,
-  BudgetDivisionTree,
-} from "@/api/model/budget/division";
+  PlanDivisionMachinePushRow,
+  PlanDivisionMachineTree,
+} from "@/api/model/plan/division";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -126,20 +93,20 @@ const formatJP = {
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
-
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.divisionId = value;
-  return item.divisionId;
+  if (value != null) item.id = value;
+  return item.id;
 };
-const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
-};
+
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
     col: 6,
-    comment: { value: row.distinction },
+    comment: { value: "" },
   });
+};
+const afterSelected = (selected: baseObject) => {
+  return;
 };
 const getComments = () => {
   return [6];
@@ -148,23 +115,20 @@ const getInitHotTable = () => {
   return {
     cmd: null,
     sortR: 0,
-    projectName: "",
     children: [],
-    divisionId: "",
-    subject: "",
-    code: null,
+    id: "",
+    code: "",
     category: "",
     name: "",
-    distinction: "",
+    type: "",
     unit: "",
+
     have: 0,
-    budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    budgetManageUnitprice: 0,
-    budgetProfitUnitprice: 0,
-    budgetManageSumprice: 0,
-    budgetProfitSumprice: 0,
+    count: 0,
+    price: 0,
+    combinedPrice: 0,
+    taxRate: 0,
+    referenceValue: 0,
     sort: 0,
     ownId: "",
     parentId: "",

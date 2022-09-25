@@ -11,6 +11,7 @@ import i18n from './locales'
 import ajTable from './components/ajTable/index.vue'
 import ajHotTable from './components/ajHotTable/index.vue'
 import ajTree from './components/ajTree/index.vue'
+
 import * as scIcons from './assets/icons'
 
 import { HotTable, HotColumn } from "@handsontable/vue3";
@@ -28,5 +29,6 @@ for (let icon in scIcons) {
 app.component("ajTable", ajTable)
 app.component("ajHotTable", ajHotTable)
 app.component("ajTree", ajTree)
+
 app.component("HotTable", HotTable)
 app.component("HotColumn", HotColumn)

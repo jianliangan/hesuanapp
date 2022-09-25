@@ -1,19 +1,17 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionTree"
-    ImportUri="http://localhost:8001/budget/import/"
+    :MainContentFetchList="ReportProjectTree"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
     :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="true"
+    :BtnUpMove="false"
+    :BtnDownMove="false"
+    :BtnInsert="false"
+    :BtnSign="false"
+    :BtnDel="false"
+    :BtnInsertChildren="false"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
@@ -34,48 +32,69 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="actualWorkAmount"
         type="numeric"
-        title="招标工程量"
+        title="(实际)招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="综合单价"
-      />
-      <hot-column
-        width="120"
-        data="budgetSynthesisSumprice"
+        data="actualSynthesisUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="综合合价"
+        title="(实际)综合单价"
       />
       <hot-column
         width="120"
-        data="budgetManageUnitprice"
+        data="actualSynthesisSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="(实际)综合合价"
+      />
+      <hot-column
+        width="120"
+        data="planWorkAmount"
+        type="numeric"
+        title="(计划)招标工程量"
+      />
+      <hot-column
+        width="120"
+        data="planSynthesisUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="(计划)综合单价"
+      />
+      <hot-column
+        width="120"
+        data="planSynthesisSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="(计划)综合合价"
+      />
+
+      <hot-column
+        width="120"
+        data="manageUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费单价"
       />
       <hot-column
         width="120"
-        data="budgetProfitUnitprice"
+        data="profitUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润单价"
       />
       <hot-column
         width="120"
-        data="budgetManageSumprice"
+        data="manageSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费合价"
       />
       <hot-column
         width="120"
-        data="budgetProfitSumprice"
+        data="profitSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润合价"
@@ -90,10 +109,7 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
 import { ProjectFetchTree } from "@/api/model/project";
-import {
-  BudgetDivisionPushRow,
-  BudgetDivisionTree,
-} from "@/api/model/budget/division";
+import { ReportProjectTree } from "@/api/model/report/project";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
@@ -158,13 +174,17 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    budgetManageUnitprice: 0,
-    budgetProfitUnitprice: 0,
-    budgetManageSumprice: 0,
-    budgetProfitSumprice: 0,
+    actualWorkAmount: 0,
+    actualSynthesisUnitprice: 0,
+    actualSynthesisSumprice: 0,
+    planWorkAmount: 0,
+    planSynthesisUnitprice: 0,
+    planSynthesisSumprice: 0,
+
+    manageUnitprice: 0,
+    profitUnitprice: 0,
+    manageSumprice: 0,
+    profitSumprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

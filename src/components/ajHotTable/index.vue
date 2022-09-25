@@ -70,7 +70,12 @@
       </el-space>
     </el-header>
     <el-main>
-      <hot-table :settings="settings" style="height: 100%" ref="myHotTable">
+      <hot-table
+        :settings="settings"
+        v-on:dblclick="dblClick"
+        style="height: 100%"
+        ref="myHotTable"
+      >
         <slot name="tableitem"></slot>
       </hot-table>
     </el-main>
@@ -135,12 +140,15 @@ function getAllAreas(
  * need to change
  * api call
  */
-
+const dblClick = () => {
+  let hot = myHotTable.value.hotInstance;
+  let cell = hot.getSelectedLast();
+  if (props.CellDblClick) props.CellDblClick(cell);
+};
 const mainframe = ref<baseObject>({});
 
 const loading = ref(false);
 const pageInfo = ref<baseObject>({});
-let currentRow: baseObject;
 
 const listUriParams = {} as baseObject;
 const tableData = ref<baseObject>({});
@@ -237,6 +245,14 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+  NestedHeaders: {
+    type: Array,
+    default: null,
+  },
+  CellDblClick: {
+    type: Function,
+    default: null,
+  },
 });
 const myRender = () => {
   let hot = myHotTable.value.hotInstance;
@@ -292,11 +308,15 @@ let settings = ref({
   height: "auto",
   licenseKey: "d50be-b4e43-2af78-46c17-f1be1",
   data: [props.GetInitHotTable()],
+  nestedHeaders: props.NestedHeaders,
   cell: [],
 
   afterUpdateSettings: function () {
+    console.log("aaaaaaaa33");
     if (firstApiLoad) {
+      console.log("aaaaaaaa44");
       let hot = myHotTable.value.hotInstance;
+
       hot.selectCell(0, 0);
       firstApiLoad = false;
     }
@@ -323,9 +343,11 @@ let settings = ref({
     let hot = myHotTable.value.hotInstance;
 
     changes.forEach(([row, prop, oldValue, newValue]) => {
-      if (oldValue === newValue) {
+      console.log("change2", oldValue, newValue);
+      if (oldValue == newValue || (oldValue == null && newValue == "")) {
         return;
       }
+
       let primeId = hot.getCopyableText(row, 0, row, 0);
       if (!primeId) {
         ElMessage.info("此行不能编辑，请先增加");
@@ -345,7 +367,7 @@ let settings = ref({
   hiddenColumns: {
     columns: [0],
     copyPasteEnabled: true,
-    indicators: true,
+    indicators: false,
   },
   width: "100%",
   height: "100%",
@@ -402,10 +424,6 @@ const handleError: UploadProps["onError"] = (
   ElMessage.error("发生错误：" + error);
 };
 
-const currentChange = (newRow: baseObject, oldRow: baseObject) => {
-  currentRow = newRow;
-  console.log("change ", newRow, oldRow);
-};
 const findSelectRowBrother = (selectRow: baseObject) => {
   let brotherRows: baseObject;
   if (!selectRow.parentId) {
@@ -866,34 +884,61 @@ const LoadData = async (row: any) => {
 };
 const myLoadData = (listData: Array<baseObject>) => {
   tableData.value.map = new Map<Object, baseObject>();
-  console.log("6666666666666", listData);
+
   if (props.GetMainPrimeId(listData[0])) {
     filterRow(listData, tableData.value.map, 0);
   }
   let indexi = 0;
   settings.value.cell = new Array<baseObject>();
-  console.log("77777777777777777777777");
+
   for (let [key, value] of tableData.value.map) {
     if (value["children"]) {
       value["__children"] = value["children"];
     }
-    console.log("888888888888888888888888888");
+
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
-  console.log("9999999999999999999999999", listData);
+  console.log("aaaaaaaa22", listData);
   myHotTable.value.hotInstance.loadData(listData);
 
   myRender();
 };
+let PageUpdateRows = (map: Map<Object, Object>, celldata: String) => {
+  let hot = myHotTable.value.hotInstance;
+  let cell = hot.getSelectedLast();
+  let selectR = cell[0];
+  let selectId = 0;
+  if (tableData.value.map && tableData.value.map.size > 0) {
+    selectId = hot.getCopyableText(selectR, 0, selectR, 0);
+  } else {
+    return;
+  }
 
+  let vv = tableData.value.map.get(selectId);
+  for (let [key, value] of map) {
+    vv[key] = value;
+  }
+  hot.setDataAtCell(cell[0], cell[1], celldata);
+  console.log("iiiiiiiii", map, vv);
+  //hot的事件设计不合理，只能再去推送一下，否则直接触发修改就行了
+
+  let tmpp: baseObject = {};
+  tools_objToobj(vv, tmpp);
+  delete tmpp.children;
+  tmpp.cmd = "edit";
+  PushDataRow([tmpp], () => {
+    myLoadData(tableData.value.list);
+  });
+  //
+};
 let PageLoaded = (uri: baseObject) => {
   tools_objToobj(uri, listUriParams);
   firstApiLoad = true;
   LoadData(uri);
   //
 };
-defineExpose({ PageLoaded });
+defineExpose({ PageLoaded, PageUpdateRows });
 </script>
     <style scoped>
 .scTable-table {

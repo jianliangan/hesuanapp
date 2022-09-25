@@ -34,48 +34,48 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="workAmount"
+        data="budgetWorkAmount"
         type="numeric"
         title="招标工程量"
       />
       <hot-column
         width="120"
-        data="synthesisUnitprice"
+        data="budgetSynthesisUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="综合单价"
       />
       <hot-column
         width="120"
-        data="synthesisSumprice"
+        data="budgetSynthesisSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="综合合价"
       />
       <hot-column
         width="120"
-        data="manageUnitprice"
+        data="budgetManageUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费单价"
       />
       <hot-column
         width="120"
-        data="profitUnitprice"
+        data="budgetProfitUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润单价"
       />
       <hot-column
         width="120"
-        data="manageSumprice"
+        data="budgetManageSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费合价"
       />
       <hot-column
         width="120"
-        data="profitSumprice"
+        data="budgetProfitSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润合价"
@@ -157,13 +157,13 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    workAmount: 0,
-    synthesisUnitprice: 0,
-    synthesisSumprice: 0,
-    manageUnitprice: 0,
-    profitUnitprice: 0,
-    manageSumprice: 0,
-    profitSumprice: 0,
+    budgetWorkAmount: 0,
+    budgetSynthesisUnitprice: 0,
+    budgetSynthesisSumprice: 0,
+    budgetManageUnitprice: 0,
+    budgetProfitUnitprice: 0,
+    budgetManageSumprice: 0,
+    budgetProfitSumprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

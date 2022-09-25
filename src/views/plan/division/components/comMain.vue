@@ -1,9 +1,9 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionTree"
-    ImportUri="http://localhost:8001/budget/import/"
+    :MainContentPushRow="PlanDivisionPushRow"
+    :MainContentFetchList="PlanDivisionTree"
+    ImportUri="http://localhost:8001/plan/import/"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
@@ -34,51 +34,64 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="planWorkAmount"
         type="numeric"
         title="招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
+        data="budgetWorkAmount"
         type="numeric"
-        :numeric-format="formatJP"
-        title="综合单价"
+        title="预算工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisSumprice"
+        data="planCostUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="综合合价"
+        title="成本单价"
       />
       <hot-column
         width="120"
-        data="budgetManageUnitprice"
+        data="planCostSumprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="管理费单价"
+        title="成本合价"
       />
       <hot-column
         width="120"
-        data="budgetProfitUnitprice"
+        data="planCostManprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="利润单价"
+        title="成本人工费"
       />
       <hot-column
         width="120"
-        data="budgetManageSumprice"
+        data="planCostMaterialsprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="管理费合价"
+        title="成本材料费"
       />
       <hot-column
         width="120"
-        data="budgetProfitSumprice"
+        data="planCostMechanicsprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="利润合价"
+        title="成本机械费"
+      />
+      <hot-column
+        width="120"
+        data="planCostDeviceprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="成本设备费"
+      />
+      <hot-column
+        width="120"
+        data="planCostSubpackageprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="专业分包费"
       />
     </template>
   </aj-hot-table>
@@ -91,9 +104,9 @@ import "handsontable/dist/handsontable.min.css";
 
 import { ProjectFetchTree } from "@/api/model/project";
 import {
-  BudgetDivisionPushRow,
-  BudgetDivisionTree,
-} from "@/api/model/budget/division";
+  PlanDivisionPushRow,
+  PlanDivisionTree,
+} from "@/api/model/plan/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
@@ -151,20 +164,24 @@ const getInitHotTable = () => {
     projectName: "",
     children: [],
     divisionId: "",
+    name: "",
     subject: "",
     code: null,
     category: "",
-    name: "",
+
     distinction: "",
     unit: "",
     have: 0,
+    planWorkAmount: 0,
     budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    budgetManageUnitprice: 0,
-    budgetProfitUnitprice: 0,
-    budgetManageSumprice: 0,
-    budgetProfitSumprice: 0,
+
+    planCostUnitprice: 0,
+    planCostSumprice: 0,
+    planCostManprice: 0,
+    planCostMaterialsprice: 0,
+    planCostMechanicsprice: 0,
+    planCostDeviceprice: 0,
+    planCostSubpackageprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

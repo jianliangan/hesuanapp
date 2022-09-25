@@ -9,13 +9,7 @@
     </el-aside>
     <el-container direction="vertical">
       <el-main>
-        <div style="height: 300px">
-          <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
-          <div style="height: 250px; background-color: white">
-            <span style="font-size: 14px">工料机:</span>
-            <com-down ref="comdown"></com-down>
-          </div>
-        </div>
+        <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
       </el-main>
     </el-container>
   </el-container>
@@ -23,7 +17,7 @@
 <script lang="ts" setup>
 import comLeft from "./components/comLeft.vue";
 import comMain from "./components/comMain.vue";
-import comDown from "./components/comDown.vue";
+
 import { ref, nextTick, onMounted } from "vue";
 interface baseObject {
   [key: string]: any;
@@ -36,15 +30,10 @@ const leftAfterSelected = (selected: baseObject) => {
   commain.value.PageLoaded({
     ownId: selected.ownId,
     selectId: selected.projectId,
+    cmd: "sj",
   });
 };
-const mainAfterSelected = (selected: baseObject) => {
-  comdown.value.PageLoaded({
-    ownId: selected.measureId,
-    selectId: selected.measureId,
-    rootId: selected.measureId,
-  });
-};
+const mainAfterSelected = (selected: baseObject) => {};
 /**
  * commain
  */
