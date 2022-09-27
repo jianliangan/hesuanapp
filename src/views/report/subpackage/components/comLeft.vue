@@ -33,19 +33,19 @@ const props = defineProps({
  */
 const ajtree = ref<baseObject>({});
 const groupsProps = {
-  value: "id",
-  label: "name",
+  value: "subPackageId",
+  label: "subPackageName",
   emitPath: false,
   checkStrictly: true,
 };
 const getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
+  if (value != null) item.subPackageId = value;
 
-  return item.id;
+  return item.subPackageId;
 };
 const getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.name = value;
-  return item.name;
+  if (value != null) item.subPackageName = value;
+  return item.subPackageName;
 };
 
 const afterSelected = (selected: baseObject) => {

@@ -70,8 +70,8 @@ const ajhottable = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
-  return item.id;
+  if (value != null) item.subPackageId = value;
+  return item.subPackageId;
 };
 const afterSelected = (selected: baseObject) => {
   props.AfterSelected(selected);

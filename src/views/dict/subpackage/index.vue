@@ -32,9 +32,9 @@ const leftAfterSelected = (selected: baseObject) => {
 };
 const mainAfterSelected = (selected: baseObject) => {
   comdown.value.PageLoaded({
-    ownId: selected.id,
-    selectId: selected.id,
-    rootId: selected.id,
+    ownId: selected.subPackageId,
+    selectId: selected.subPackageId,
+    rootId: selected.subPackageId,
   });
 };
 /**

@@ -119,6 +119,15 @@
         title="利润合价"
       />
     </template>
+    <template v-slot:expendcondition>
+      <aj-select-input
+        ref="projectSelect"
+        :MainContentFetchList="ProjectFetchList"
+        :GetMainPrimeId="getProjectSelectMainPrimeId"
+        :GetMainName="getProjectSelectMainName"
+        :ItemSelect="projectItemSelect"
+      ></aj-select-input
+    ></template>
   </aj-hot-table>
 </template>
 <script lang="ts" setup>
@@ -126,8 +135,8 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
+import { ProjectFetchList, ProjectPushRow } from "@/api/model/project";
 
-import { ProjectFetchTree } from "@/api/model/project";
 import { ReportSubpackageTree } from "@/api/model/report/subpackage";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
@@ -135,16 +144,27 @@ import { ref, nextTick, defineProps } from "vue";
 interface baseObject {
   [key: string]: any;
 }
+let projectSelect = ref<baseObject>({});
 const props = defineProps({
   AfterSelected: {
     type: Function,
     default: null,
   },
 });
+const listUriParams = {} as baseObject;
 /**
  * left tree
  */
-
+const projectItemSelect = (value: String) => {
+  listUriParams.projectId = value;
+  ajhottable.value.PageLoaded(listUriParams);
+};
+const getProjectSelectMainPrimeId = (item: baseObject) => {
+  return item.projectId;
+};
+const getProjectSelectMainName = (item: baseObject) => {
+  return item.projectName;
+};
 /**
  * right main
  */
@@ -258,7 +278,9 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+  tools_objToobj(uri, listUriParams);
+  projectSelect.value.PageLoaded(uri);
+  // ;
 }
 
 // nextTick(() => {
@@ -267,3 +289,5 @@ function PageLoaded(uri: baseObject) {
 
 defineExpose({ PageLoaded });
 </script>
+<style>
+</style>

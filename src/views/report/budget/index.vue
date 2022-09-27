@@ -29,7 +29,7 @@ const comleft = ref<baseObject>({});
 const leftAfterSelected = (selected: baseObject) => {
   commain.value.PageLoaded({
     ownId: selected.ownId,
-    selectId: selected.projectId,
+    projectId: selected.projectId,
     cmd: "ys",
   });
 };

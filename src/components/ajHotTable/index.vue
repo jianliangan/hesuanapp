@@ -67,6 +67,7 @@
             <el-button type="primary">导入</el-button>
           </el-upload>
         </template>
+        <slot name="expendcondition"></slot>
       </el-space>
     </el-header>
     <el-main>

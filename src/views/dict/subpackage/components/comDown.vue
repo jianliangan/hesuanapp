@@ -102,11 +102,11 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
-  return item.id;
+  if (value != null) item.subPackageId = value;
+  return item.subPackageId;
 };
 const getMainName = (item: baseObject) => {
-  return item.name;
+  return item.subPackageName;
 };
 
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
@@ -121,8 +121,8 @@ const clkOk1 = (rows: Array<baseObject>) => {
   // rows: Array<>
   let row = rows[0];
   let map = new Map<String, Object>();
-  map.set("subPackage", row.id);
-  map.set("subPackageName", row.name);
+  map.set("subPackage", row.subPackageId);
+  map.set("subPackageName", row.subPackageName);
   console.log("iiiiiiiii", row);
   ajhottable.value.PageUpdateRows(map, row.name);
 };
