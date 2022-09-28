@@ -1,24 +1,24 @@
 <template>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="ActualDivisionPushRow"
-    :MainContentFetchList="ActualDivisionTree"
+    :MainContentFetchList="ReportProjectTree"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
     :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="true"
+    :BtnUpMove="false"
+    :BtnDownMove="false"
+    :BtnInsert="false"
+    :BtnSign="false"
+    :BtnDel="false"
+    :BtnInsertChildren="false"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
     :AddComment="addComment"
     :GetComments="getComments"
     :AfterSelected="afterSelected"
+    :NestedHeaders="nestedHeaders"
   >
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
@@ -33,64 +33,72 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="actualWorkAmount"
+        data="workAmount"
         type="numeric"
-        title="招标工程量"
+        title="(实际)招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
-        type="numeric"
-        title="预算工程量"
-      />
-      <hot-column
-        width="120"
-        data="actualCostUnitprice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="成本单价"
+        title="(实际)综合单价"
       />
       <hot-column
         width="120"
-        data="actualCostSumprice"
+        data="costSumprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="成本合价"
+        title="(实际)综合合价"
       />
       <hot-column
         width="120"
-        data="actualCostManprice"
+        data="workAmount2"
         type="numeric"
-        :numeric-format="formatJP"
-        title="成本人工费"
+        title="(计划)招标工程量"
       />
       <hot-column
         width="120"
-        data="actualCostMaterialsprice"
+        data="costUnitprice2"
         type="numeric"
         :numeric-format="formatJP"
-        title="成本材料费"
+        title="(计划)综合单价"
       />
       <hot-column
         width="120"
-        data="actualCostMechanicsprice"
+        data="costSumprice2"
         type="numeric"
         :numeric-format="formatJP"
-        title="成本机械费"
+        title="(计划)综合合价"
+      />
+
+      <hot-column
+        width="120"
+        data="manageUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="管理费单价"
       />
       <hot-column
         width="120"
-        data="actualCostDeviceprice"
+        data="profitUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="成本设备费"
+        title="利润单价"
       />
       <hot-column
         width="120"
-        data="actualCostSubpackageprice"
+        data="manageSumprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="专业分包费"
+        title="管理费合价"
+      />
+      <hot-column
+        width="120"
+        data="profitSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="利润合价"
       />
       <hot-column
         width="120"
@@ -109,10 +117,7 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
 import { ProjectFetchTree } from "@/api/model/project";
-import {
-  ActualDivisionPushRow,
-  ActualDivisionTree,
-} from "@/api/model/actual/division";
+import { ReportProjectTree } from "@/api/model/report/project";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
@@ -132,7 +137,49 @@ const props = defineProps({
 /**
  * right main
  */
+const nestedHeaders = [
+  [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    { label: "实际", colspan: 3 },
+    { label: "计划", colspan: 3 },
+    "",
+    "",
+    "",
+    "",
+    "",
+  ],
+  [
+    "",
+    "项目相关",
+    "名称",
+    "成本科目",
+    "编码",
+    "类别",
+    "项目特征",
+    "单位",
+    "含量",
+    "招标工程量",
+    "综合单价",
+    "综合合价",
+    "招标工程量",
+    "综合单价",
+    "综合合价",
 
+    "管理费单价",
+    "利润单价",
+    "管理费合价",
+    "利润合价",
+    "进度",
+  ],
+];
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
@@ -170,25 +217,24 @@ const getInitHotTable = () => {
     projectName: "",
     children: [],
     divisionId: "",
-    name: "",
     subject: "",
     code: null,
     category: "",
-
+    name: "",
     distinction: "",
     unit: "",
     have: 0,
-    actualWorkAmount: 0,
-    budgetWorkAmount: 0,
+    workAmount: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    workAmount2: 0,
+    costUnitprice2: 0,
+    costSumprice2: 0,
 
-    actualCostUnitprice: 0,
-    actualCostSumprice: 0,
-    actualCostManprice: 0,
-    actualCostMaterialsprice: 0,
-    actualCostMechanicsprice: 0,
-    actualCostDeviceprice: 0,
-    actualCostSubpackageprice: 0,
-    schedule: "",
+    manageUnitprice: 0,
+    profitUnitprice: 0,
+    manageSumprice: 0,
+    profitSumprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

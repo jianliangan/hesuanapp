@@ -1,58 +1,114 @@
 <template>
-  <aj-select-dialog
-    ref="selectDialog"
-    :MainContentFetchList="SubPackageList"
-    :ClkOk="clkOk1"
-    :GetMainName="getMainName"
-    Title="分包商"
-  ></aj-select-dialog>
   <aj-hot-table
     ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionMachinePushRow"
-    :MainContentFetchList="BudgetDivisionMachineTree"
+    :MainContentFetchList="ReportSubpackageTree"
     MaxFileNums="1"
     MaxFileSize="20"
     TableKey="name"
     :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
+    :BtnUpMove="false"
+    :BtnDownMove="false"
+    :BtnInsert="false"
+    :BtnSign="false"
+    :BtnDel="false"
+    :BtnInsertChildren="false"
     :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable"
     :AddComment="addComment"
     :GetComments="getComments"
     :AfterSelected="afterSelected"
-    :CellDblClick="cellDblClick"
+    :NestedHeaders="nestedHeaders"
   >
     <template v-slot:tableitem>
-      <hot-column width="0" data="id" title="" />
+      <hot-column width="0" data="divisionId" title="" />
+      <hot-column width="120" data="projectName" title="项目相关" />
+      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />
-      <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="subPackageName" title="分包单位" />
-      <hot-column width="120" data="type" title="规格型号" />
+      <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="120" data="have" type="numeric" title="含量" />
 
-      <hot-column width="120" data="loss" title="损耗率" />
-      <hot-column width="120" data="have" title="含量" />
-      <hot-column width="120" data="count" type="numeric" title="数量" />
       <hot-column
         width="120"
-        data="price"
+        data="workAmount"
         type="numeric"
-        :numeric-format="formatJP"
-        title="市场价"
+        title="招标工程量"
       />
       <hot-column
         width="120"
-        data="combinedPrice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="合价"
+        title="综合单价"
+      />
+      <hot-column
+        width="120"
+        data="costSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="综合合价"
+      />
+      <hot-column
+        width="120"
+        data="workAmount2"
+        type="numeric"
+        title="招标工程量"
+      />
+      <hot-column
+        width="120"
+        data="costUnitprice2"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="综合单价"
+      />
+      <hot-column
+        width="120"
+        data="costSumprice2"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="综合合价"
+      />
+      <hot-column
+        width="120"
+        data="manageUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="管理费单价"
+      />
+      <hot-column
+        width="120"
+        data="profitUnitprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="利润单价"
+      />
+      <hot-column
+        width="120"
+        data="manageSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="管理费合价"
+      />
+      <hot-column
+        width="120"
+        data="profitSumprice"
+        type="numeric"
+        :numeric-format="formatJP"
+        title="利润合价"
       />
     </template>
+    <template v-slot:expendcondition>
+      <aj-select-input
+        ref="projectSelect"
+        :MainContentFetchList="ProjectFetchList"
+        :GetMainPrimeId="getProjectSelectMainPrimeId"
+        :GetMainName="getProjectSelectMainName"
+        :ItemSelect="projectItemSelect"
+      ></aj-select-input
+    ></template>
   </aj-hot-table>
 </template>
 <script lang="ts" setup>
@@ -60,35 +116,79 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
-import {
-  BudgetDivisionMachinePushRow,
-  BudgetDivisionMachineTree,
-} from "@/api/model/budget/division";
-import { SubPackageList } from "@/api/model/dict/subpackage";
-import { tools_objToobj } from "@/components/jrTools";
+import { ProjectFetchList, ProjectPushRow } from "@/api/model/project";
 
-import { ref, nextTick } from "vue";
-import { RowsSpan } from "hyperformula/typings/Span";
+import { ReportSubpackageTree } from "@/api/model/report/subpackage";
+import { tools_objToobj } from "@/components/jrTools";
+import { ref, nextTick, defineProps } from "vue";
 
 interface baseObject {
   [key: string]: any;
 }
-let selectDialog = ref<baseObject>({});
+let projectSelect = ref<baseObject>({});
 const props = defineProps({
   AfterSelected: {
     type: Function,
     default: null,
   },
 });
+const listUriParams = {} as baseObject;
 /**
  * left tree
  */
-
+const projectItemSelect = (value: String) => {
+  listUriParams.projectId = value;
+  ajhottable.value.PageLoaded(listUriParams, value);
+};
+const getProjectSelectMainPrimeId = (item: baseObject) => {
+  return item.projectId;
+};
+const getProjectSelectMainName = (item: baseObject) => {
+  return item.projectName;
+};
 /**
  * right main
  */
-
+const nestedHeaders = [
+  [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    { label: "实际", colspan: 3 },
+    { label: "计划", colspan: 3 },
+    "",
+    "",
+    "",
+    "",
+  ],
+  [
+    "",
+    "项目相关",
+    "名称",
+    "成本科目",
+    "编码",
+    "类别",
+    "项目特征",
+    "单位",
+    "含量",
+    "招标工程量",
+    "综合单价",
+    "综合合价",
+    "招标工程量",
+    "综合单价",
+    "综合合价",
+    "管理费单价",
+    "利润单价",
+    "管理费合价",
+    "利润合价",
+  ],
+];
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
@@ -101,36 +201,20 @@ const formatJP = {
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
-let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.subPackageId = value;
-  return item.subPackageId;
-};
-const getMainName = (item: baseObject) => {
-  return item.subPackageName;
-};
 
+let getMainPrimeId = (item: baseObject, value: Object) => {
+  if (value != null) item.divisionId = value;
+  return item.divisionId;
+};
+const afterSelected = (selected: baseObject) => {
+  //props.AfterSelected(selected);
+};
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
     col: 6,
-    comment: { value: "" },
+    comment: { value: row.distinction },
   });
-};
-const clkOk1 = (rows: Array<baseObject>) => {
-  // subPackageName
-  // rows: Array<>
-  let row = rows[0];
-  let map = new Map<String, Object>();
-  map.set("subPackage", row.subPackageId);
-  map.set("subPackageName", row.subPackageName);
-  console.log("iiiiiiiii", row);
-  ajhottable.value.PageUpdateRows(map, row.name);
-};
-const cellDblClick = (cell: any) => {
-  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
-};
-const afterSelected = (selected: baseObject) => {
-  return;
 };
 const getComments = () => {
   return [6];
@@ -139,30 +223,39 @@ const getInitHotTable = () => {
   return {
     cmd: null,
     sortR: 0,
+    projectName: "",
     children: [],
-    id: "",
-    code: "",
+    divisionId: "",
+    subject: "",
+    code: null,
     category: "",
     name: "",
-    type: "",
+    distinction: "",
     unit: "",
-    loss: 0,
     have: 0,
-    count: 0,
-    price: 0,
-    combinedPrice: 0,
+
+    workAmount: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    workAmount2: 0,
+    costUnitprice2: 0,
+    costSumprice2: 0,
+    manageUnitprice: 0,
+    profitUnitprice: 0,
+    manageSumprice: 0,
+    profitSumprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",
-    subPackageName: "",
-    subPackage: "",
   };
 };
 /**
  * this api
  */
-function PageLoaded(uri: baseObject, ownId: Object) {
-  ajhottable.value.PageLoaded(uri, ownId);
+function PageLoaded(uri: baseObject) {
+  tools_objToobj(uri, listUriParams);
+  projectSelect.value.PageLoaded(uri);
+  // ;
 }
 
 // nextTick(() => {
@@ -171,3 +264,5 @@ function PageLoaded(uri: baseObject, ownId: Object) {
 
 defineExpose({ PageLoaded });
 </script>
+<style>
+</style>
