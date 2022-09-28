@@ -30,65 +30,46 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" type="numeric" title="含量" />
+
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="workAmount"
         type="numeric"
-        title="(预算)招标工程量"
+        title="招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="(预算)综合单价"
+        title="综合单价"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisSumprice"
+        data="costSumprice"
         type="numeric"
         :numeric-format="formatJP"
-        title="(预算)综合合价"
+        title="综合合价"
       />
       <hot-column
         width="120"
-        data="planWorkAmount"
+        data="workAmount2"
         type="numeric"
-        title="(计划)招标工程量"
+        title="招标工程量"
       />
       <hot-column
         width="120"
-        data="planSynthesisUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(计划)综合单价"
-      />
-      <hot-column
-        width="120"
-        data="planSynthesisSumprice"
+        data="costUnitprice2"
         type="numeric"
         :numeric-format="formatJP"
-        title="(计划)综合合价"
+        title="综合单价"
       />
       <hot-column
         width="120"
-        data="actualWorkAmount"
-        type="numeric"
-        title="(实际)招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="actualSynthesisUnitprice"
+        data="costSumprice2"
         type="numeric"
         :numeric-format="formatJP"
-        title="(实际)综合单价"
-      />
-      <hot-column
-        width="120"
-        data="actualSynthesisSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(实际)综合合价"
+        title="综合合价"
       />
       <hot-column
         width="120"
@@ -157,7 +138,7 @@ const listUriParams = {} as baseObject;
  */
 const projectItemSelect = (value: String) => {
   listUriParams.projectId = value;
-  ajhottable.value.PageLoaded(listUriParams);
+  ajhottable.value.PageLoaded(listUriParams, value);
 };
 const getProjectSelectMainPrimeId = (item: baseObject) => {
   return item.projectId;
@@ -179,9 +160,8 @@ const nestedHeaders = [
     "",
     "",
     "",
-    { label: "预算", colspan: 3 },
-    { label: "计划", colspan: 3 },
     { label: "实际", colspan: 3 },
+    { label: "计划", colspan: 3 },
     "",
     "",
     "",
@@ -197,9 +177,6 @@ const nestedHeaders = [
     "项目特征",
     "单位",
     "含量",
-    "招标工程量",
-    "综合单价",
-    "综合合价",
     "招标工程量",
     "综合单价",
     "综合合价",
@@ -256,15 +233,13 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    planWorkAmount: 0,
-    planSynthesisUnitprice: 0,
-    planSynthesisSumprice: 0,
-    actualWorkAmount: 0,
-    actualSynthesisUnitprice: 0,
-    actualSynthesisSumprice: 0,
+
+    workAmount: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    workAmount2: 0,
+    costUnitprice2: 0,
+    costSumprice2: 0,
     manageUnitprice: 0,
     profitUnitprice: 0,
     manageSumprice: 0,

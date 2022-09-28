@@ -189,8 +189,8 @@ const getInitHotTable = () => {
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

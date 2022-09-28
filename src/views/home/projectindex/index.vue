@@ -89,10 +89,13 @@ let getTreePrimeName = (item: baseObject, value: Object) => {
 
 const afterSelected = (selected: baseObject) => {
   //链接右侧
-  ajtable.value.PageLoaded({
-    ownId: selected.projectId,
-    rootId: selected.projectId,
-  });
+  ajtable.value.PageLoaded(
+    {
+      ownId: selected.projectId,
+      rootId: selected.projectId,
+    },
+    selected.projectId
+  );
 };
 /**
  * main

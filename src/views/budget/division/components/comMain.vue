@@ -34,48 +34,48 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="budgetWorkAmount"
+        data="workAmount"
         type="numeric"
         title="招标工程量"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisUnitprice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="综合单价"
       />
       <hot-column
         width="120"
-        data="budgetSynthesisSumprice"
+        data="costSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="综合合价"
       />
       <hot-column
         width="120"
-        data="budgetManageUnitprice"
+        data="manageUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费单价"
       />
       <hot-column
         width="120"
-        data="budgetProfitUnitprice"
+        data="profitUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润单价"
       />
       <hot-column
         width="120"
-        data="budgetManageSumprice"
+        data="manageSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="管理费合价"
       />
       <hot-column
         width="120"
-        data="budgetProfitSumprice"
+        data="profitSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="利润合价"
@@ -158,13 +158,13 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    budgetWorkAmount: 0,
-    budgetSynthesisUnitprice: 0,
-    budgetSynthesisSumprice: 0,
-    budgetManageUnitprice: 0,
-    budgetProfitUnitprice: 0,
-    budgetManageSumprice: 0,
-    budgetProfitSumprice: 0,
+    workAmount: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    manageUnitprice: 0,
+    profitUnitprice: 0,
+    manageSumprice: 0,
+    profitSumprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",
@@ -173,8 +173,8 @@ const getInitHotTable = () => {
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

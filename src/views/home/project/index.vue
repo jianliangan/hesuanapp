@@ -153,8 +153,8 @@ const onOpenDialog = (type: String) => {
 const onCancelDialog = () => {
   return;
 };
-function PageLoaded(uri: baseObject) {
-  ajtable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajtable.value.PageLoaded(uri, ownId);
 }
 
 nextTick(() => {

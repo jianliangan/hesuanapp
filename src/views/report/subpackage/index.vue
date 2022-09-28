@@ -24,7 +24,7 @@ interface baseObject {
 const comleft = ref<baseObject>({});
 const leftAfterSelected = (selected: baseObject) => {
   commain.value.PageLoaded({
-    subPackageId: selected.id,
+    subPackageId: selected.subPackageId,
   });
 };
 const mainAfterSelected = (selected: baseObject) => {};

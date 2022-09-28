@@ -27,11 +27,14 @@ interface baseObject {
  */
 const comleft = ref<baseObject>({});
 const leftAfterSelected = (selected: baseObject) => {
-  commain.value.PageLoaded({
-    ownId: selected.ownId,
-    projectId: selected.projectId,
-    cmd: "sj",
-  });
+  commain.value.PageLoaded(
+    {
+      ownId: selected.ownId,
+      projectId: selected.projectId,
+      cmd: "sj",
+    },
+    selected.ownId
+  );
 };
 const mainAfterSelected = (selected: baseObject) => {};
 /**

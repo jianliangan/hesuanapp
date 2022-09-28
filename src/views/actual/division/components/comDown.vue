@@ -92,17 +92,17 @@ const props = defineProps({
  */
 let selectDialog = ref<baseObject>({});
 const getMainName = (item: baseObject) => {
-  return item.name;
+  return item.subPackageName;
 };
 const clkOk1 = (rows: Array<baseObject>) => {
   // subPackageName
   // rows: Array<>
   let row = rows[0];
   let map = new Map<String, Object>();
-  map.set("subPackage", row.id);
-  map.set("subPackageName", row.name);
+  map.set("subPackageId", row.subPackageId);
+  map.set("subPackageName", row.subPackageName);
   console.log("iiiiiiiii", row);
-  ajhottable.value.PageUpdateRows(map, row.name);
+  ajhottable.value.PageUpdateRows(map, row.subPackageName);
 };
 const cellDblClick = (cell: any) => {
   if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
@@ -159,14 +159,14 @@ const getInitHotTable = () => {
     ownId: "",
     parentId: "",
     subPackageName: "",
-    subPackage: "",
+    subPackageId: "",
   };
 };
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

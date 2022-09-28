@@ -168,16 +168,16 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    planWorkAmount: 0,
+    workAmount: 0,
     budgetWorkAmount: 0,
 
-    planCostUnitprice: 0,
-    planCostSumprice: 0,
-    planCostManprice: 0,
-    planCostMaterialsprice: 0,
-    planCostMechanicsprice: 0,
-    planCostDeviceprice: 0,
-    planCostSubpackageprice: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    costManprice: 0,
+    costMaterialsprice: 0,
+    costMechanicsprice: 0,
+    costDeviceprice: 0,
+    costSubpackageprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",
@@ -186,8 +186,8 @@ const getInitHotTable = () => {
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

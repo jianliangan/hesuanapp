@@ -34,7 +34,7 @@
       <hot-column width="120" data="have" type="numeric" title="含量" />
       <hot-column
         width="120"
-        data="planWorkAmount"
+        data="workAmount"
         type="numeric"
         title="招标工程量"
       />
@@ -46,49 +46,49 @@
       />
       <hot-column
         width="120"
-        data="planCostUnitprice"
+        data="costUnitprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本单价"
       />
       <hot-column
         width="120"
-        data="planCostSumprice"
+        data="costSumprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本合价"
       />
       <hot-column
         width="120"
-        data="planCostManprice"
+        data="costManprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本人工费"
       />
       <hot-column
         width="120"
-        data="planCostMaterialsprice"
+        data="costMaterialsprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本材料费"
       />
       <hot-column
         width="120"
-        data="planCostMechanicsprice"
+        data="costMechanicsprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本机械费"
       />
       <hot-column
         width="120"
-        data="planCostDeviceprice"
+        data="costDeviceprice"
         type="numeric"
         :numeric-format="formatJP"
         title="成本设备费"
       />
       <hot-column
         width="120"
-        data="planCostSubpackageprice"
+        data="costSubpackageprice"
         type="numeric"
         :numeric-format="formatJP"
         title="专业分包费"
@@ -172,16 +172,16 @@ const getInitHotTable = () => {
     distinction: "",
     unit: "",
     have: 0,
-    planWorkAmount: 0,
+    workAmount: 0,
     budgetWorkAmount: 0,
 
-    planCostUnitprice: 0,
-    planCostSumprice: 0,
-    planCostManprice: 0,
-    planCostMaterialsprice: 0,
-    planCostMechanicsprice: 0,
-    planCostDeviceprice: 0,
-    planCostSubpackageprice: 0,
+    costUnitprice: 0,
+    costSumprice: 0,
+    costManprice: 0,
+    costMaterialsprice: 0,
+    costMechanicsprice: 0,
+    costDeviceprice: 0,
+    costSubpackageprice: 0,
     sort: 0,
     ownId: "",
     parentId: "",

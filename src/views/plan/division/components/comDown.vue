@@ -1,4 +1,11 @@
 <template>
+  <aj-select-dialog
+    ref="selectDialog"
+    :MainContentFetchList="SubPackageList"
+    :ClkOk="clkOk1"
+    :GetMainName="getMainName"
+    Title="分包商"
+  ></aj-select-dialog>
   <aj-hot-table
     ref="ajhottable"
     :MainContentPushRow="PlanDivisionMachinePushRow"
@@ -17,12 +24,14 @@
     :AddComment="addComment"
     :GetComments="getComments"
     :AfterSelected="afterSelected"
+    :CellDblClick="cellDblClick"
   >
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />
       <hot-column width="120" data="name" title="名称" />
+      <hot-column width="120" data="subPackageName" title="分包商" />
       <hot-column width="120" data="type" title="规格型号" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" title="含量" />
@@ -56,7 +65,8 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
+import { SubPackageList } from "@/api/model/dict/subpackage";
 import {
   PlanDivisionMachinePushRow,
   PlanDivisionMachineTree,
@@ -80,7 +90,23 @@ const props = defineProps({
 /**
  * right main
  */
-
+let selectDialog = ref<baseObject>({});
+const getMainName = (item: baseObject) => {
+  return item.subPackageName;
+};
+const clkOk1 = (rows: Array<baseObject>) => {
+  // subPackageName
+  // rows: Array<>
+  let row = rows[0];
+  let map = new Map<String, Object>();
+  map.set("subPackageId", row.subPackageId);
+  map.set("subPackageName", row.subPackageName);
+  console.log("iiiiiiiii", row);
+  ajhottable.value.PageUpdateRows(map, row.subPackageName);
+};
+const cellDblClick = (cell: any) => {
+  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
+};
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
@@ -129,6 +155,8 @@ const getInitHotTable = () => {
     combinedPrice: 0,
     taxRate: 0,
     referenceValue: 0,
+    subPackageId: "",
+    subPackageName: "",
     sort: 0,
     ownId: "",
     parentId: "",
@@ -137,8 +165,8 @@ const getInitHotTable = () => {
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

@@ -33,17 +33,23 @@ interface baseObject {
  */
 const comleft = ref<baseObject>({});
 const leftAfterSelected = (selected: baseObject) => {
-  commain.value.PageLoaded({
-    ownId: selected.ownId,
-    selectId: selected.projectId,
-  });
+  commain.value.PageLoaded(
+    {
+      ownId: selected.ownId,
+      projectId: selected.projectId,
+    },
+    selected.ownId
+  );
 };
 const mainAfterSelected = (selected: baseObject) => {
-  comdown.value.PageLoaded({
-    ownId: selected.measureId,
-    selectId: selected.measureId,
-    rootId: selected.measureId,
-  });
+  comdown.value.PageLoaded(
+    {
+      ownId: selected.measureId,
+      measureId: selected.measureId,
+      rootId: selected.measureId,
+    },
+    selected.measureId
+  );
 };
 /**
  * commain

@@ -21,8 +21,8 @@
     :AfterSelected="afterSelected"
   >
     <template v-slot:tableitem>
-      <hot-column width="0" data="id" title="" />
-      <hot-column width="120" data="name" title="分包名称" />
+      <hot-column width="0" data="subPackageId" title="" />
+      <hot-column width="120" data="subPackageName" title="分包名称" />
       <hot-column width="120" data="contact" title="联系人" />
       <hot-column width="120" data="phone" title="电话" />
     </template>
@@ -90,7 +90,8 @@ const getInitHotTable = () => {
   return {
     cmd: "",
     sortR: 0,
-    name: "",
+    subPackageId: "",
+    subPackageName: "",
     contact: "",
     phone: "",
     source: "",
@@ -100,8 +101,8 @@ const getInitHotTable = () => {
 /**
  * this api
  */
-function PageLoaded(uri: baseObject) {
-  ajhottable.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  ajhottable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {

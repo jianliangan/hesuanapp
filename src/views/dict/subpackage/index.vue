@@ -25,17 +25,23 @@ interface baseObject {
  */
 
 const leftAfterSelected = (selected: baseObject) => {
-  commain.value.PageLoaded({
-    ownId: selected.ownId,
-    selectId: selected.projectId,
-  });
+  commain.value.PageLoaded(
+    {
+      ownId: selected.ownId,
+      selectId: selected.projectId,
+    },
+    selected.ownId
+  );
 };
 const mainAfterSelected = (selected: baseObject) => {
-  comdown.value.PageLoaded({
-    ownId: selected.subPackageId,
-    selectId: selected.subPackageId,
-    rootId: selected.subPackageId,
-  });
+  comdown.value.PageLoaded(
+    {
+      ownId: selected.subPackageId,
+      selectId: selected.subPackageId,
+      rootId: selected.subPackageId,
+    },
+    selected.subPackageId
+  );
 };
 /**
  * commain
@@ -49,8 +55,8 @@ const comdown = ref<baseObject>({});
 const init = () => {
   alert();
 };
-function PageLoaded(uri: baseObject) {
-  commain.value.PageLoaded(uri);
+function PageLoaded(uri: baseObject, ownId: Object) {
+  commain.value.PageLoaded(uri, ownId);
 }
 
 const childMounted = () => {

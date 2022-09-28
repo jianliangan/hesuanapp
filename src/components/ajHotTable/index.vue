@@ -121,7 +121,7 @@ interface baseObject {
 }
 var firstApiLoad = true;
 const myHotTable = ref<baseObject>({});
-
+let listUriParamsOwnId = {};
 let planAreas = ref(new Map<string, baseObject>());
 
 numbro.registerLanguage(languages["zh-CN"]);
@@ -754,12 +754,12 @@ const allInstert = (cmd: string) => {
         row.sort = selectSort.add(toRowSort).div(2).toString();
         row.cmd = "add";
         row.parentId = selectId;
-        row.ownId = selectId;
+        row.ownId = selectRow.ownId;
       } else {
         row.sort = 1;
         row.cmd = "add";
         row.parentId = selectId;
-        row.ownId = selectId;
+        row.ownId = selectRow.ownId;
       }
     } else {
       let selectSort = new Big(selectRow.sort);
@@ -774,8 +774,8 @@ const allInstert = (cmd: string) => {
     row = tableData.value.list[0];
     row.sort = 1;
     row.cmd = "add";
-    row.parentId = listUriParams.selectId;
-    row.ownId = listUriParams.selectId;
+    row.parentId = listUriParamsOwnId;
+    row.ownId = listUriParamsOwnId;
   }
   //post
 
@@ -933,9 +933,10 @@ let PageUpdateRows = (map: Map<Object, Object>, celldata: String) => {
   });
   //
 };
-let PageLoaded = (uri: baseObject) => {
+let PageLoaded = (uri: baseObject, ownId: String) => {
   tools_objToobj(uri, listUriParams);
   firstApiLoad = true;
+  listUriParamsOwnId = ownId;
   LoadData(uri);
   //
 };
