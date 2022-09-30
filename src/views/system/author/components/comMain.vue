@@ -1,29 +1,101 @@
 <template>
   <aj-table
     ref="ajtable"
-    :MainContentFetchList="SettingMenuFetchList"
+    :MainContentFetchList="proxyMainContentFetchList"
     :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName"
     :GetFormInstance="getFormInstance"
+    :GetExtendData="getExtendData"
     :OnOpenDialog="onOpenDialog"
     :OnCancelDialog="onCancelDialog"
     :HasPage="true"
     :PreSubmit="preSubmit"
-    :BtnNew="true"
+    :BtnNew="false"
+    TableKey="name"
+    :hasOptions="false"
   >
-    <template v-slot:formitem>
-      <el-form :model="formInstance" label-width="120px">
-        <el-form-item label="角色名称">
-          <el-input v-model="formInstance.roleName" />
-        </el-form-item>
-        <el-form-item label="权限">
-          <el-input v-model="formInstance.author" />
-        </el-form-item>
-      </el-form>
-    </template>
+    <template v-slot:formitem> </template>
     <template v-slot:tableitem>
-      <el-table-column prop="roleName" label="角色名称" />
-      <el-table-column prop="author" label="权限" />
+      <el-table-column prop="meta.title" label="菜单名称" />
+      <el-table-column label="">
+        <template #header>
+          <el-space
+            ><span>权限</span>
+            <el-checkbox
+              label="可读"
+              name="type"
+              checked
+              v-if="
+                extendData.authormap &&
+                extendData.authormap.get('all') &&
+                extendData.authormap.get('all')['read'] == '1'
+              "
+              @change="(value) => readChange(value, { component: 'all' })"
+            />
+            <el-checkbox
+              v-else
+              label="可读"
+              name="type"
+              @change="(value) => readChange(value, { component: 'all' })"
+            />
+            <el-checkbox
+              v-if="
+                extendData.authormap &&
+                extendData.authormap.get('all') &&
+                extendData.authormap.get('all')['write'] == '1'
+              "
+              checked
+              label="可写"
+              @change="(value) => readChange2(value, { component: 'all' })"
+              name="type"
+            />
+            <el-checkbox
+              v-else
+              label="可写"
+              @change="(value) => readChange2(value, { component: 'all' })"
+              name="type"
+            />
+          </el-space>
+        </template>
+        <template #default="scope">
+          <template v-if="scope.row.component">
+            <el-checkbox
+              checked
+              label="可读"
+              @change="(value) => readChange(value, scope.row)"
+              name="type"
+              v-if="
+                extendData.authormap &&
+                extendData.authormap.get(scope.row.component) &&
+                extendData.authormap.get(scope.row.component)['read'] == '1'
+              "
+            />
+            <el-checkbox
+              label="可读"
+              name="type"
+              @change="(value) => readChange(value, scope.row)"
+              v-else
+            />
+            <el-checkbox
+              checked
+              label="可写"
+              @change="(value) => readChange2(value, scope.row)"
+              name="type"
+              v-if="
+                extendData.authormap &&
+                extendData.authormap.get(scope.row.component) &&
+                extendData.authormap.get(scope.row.component)['write'] == '1'
+              "
+            />
+            <el-checkbox
+              label="可写"
+              @change="(value) => readChange2(value, scope.row)"
+              name="type"
+              v-else
+            />
+          </template>
+        </template>
+      </el-table-column>
     </template>
   </aj-table>
 </template>
@@ -31,30 +103,75 @@
     <script lang="ts" setup>
 import { SettingMenuFetchList } from "@/api/model/system/setting";
 
-import { tools_objToobj } from "@/components/jrTools";
+import { RolePushRowAuthor } from "@/api/model/system/role";
+//
+
+import { tools_objToobj, tools_objToStrMap } from "@/components/jrTools";
 import { ref, nextTick } from "vue";
 interface baseObject {
   [key: string]: any;
 }
+
 const groupsProps = {
-  value: "code",
+  value: "name",
   label: "name",
 };
+const extendData = ref<baseObject>({});
+const listUriParams = {} as baseObject;
+let listUriParamsOwnId = "";
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
+const extendRole = ref(new Map<String, String>());
+let getExtendData = (value: any) => {
+  console.log("ddddddddd", value);
+  extendData.value = value;
+  extendData.value.authormap = tools_objToStrMap(extendData.value.author);
 
-let planAreas = new Map<string, baseObject>();
-function getAllAreas(
-  areas: Array<baseObject>,
-  result: Map<string, baseObject>
-) {
-  if (areas == undefined) return;
-  for (let i = 0; i < areas.length; i++) {
-    getAllAreas(areas[i].children, result);
-    result.set(areas[i].code, { code: areas[i].code, name: areas[i].name });
+  console.log("dddd3333ddddd", extendData.value.authormap);
+};
+let readChange = (value, p: baseObject) => {
+  let tmp = [];
+  tmp[0] = p.component;
+  if (value == true) {
+    tmp[1] = "1";
+  } else {
+    tmp[1] = "0";
   }
-}
-
+  tmp[2] = "-1";
+  RolePushRowAuthor(tmp, "?roleId=" + listUriParamsOwnId)
+    .then((resdata: any) => {
+      if (tmp[0] == "all")
+        for (let [key, value] of extendData.value.authormap) {
+          value["read"] = tmp[1];
+        }
+    })
+    .catch((err: any) => {});
+};
+let readChange2 = (value, p: baseObject) => {
+  let tmp = [];
+  tmp[0] = p.component;
+  tmp[1] = "-1";
+  if (value == true) {
+    tmp[2] = "1";
+  } else {
+    tmp[2] = "0";
+  }
+  // let tmp:Array<String>;
+  // tmp.set(p.component, {});
+  // if (value == true) {
+  //   tmp[p.component].write = 1;
+  // } else {
+  //   tmp[p.component].write = 0;
+  // }
+  RolePushRowAuthor(tmp, "?roleId=" + listUriParamsOwnId)
+    .then((resdata: any) => {
+      if (tmp[0] == "all")
+        for (let [key, value] of extendData.value.authormap) {
+          value["write"] = tmp[2];
+        }
+    })
+    .catch((err: any) => {});
+};
 let cityOnChange = () => {
   formInstance.value.province = formInstance.value.groupcity[0];
   formInstance.value.city = formInstance.value.groupcity[1];
@@ -63,7 +180,14 @@ let cityOnChange = () => {
 const preSubmit = () => {
   return true;
 };
-
+const proxyMainContentFetchList = (row: baseObject) => {
+  return SettingMenuFetchList(row)
+    .then((resdata: any) => {
+      extendRole.value = resdata["extend"];
+      return resdata;
+    })
+    .catch((err: any) => {});
+};
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
@@ -87,11 +211,12 @@ const onCancelDialog = () => {
   return;
 };
 function PageLoaded(uri: baseObject, ownId: Object) {
+  tools_objToobj(uri, listUriParams);
+  console.log("gggggggggggggg", ownId);
+  listUriParamsOwnId = ownId;
   ajtable.value.PageLoaded(uri, ownId);
 }
 
-nextTick(() => {
-  PageLoaded({ ownId: "0" }, 0);
-});
+defineExpose({ PageLoaded });
 </script>
     

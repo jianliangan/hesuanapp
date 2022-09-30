@@ -16,3 +16,13 @@ export const UsersPushRow = (body: any) => {
         }
     })
 }
+export const ApiToken = (body: any) => {
+    return request({
+        url: '/system/users/token',
+        method: 'post',
+        data: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

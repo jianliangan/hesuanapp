@@ -6,4 +6,11 @@ export const SettingMenuFetchList = (query: any) => {
         params: query
     })
 }
+export const ApiSystemMenu = (query: any) => {
+    return request({
+        url: '/system/setting/getmenu',
+        method: 'get',
+        params: query
+    })
+}
 

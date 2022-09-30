@@ -1,4 +1,4 @@
-import { FetchIds } from "@/api/common"
+
 import { TreeKey } from "element-plus/es/components/tree/src/tree.type"
 import 'element-plus/theme-chalk/el-message-box.css'
 import { ElMessageBox } from 'element-plus'
@@ -6,22 +6,6 @@ export interface interface_with_sort {
     sort: number
 }
 const Get_Global_id = async (id: number) => {
-
-}
-export var tools_get_uniq_id = (getidthen: (id: number, ctx: any) => void, ctx: any) => {
-
-    FetchIds().then((response: any) => {
-        if (response.status == 200) {
-            let body = response.data
-            let id = body["id"]
-            getidthen(id, ctx)
-
-        }
-        // return 0
-    }).catch((err: any) => {
-
-    })
-
 
 }
 

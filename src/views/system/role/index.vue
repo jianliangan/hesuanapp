@@ -17,14 +17,19 @@
         <el-form-item label="角色名称">
           <el-input v-model="formInstance.roleName" />
         </el-form-item>
-        <el-form-item label="权限">
-          <el-input v-model="formInstance.author" />
+        <el-form-item label="角色权限">
+          <el-input
+            type="textarea"
+            rows="10"
+            disabled
+            v-model="formInstance.author"
+          />
         </el-form-item>
       </el-form>
     </template>
     <template v-slot:tableitem>
       <el-table-column prop="roleName" label="角色名称" />
-      <el-table-column prop="author" label="权限" />
+      <el-table-column prop="author" label="权限" class-name="truncate" />
     </template>
   </aj-table>
 </template>
@@ -96,3 +101,12 @@ nextTick(() => {
 });
 </script>
     
+<style >
+body .el-table .truncate .cell {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 20px;
+}
+</style>

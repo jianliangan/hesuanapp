@@ -77,7 +77,12 @@
       >
         <slot name="tableitem"></slot>
 
-        <el-table-column label="操作" fixed="right" width="150">
+        <el-table-column
+          label="操作"
+          fixed="right"
+          width="150"
+          v-if="props.hasOptions == true"
+        >
           <template #default="scope">
             <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)">
               <template #reference>
@@ -274,6 +279,14 @@ const props = defineProps({
     default: null,
   },
   PreInstanData: {
+    type: Function,
+    default: null,
+  },
+  hasOptions: {
+    type: Boolean,
+    default: true,
+  },
+  GetExtendData: {
     type: Function,
     default: null,
   },
@@ -539,6 +552,9 @@ const AfterSelected = async (row: any) => {
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
         pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
         tableData.value.list = resdata["list"];
+        if (props.GetExtendData) {
+          props.GetExtendData(resdata["extend"]);
+        }
         tableData.value.map = new Map<any, baseObject>();
         for (let i = 0; i < tableData.value.list.length; i++) {
           tableData.value.map.set(

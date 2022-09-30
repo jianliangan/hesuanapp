@@ -6,6 +6,7 @@
     :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName"
     :GetFormInstance="getFormInstance"
+    :GetExtendData="getExtendData"
     :OnOpenDialog="onOpenDialog"
     :OnCancelDialog="onCancelDialog"
     :HasPage="true"
@@ -23,15 +24,24 @@
         <el-form-item label="电话">
           <el-input v-model="formInstance.phone" />
         </el-form-item>
-        <el-form-item label="角色">
-          <el-input v-model="formInstance.roleId" />
-        </el-form-item>
+        <el-select v-model="formInstance.roleId" class="m-2" placeholder="角色">
+          <el-option
+            v-for="item in extendData.roles"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form>
     </template>
     <template v-slot:tableitem>
       <el-table-column prop="usersName" label="用户名称" />
 
-      <el-table-column prop="passWord" label="用户密码" />
+      <el-table-column label="角色">
+        <template #default="scope">
+          {{ extendData.rolesMap.get(scope.row.roleId)?.roleName }}
+        </template>
+      </el-table-column>
 
       <el-table-column prop="phone" label="手机号" />
     </template>
@@ -41,7 +51,7 @@
   <script lang="ts" setup>
 import { UsersFetchList, UsersPushRow } from "@/api/model/system/users";
 
-import { tools_objToobj } from "@/components/jrTools";
+import { tools_objToobj, tools_objToStrMap } from "@/components/jrTools";
 import { ref, nextTick } from "vue";
 interface baseObject {
   [key: string]: any;
@@ -52,7 +62,7 @@ const groupsProps = {
 };
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
-
+const extendData = ref<baseObject>({});
 let planAreas = new Map<string, baseObject>();
 function getAllAreas(
   areas: Array<baseObject>,
@@ -73,7 +83,12 @@ let cityOnChange = () => {
 const preSubmit = () => {
   return true;
 };
-
+let getExtendData = (value: any) => {
+  extendData.value = value;
+  extendData.value.rolesMap = tools_objToStrMap(extendData.value.roles);
+  console.log(value);
+  console.log(extendData.value.rolesMap);
+};
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
