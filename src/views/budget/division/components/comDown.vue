@@ -1,11 +1,4 @@
 <template>
-  <aj-select-dialog
-    ref="selectDialog"
-    :MainContentFetchList="SubPackageList"
-    :ClkOk="clkOk1"
-    :GetMainName="getMainName"
-    Title="分包商"
-  ></aj-select-dialog>
   <aj-hot-table
     ref="ajhottable"
     :MainContentPushRow="BudgetDivisionMachinePushRow"
@@ -24,14 +17,13 @@
     :AddComment="addComment"
     :GetComments="getComments"
     :AfterSelected="afterSelected"
-    :CellDblClick="cellDblClick"
   >
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />
       <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="subPackageName" title="分包单位" />
+
       <hot-column width="120" data="type" title="规格型号" />
       <hot-column width="120" data="unit" title="单位" />
 
@@ -60,12 +52,12 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
+
 import {
   BudgetDivisionMachinePushRow,
   BudgetDivisionMachineTree,
 } from "@/api/model/budget/division";
-import { SubPackageList } from "@/api/model/dict/subpackage";
+
 import { tools_objToobj } from "@/components/jrTools";
 
 import { ref, nextTick } from "vue";
@@ -116,19 +108,7 @@ const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
     comment: { value: "" },
   });
 };
-const clkOk1 = (rows: Array<baseObject>) => {
-  // subPackageName
-  // rows: Array<>
-  let row = rows[0];
-  let map = new Map<String, Object>();
-  map.set("subPackage", row.id);
-  map.set("subPackageName", row.name);
-  console.log("iiiiiiiii", row);
-  ajhottable.value.PageUpdateRows(map, row.name);
-};
-const cellDblClick = (cell: any) => {
-  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
-};
+
 const afterSelected = (selected: baseObject) => {
   return;
 };
@@ -154,8 +134,6 @@ const getInitHotTable = () => {
     sort: 0,
     ownId: "",
     parentId: "",
-    subPackageName: "",
-    subPackage: "",
   };
 };
 /**

@@ -1,17 +1,7 @@
 <template>
-  <el-select
-    v-model="conditionValue"
-    filterable
-    placeholder="Select"
-    @change="onchange"
-  >
-    <el-option
-      v-for="item in conditionOptions"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
-      popper-class="eloption"
-    />
+  <el-select v-model="conditionValue" filterable :placeholder="props.Placeholder" @change="onchange">
+    <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label" :value="item.value"
+      popper-class="eloption" />
   </el-select>
 </template>
 
@@ -53,6 +43,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  Placeholder: {
+    type: String,
+    default: "请选择",
+  }
 });
 const color_config_array = ["", "success", "info", "warning", "danger"];
 const ui_dialog_visible = ref(false);
@@ -107,7 +101,7 @@ defineExpose({ PageLoaded });
   margin-right: 40px;
 }
 
-.el-table >>> .header-row th {
+.el-table>>>.header-row th {
   background-color: #81d3f8 !important;
   color: #333333;
   font-size: 10px;
@@ -117,7 +111,7 @@ defineExpose({ PageLoaded });
   padding-bottom: 3px;
 }
 
-.el-table >>> td {
+.el-table>>>td {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
@@ -125,14 +119,14 @@ defineExpose({ PageLoaded });
   padding-bottom: 3px;
 }
 
-.el-table >>> td span {
+.el-table>>>td span {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
   padding: 3px;
 }
 
-.el-table >>> td .cell {
+.el-table>>>td .cell {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
@@ -140,7 +134,7 @@ defineExpose({ PageLoaded });
   margin: 3px;
 }
 
-.el-table >>> td button {
+.el-table>>>td button {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;

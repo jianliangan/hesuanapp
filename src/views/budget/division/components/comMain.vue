@@ -1,4 +1,11 @@
 <template>
+  <aj-select-dialog
+    ref="selectDialog"
+    :MainContentFetchList="MaterialsList"
+    :ClkOk="clkOk1"
+    :GetMainName="getMainNameMaterials"
+    Title="材料库"
+  ></aj-select-dialog>
   <aj-hot-table
     ref="ajhottable"
     :MainContentPushRow="BudgetDivisionPushRow"
@@ -20,6 +27,7 @@
     :AddComment="addComment"
     :GetComments="getComments"
     :AfterSelected="afterSelected"
+    :CellDblClick="cellDblClick"
   >
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
@@ -88,15 +96,16 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
-import { ProjectFetchTree } from "@/api/model/project";
+import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
+import { ProjectFetchTree } from "@/api/model/home/project";
+import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
 import {
   BudgetDivisionPushRow,
   BudgetDivisionTree,
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
-
+let selectDialog = ref<baseObject>({});
 interface baseObject {
   [key: string]: any;
 }
@@ -127,6 +136,46 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 
+// const manufacturerData = [
+//   { name: "BMW", country: "Germany", owner: "Bayerische Motoren Werke AG" },
+//   { name: "Chrysler", country: "USA", owner: "Chrysler Group LLC" },
+//   { name: "Nissan", country: "Japan", owner: "Nissan Motor Company Ltd" },
+//   { name: "Suzuki", country: "Japan", owner: "Suzuki Motor Corporation" },
+//   { name: "Toyota", country: "Japan", owner: "Toyota Motor Corporation" },
+//   { name: "Volvo", country: "Sweden", owner: "Zhejiang Geely Holding Group" },
+// ];
+
+// const columSetting = {
+//   title: "编码",
+//   type: "handsontable",
+//   handsontable: {
+//     colHeaders: ["Marque", "Country", "Parent company"],
+//     autoColumnSize: true,
+//     data: manufacturerData,
+//     getValue() {
+//       const selection = this.getSelectedLast();
+//       // Get the manufacturer name of the clicked row and ignore header
+//       // coordinates (negative values)
+//       return this.getSourceDataAtRow(Math.max(selection[0], 0)).name;
+//     },
+//   },
+// };
+const getMainNameMaterials = (item: baseObject) => {
+  return item.materialsName;
+};
+const cellDblClick = (cell: any) => {
+  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
+};
+const clkOk1 = (rows: Array<baseObject>) => {
+  // subPackageName
+  // rows: Array<>
+  let row = rows[0];
+  let map = new Map<String, Object>();
+  map.set("materialsId", row.materialsId);
+  map.set("materialsName", row.materialsName);
+  console.log("iiiiiiiii", row);
+  ajhottable.value.PageUpdateRows(map, row.materialsName);
+};
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.divisionId = value;
   return item.divisionId;

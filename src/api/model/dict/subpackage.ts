@@ -6,6 +6,14 @@ export const SubPackageList = (query: any) => {
         params: query
     })
 }
+export const SupplyUnitList = (query: any) => {
+    return request({
+        url: '/dict/supplyunit/fetch',
+        method: 'get',
+        params: query
+    })
+}
+
 export const SubPackagePushRow = (body: any) => {
     return request({
         url: '/dict/subpackage/push',

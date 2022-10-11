@@ -1,11 +1,7 @@
 <template>
   <el-container>
     <el-aside width="200px">
-      <com-left
-        ref="comleft"
-        @init="init"
-        :AfterSelected="leftAfterSelected"
-      ></com-left>
+      <com-left ref="comleft" @init="init" :AfterSelected="leftAfterSelected"></com-left>
     </el-aside>
     <el-container direction="vertical">
       <el-main>

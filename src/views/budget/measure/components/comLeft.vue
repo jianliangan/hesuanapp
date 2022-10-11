@@ -14,7 +14,7 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import { ProjectFetchTree } from "@/api/model/project";
+import { ProjectFetchTree } from "@/api/model/home/project";
 import {
   BudgetDivisionPushRow,
   BudgetDivisionTree,

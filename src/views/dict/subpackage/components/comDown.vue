@@ -116,7 +116,7 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-import { ProjectFetchList, ProjectPushRow } from "@/api/model/project";
+import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
 
 import { ReportSubpackageTree } from "@/api/model/report/subpackage";
 import { tools_objToobj } from "@/components/jrTools";

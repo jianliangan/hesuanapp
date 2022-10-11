@@ -30,13 +30,13 @@
                 extendData.authormap.get('all') &&
                 extendData.authormap.get('all')['read'] == '1'
               "
-              @change="(value) => readChange(value, { component: 'all' })"
+              @change="(value) => readChange(value, { path: 'all' })"
             />
             <el-checkbox
               v-else
               label="可读"
               name="type"
-              @change="(value) => readChange(value, { component: 'all' })"
+              @change="(value) => readChange(value, { path: 'all' })"
             />
             <el-checkbox
               v-if="
@@ -46,13 +46,13 @@
               "
               checked
               label="可写"
-              @change="(value) => readChange2(value, { component: 'all' })"
+              @change="(value) => readChange2(value, { path: 'all' })"
               name="type"
             />
             <el-checkbox
               v-else
               label="可写"
-              @change="(value) => readChange2(value, { component: 'all' })"
+              @change="(value) => readChange2(value, { path: 'all' })"
               name="type"
             />
           </el-space>
@@ -66,8 +66,8 @@
               name="type"
               v-if="
                 extendData.authormap &&
-                extendData.authormap.get(scope.row.component) &&
-                extendData.authormap.get(scope.row.component)['read'] == '1'
+                extendData.authormap.get(scope.row.path) &&
+                extendData.authormap.get(scope.row.path)['read'] == '1'
               "
             />
             <el-checkbox
@@ -83,8 +83,8 @@
               name="type"
               v-if="
                 extendData.authormap &&
-                extendData.authormap.get(scope.row.component) &&
-                extendData.authormap.get(scope.row.component)['write'] == '1'
+                extendData.authormap.get(scope.row.path) &&
+                extendData.authormap.get(scope.row.path)['write'] == '1'
               "
             />
             <el-checkbox
@@ -101,7 +101,7 @@
 </template>
     
     <script lang="ts" setup>
-import { SettingMenuFetchList } from "@/api/model/system/setting";
+import { SettingMenuFetchList } from "@/api/model/system/author";
 
 import { RolePushRowAuthor } from "@/api/model/system/role";
 //
@@ -131,7 +131,7 @@ let getExtendData = (value: any) => {
 };
 let readChange = (value, p: baseObject) => {
   let tmp = [];
-  tmp[0] = p.component;
+  tmp[0] = p.path;
   if (value == true) {
     tmp[1] = "1";
   } else {
@@ -149,7 +149,7 @@ let readChange = (value, p: baseObject) => {
 };
 let readChange2 = (value, p: baseObject) => {
   let tmp = [];
-  tmp[0] = p.component;
+  tmp[0] = p.path;
   tmp[1] = "-1";
   if (value == true) {
     tmp[2] = "1";
@@ -157,11 +157,11 @@ let readChange2 = (value, p: baseObject) => {
     tmp[2] = "0";
   }
   // let tmp:Array<String>;
-  // tmp.set(p.component, {});
+  // tmp.set(p.path, {});
   // if (value == true) {
-  //   tmp[p.component].write = 1;
+  //   tmp[p.path].write = 1;
   // } else {
-  //   tmp[p.component].write = 0;
+  //   tmp[p.path].write = 0;
   // }
   RolePushRowAuthor(tmp, "?roleId=" + listUriParamsOwnId)
     .then((resdata: any) => {

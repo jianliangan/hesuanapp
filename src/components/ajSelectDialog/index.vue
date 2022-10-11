@@ -167,7 +167,6 @@ function PageLoaded(uri: baseObject, selected: Array<String>) {
   nodes_list.value?.splice(0);
   tools_objToobj(uri, listUriParams);
   AfterSelected(uri, selected);
-  //
 }
 defineExpose({ PageLoaded });
 </script>

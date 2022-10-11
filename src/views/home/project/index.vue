@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ProjectFetchList, ProjectPushRow } from "@/api/model/project";
+import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
 import chinaAreas from "@/components/chinaareas/index";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick } from "vue";

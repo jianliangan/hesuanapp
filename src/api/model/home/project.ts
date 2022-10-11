@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 export const ProjectFetchList = (query: any) => {
     return request({
-        url: '/project/fetch',
+        url: '/home/project/fetch/',
         method: 'get',
         params: query
     })
 }
 export const ProjectPushRow = (body: any) => {
     return request({
-        url: '/project/push',
+        url: '/home/project/push',
         method: 'post',
         data: JSON.stringify(body),
         headers: {
@@ -18,7 +18,7 @@ export const ProjectPushRow = (body: any) => {
 }
 export const ProjectFetchTree = (query: any) => {
     return request({
-        url: '/project/tree',
+        url: '/home/project/tree',
         method: 'get',
         params: query
     })

@@ -40,7 +40,7 @@
 
 <script>
 import { ApiToken } from "@/api/model/system/users.ts";
-import { ApiSystemMenu } from "@/api/model/system/setting.ts";
+import { ApiSystemMenu } from "@/api/model/system/author.ts";
 export default {
   data() {
     return {
@@ -85,8 +85,10 @@ export default {
     async login() {
       var validate = await this.$refs.loginForm.validate().catch(() => {});
       if (!validate) {
+        this.islogin = false;
         return false;
       }
+      console.log("111");
       //this.$TOOL.crypto.MD5(this.form.password),
       this.islogin = true;
       var data = {
@@ -96,7 +98,10 @@ export default {
       //获取token
       let resdata = await ApiToken(data);
       var user = resdata;
-
+      if (!resdata) {
+        this.islogin = false;
+        return false;
+      }
       this.$TOOL.cookie.set("TOKEN", user.token, {
         expires: this.form.autologin ? 24 * 60 * 60 : 0,
       });
@@ -111,9 +116,8 @@ export default {
       } else {
         menu = await this.$API.demo.menu.get();
       }
-
+      this.islogin = false;
       if (menu.menu.length == 0) {
-        this.islogin = false;
         this.$alert("当前用户无任何菜单权限，请联系系统管理员", "无权限访问", {
           type: "error",
           center: true,
@@ -127,7 +131,6 @@ export default {
         path: "/",
       });
       ElMessage.success("登录成功！");
-      this.islogin = false;
     },
   },
 };

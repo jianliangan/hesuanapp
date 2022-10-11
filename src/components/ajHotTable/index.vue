@@ -144,6 +144,8 @@ function getAllAreas(
 const dblClick = () => {
   let hot = myHotTable.value.hotInstance;
   let cell = hot.getSelectedLast();
+  //let testcontainerOffset = myHotTable.value.offset(hot.rootElement);
+  console.log("aaaaaaaaaa", cell, hot.rootElement);
   if (props.CellDblClick) props.CellDblClick(cell);
 };
 const mainframe = ref<baseObject>({});
@@ -313,9 +315,7 @@ let settings = ref({
   cell: [],
 
   afterUpdateSettings: function () {
-    console.log("aaaaaaaa33");
     if (firstApiLoad) {
-      console.log("aaaaaaaa44");
       let hot = myHotTable.value.hotInstance;
 
       hot.selectCell(0, 0);
@@ -900,7 +900,7 @@ const myLoadData = (listData: Array<baseObject>) => {
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
-  console.log("aaaaaaaa22", listData);
+
   myHotTable.value.hotInstance.loadData(listData);
 
   myRender();

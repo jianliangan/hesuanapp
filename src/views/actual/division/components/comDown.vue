@@ -6,6 +6,13 @@
     :GetMainName="getMainName"
     Title="分包商"
   ></aj-select-dialog>
+  <aj-select-dialog
+    ref="selectDialog2"
+    :MainContentFetchList="SupplyUnitList"
+    :ClkOk="clkOk2"
+    :GetMainName="getMainName2"
+    Title="供应商"
+  ></aj-select-dialog>
   <aj-hot-table
     ref="ajhottable"
     :MainContentPushRow="ActualDivisionMachinePushRow"
@@ -32,6 +39,7 @@
       <hot-column width="120" data="category" title="类别" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subPackageName" title="分包单位" />
+      <hot-column width="120" data="supplyUnitName" title="供应商名称" />
       <hot-column width="120" data="type" title="规格型号" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" title="含量" />
@@ -67,6 +75,7 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
 import { SubPackageList } from "@/api/model/dict/subpackage";
+import { SupplyUnitList } from "@/api/model/dict/supplyunit";
 import {
   ActualDivisionMachinePushRow,
   ActualDivisionMachineTree,
@@ -91,6 +100,8 @@ const props = defineProps({
  * right main
  */
 let selectDialog = ref<baseObject>({});
+
+let selectDialog2 = ref<baseObject>({});
 const getMainName = (item: baseObject) => {
   return item.subPackageName;
 };
@@ -104,8 +115,22 @@ const clkOk1 = (rows: Array<baseObject>) => {
   console.log("iiiiiiiii", row);
   ajhottable.value.PageUpdateRows(map, row.subPackageName);
 };
+const getMainName2 = (item: baseObject) => {
+  return item.supplyUnitName;
+};
+const clkOk2 = (rows: Array<baseObject>) => {
+  // subPackageName
+  // rows: Array<>
+  let row = rows[0];
+  let map = new Map<String, Object>();
+  map.set("supplyUnitId", row.supplyUnitId);
+  map.set("supplyUnitName", row.supplyUnitName);
+  console.log("iiiiiiiii", row);
+  ajhottable.value.PageUpdateRows(map, row.supplyUnitName);
+};
 const cellDblClick = (cell: any) => {
   if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
+  if (cell[1] == 5) selectDialog2.value.PageLoaded("", null);
 };
 const HotCommentIndex = [4];
 registerAllModules();
@@ -160,6 +185,8 @@ const getInitHotTable = () => {
     parentId: "",
     subPackageName: "",
     subPackageId: "",
+    supplyUnitName: "",
+    supplyUnitId: "",
   };
 };
 /**
