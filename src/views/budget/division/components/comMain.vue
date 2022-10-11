@@ -1,34 +1,11 @@
 <template>
-  <aj-select-dialog
-    ref="selectDialog"
-    :MainContentFetchList="MaterialsList"
-    :ClkOk="clkOk1"
-    :GetMainName="getMainNameMaterials"
-    Title="材料库"
-  ></aj-select-dialog>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentPushRow="BudgetDivisionPushRow"
-    :MainContentFetchList="BudgetDivisionTree"
-    ImportUri="http://localhost:8001/budget/import/"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="true"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-    :CellDblClick="cellDblClick"
-  >
+  <aj-select-div ref="selectDiv" :MainContentFetchList="MaterialsList" :ClkOk="clkOk1"
+    :GetMainName="getMainNameMaterials" Title="材料库"></aj-select-div>
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow" :MainContentFetchList="BudgetDivisionTree"
+    ImportUri="http://localhost:8001/budget/import/" MaxFileNums="1" MaxFileSize="20" TableKey="name"
+    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnDel="true"
+    :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable"
+    :AddComment="addComment" :GetComments="getComments" :AfterSelected="afterSelected" :CellDblClick="cellDblClick">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -40,54 +17,13 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" type="numeric" title="含量" />
-      <hot-column
-        width="120"
-        data="workAmount"
-        type="numeric"
-        title="招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="costUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="综合单价"
-      />
-      <hot-column
-        width="120"
-        data="costSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="综合合价"
-      />
-      <hot-column
-        width="120"
-        data="manageUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费单价"
-      />
-      <hot-column
-        width="120"
-        data="profitUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润单价"
-      />
-      <hot-column
-        width="120"
-        data="manageSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费合价"
-      />
-      <hot-column
-        width="120"
-        data="profitSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润合价"
-      />
+      <hot-column width="120" data="workAmount" type="numeric" title="招标工程量" />
+      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="综合单价" />
+      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="综合合价" />
+      <hot-column width="120" data="manageUnitprice" type="numeric" :numeric-format="formatJP" title="管理费单价" />
+      <hot-column width="120" data="profitUnitprice" type="numeric" :numeric-format="formatJP" title="利润单价" />
+      <hot-column width="120" data="manageSumprice" type="numeric" :numeric-format="formatJP" title="管理费合价" />
+      <hot-column width="120" data="profitSumprice" type="numeric" :numeric-format="formatJP" title="利润合价" />
     </template>
   </aj-hot-table>
 </template>
@@ -98,14 +34,14 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
 import { ProjectFetchTree } from "@/api/model/home/project";
-import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
+import ajSelectDiv from "@/components/ajSelectDiv/index.vue";
 import {
   BudgetDivisionPushRow,
   BudgetDivisionTree,
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
-let selectDialog = ref<baseObject>({});
+let selectDiv = ref<baseObject>({});
 interface baseObject {
   [key: string]: any;
 }
@@ -163,8 +99,21 @@ const tableData2 = ref(new Array<baseObject>());
 const getMainNameMaterials = (item: baseObject) => {
   return item.materialsName;
 };
-const cellDblClick = (cell: any) => {
-  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
+const cellDblClick = (cell: any, event: any) => {
+  let element = event.target;
+  var actualTop = element.offsetTop
+  var actualLeft = element.offsetLeft
+  var current = element.offsetParent
+  while (current !== null) {
+    actualTop += current.offsetTop
+    actualLeft += current.offsetLeft
+    current = current.offsetParent
+  }
+  actualTop = actualTop + element.clientHeight;
+  console.log("eeeeeeeeeeeeeee", actualTop, event);
+  //if (cell[1] == 4)
+  selectDiv.value.PageLoaded("", null);
+  selectDiv.value.SetPosition(actualLeft, actualTop);
 };
 const clkOk1 = (rows: Array<baseObject>) => {
   // subPackageName

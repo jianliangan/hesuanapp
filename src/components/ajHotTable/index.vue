@@ -2,68 +2,23 @@
   <el-container>
     <el-header>
       <el-space>
-        <el-button
-          type="primary"
-          @click="ClkUpMove"
-          v-if="props.BtnUpMove == true"
-          >上移</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkDownMove"
-          v-if="props.BtnDownMove == true"
-          >下移</el-button
-        >
+        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
+        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
           <template #reference>
-            <el-button type="primary" v-if="props.BtnDel == true"
-              >删除</el-button
-            >
+            <el-button type="primary" v-if="props.BtnDel == true">删除</el-button>
           </template>
         </el-popconfirm>
 
-        <el-button
-          type="primary"
-          @click="ClkInsertChildren"
-          v-if="props.BtnInsertChildren == true"
-          >增加子项</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkPreInsert"
-          v-if="props.BtnInsert == true"
-          >前增加</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkBackInsert"
-          v-if="props.BtnInsert == true"
-          >后增加</el-button
-        >
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true"
-          >标记</el-button
-        >
-        <el-button
-          type="primary"
-          @click="ClkUnSign"
-          v-if="props.BtnSign == true"
-          >取消标记</el-button
-        >
-        <template
-          v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
-        >
-          <el-upload
-            :accept="props.FilesExts"
-            :maxSize="props.MaxFileSize"
-            :limit="1"
-            :data="listUriParams"
-            :show-file-list="false"
-            :action="props?.ImportUri"
-            :on-error="handleError"
-            :on-success="handleSuccess"
-            :on-change="handleChange"
-            auto-upload
-          >
+        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true">增加子项</el-button>
+        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true">前增加</el-button>
+        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true">后增加</el-button>
+        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">标记</el-button>
+        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true">取消标记</el-button>
+        <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
+          <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
+            :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
+            :on-change="handleChange" auto-upload>
             <el-button type="primary">导入</el-button>
           </el-upload>
         </template>
@@ -71,29 +26,18 @@
       </el-space>
     </el-header>
     <el-main>
-      <hot-table
-        :settings="settings"
-        v-on:dblclick="dblClick"
-        style="height: 100%"
-        ref="myHotTable"
-      >
+      <hot-table :settings="settings" v-on:dblclick="dblClick" style="height: 100%" ref="myHotTable">
         <slot name="tableitem"></slot>
       </hot-table>
     </el-main>
     <el-footer v-if="HasPage == true">
-      <el-pagination
-        layout="prev, pager, next"
-        :total="pageInfo.itemTotal"
-        :page-size="pageInfo.pageSize"
-        small
-        background
-        @current-change="HandleCurrentChange"
-      />
+      <el-pagination layout="prev, pager, next" :total="pageInfo.itemTotal" :page-size="pageInfo.pageSize" small
+        background @current-change="HandleCurrentChange" />
     </el-footer>
   </el-container>
 </template>
     
-    <script lang="ts" setup>
+<script lang="ts" setup>
 import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
@@ -141,12 +85,12 @@ function getAllAreas(
  * need to change
  * api call
  */
-const dblClick = () => {
+const dblClick = (event: any) => {
   let hot = myHotTable.value.hotInstance;
   let cell = hot.getSelectedLast();
   //let testcontainerOffset = myHotTable.value.offset(hot.rootElement);
   console.log("aaaaaaaaaa", cell, hot.rootElement);
-  if (props.CellDblClick) props.CellDblClick(cell);
+  if (props.CellDblClick) props.CellDblClick(cell, event);
 };
 const mainframe = ref<baseObject>({});
 
@@ -381,13 +325,13 @@ tableData.value.tableHeight = computed({
 
     return tt;
   },
-  set() {},
+  set() { },
 });
 tableData.value.tablePackageHeight = computed({
   get() {
     return mainframe.value.offsetHeight - 50 - 32 + "px";
   },
-  set() {},
+  set() { },
 });
 
 const HandleCurrentChange = (val: number) => {
@@ -397,17 +341,17 @@ const HandleCurrentChange = (val: number) => {
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
     "文件超过限制：文件不能超过 " +
-      props?.MaxFileNums +
-      ",单文件大小不能超过 " +
-      props?.MaxFileSize +
-      "M"
+    props?.MaxFileNums +
+    ",单文件大小不能超过 " +
+    props?.MaxFileSize +
+    "M"
   );
 };
 
 const handleChange: UploadProps["onChange"] = (
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
-) => {};
+) => { };
 const handleSuccess: UploadProps["onSuccess"] = (
   error: Error,
   uploadFile: UploadFile,
@@ -942,7 +886,7 @@ let PageLoaded = (uri: baseObject, ownId: String) => {
 };
 defineExpose({ PageLoaded, PageUpdateRows });
 </script>
-    <style scoped>
+<style scoped>
 .scTable-table {
   height: calc(100% - 50px);
 }
@@ -963,24 +907,31 @@ body .handsontable .truncate {
   text-overflow: ellipsis;
   height: 20px;
 }
+
 body .handsontable .sourceproject_1 {
   background: rgb(164, 147, 232);
 }
+
 body .handsontable .sourceproject_2 {
   background: rgb(212, 203, 252);
 }
+
 body .handsontable .sourceproject_3 {
   background: rgb(240, 236, 254);
 }
+
 body .handsontable .sourceproject_4 {
   background: rgb(246, 245, 252);
 }
+
 body .handsontable .sourceproject_5 {
   background: rgb(252, 204, 190);
 }
+
 body .handsontable .sourceproject_6 {
   background: rgb(253, 226, 218);
 }
+
 body .handsontable .sourceproject_7 {
   background: rgb(251, 242, 239);
 }
@@ -988,9 +939,11 @@ body .handsontable .sourceproject_7 {
 body .handsontable .mytagrow {
   background: yellow;
 }
+
 body .handsontable .onlyRead {
   background: rgb(227, 229, 230);
 }
+
 .el-main {
   padding: 0px;
 }

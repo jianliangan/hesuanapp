@@ -125,7 +125,7 @@ const ClkSign = () => {
   uri.distinction = searchdistinction.value;
   ajhottable.value.PageLoaded(uri, 0);
 }
-const cellDblClick = (cell: any) => {
+const cellDblClick = (cell: any, event: any) => {
   if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
 };
 const clkOk1 = (rows: Array<baseObject>) => {

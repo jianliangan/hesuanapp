@@ -1,38 +1,13 @@
 <template>
-  <aj-select-dialog
-    ref="selectDialog"
-    :MainContentFetchList="SubPackageList"
-    :ClkOk="clkOk1"
-    :GetMainName="getMainName"
-    Title="分包商"
-  ></aj-select-dialog>
-  <aj-select-dialog
-    ref="selectDialog2"
-    :MainContentFetchList="SupplyUnitList"
-    :ClkOk="clkOk2"
-    :GetMainName="getMainName2"
-    Title="供应商"
-  ></aj-select-dialog>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentPushRow="PlanDivisionMachinePushRow"
-    :MainContentFetchList="PlanDivisionMachineTree"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-    :CellDblClick="cellDblClick"
-  >
+  <aj-select-dialog ref="selectDialog" :MainContentFetchList="SubPackageList" :ClkOk="clkOk1" :GetMainName="getMainName"
+    Title="分包商"></aj-select-dialog>
+  <aj-select-dialog ref="selectDialog2" :MainContentFetchList="SupplyUnitList" :ClkOk="clkOk2"
+    :GetMainName="getMainName2" Title="供应商"></aj-select-dialog>
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanDivisionMachinePushRow"
+    :MainContentFetchList="PlanDivisionMachineTree" MaxFileNums="1" MaxFileSize="20" TableKey="name"
+    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected" :CellDblClick="cellDblClick">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
@@ -44,27 +19,10 @@
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" title="含量" />
       <hot-column width="120" data="count" type="numeric" title="数量" />
-      <hot-column
-        width="120"
-        data="price"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="市场价"
-      />
-      <hot-column
-        width="120"
-        data="combinedPrice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="合价"
-      />
+      <hot-column width="120" data="price" type="numeric" :numeric-format="formatJP" title="市场价" />
+      <hot-column width="120" data="combinedPrice" type="numeric" :numeric-format="formatJP" title="合价" />
       <hot-column width="120" data="taxRate" type="numeric" title="税率" />
-      <hot-column
-        width="120"
-        data="referenceValue"
-        type="numeric"
-        title="参考值"
-      />
+      <hot-column width="120" data="referenceValue" type="numeric" title="参考值" />
     </template>
   </aj-hot-table>
 </template>
@@ -127,7 +85,7 @@ const clkOk2 = (rows: Array<baseObject>) => {
   console.log("iiiiiiiii", row);
   ajhottable.value.PageUpdateRows(map, row.supplyUnitName);
 };
-const cellDblClick = (cell: any) => {
+const cellDblClick = (cell: any, event: any) => {
   if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
   if (cell[1] == 5) selectDialog2.value.PageLoaded("", null);
 };
