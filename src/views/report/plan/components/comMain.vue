@@ -1,25 +1,9 @@
 <template>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentFetchList="ReportProjectTree"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="false"
-    :BtnDownMove="false"
-    :BtnInsert="false"
-    :BtnSign="false"
-    :BtnDel="false"
-    :BtnInsertChildren="false"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-    :NestedHeaders="nestedHeaders"
-  >
+  <aj-hot-table ref="ajhottable" :MainContentFetchList="ReportProjectTree" MaxFileNums="1" MaxFileSize="20"
+    TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
+    :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
+    :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
+    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -31,82 +15,18 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" type="numeric" title="含量" />
-      <hot-column
-        width="120"
-        data="workAmount"
-        type="numeric"
-        title="(实际)招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="costUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(实际)综合单价"
-      />
-      <hot-column
-        width="120"
-        data="costSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(实际)综合合价"
-      />
-      <hot-column
-        width="120"
-        data="workAmount2"
-        type="numeric"
-        title="(计划)招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="costUnitprice2"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(计划)综合单价"
-      />
-      <hot-column
-        width="120"
-        data="costSumprice2"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="(计划)综合合价"
-      />
+      <hot-column width="120" data="workAmount" type="numeric" title="(实际)招标工程量" />
+      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="(实际)综合单价" />
+      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="(实际)综合合价" />
+      <hot-column width="120" data="workAmount2" type="numeric" title="(计划)招标工程量" />
+      <hot-column width="120" data="costUnitprice2" type="numeric" :numeric-format="formatJP" title="(计划)综合单价" />
+      <hot-column width="120" data="costSumprice2" type="numeric" :numeric-format="formatJP" title="(计划)综合合价" />
 
-      <hot-column
-        width="120"
-        data="manageUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费单价"
-      />
-      <hot-column
-        width="120"
-        data="profitUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润单价"
-      />
-      <hot-column
-        width="120"
-        data="manageSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="管理费合价"
-      />
-      <hot-column
-        width="120"
-        data="profitSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="利润合价"
-      />
-      <hot-column
-        width="120"
-        data="schedule"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="进度"
-      />
+      <hot-column width="120" data="manageUnitprice" type="numeric" :numeric-format="formatJP" title="管理费单价" />
+      <hot-column width="120" data="profitUnitprice" type="numeric" :numeric-format="formatJP" title="利润单价" />
+      <hot-column width="120" data="manageSumprice" type="numeric" :numeric-format="formatJP" title="管理费合价" />
+      <hot-column width="120" data="profitSumprice" type="numeric" :numeric-format="formatJP" title="利润合价" />
+      <hot-column width="120" data="schedule" type="numeric" :numeric-format="formatJP" title="进度" />
     </template>
   </aj-hot-table>
 </template>
@@ -198,7 +118,7 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.divisionId;
 };
 const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
+  if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({

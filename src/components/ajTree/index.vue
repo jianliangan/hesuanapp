@@ -1,21 +1,11 @@
 <template>
   <el-container v-loading="showasideing">
     <el-header>
-      <el-input
-        placeholder="输入关键字进行过滤"
-        v-model="filterText"
-        clearable
-      ></el-input>
+      <el-input placeholder="输入关键字进行过滤" v-model="filterText" clearable></el-input>
     </el-header>
     <el-main class="nopadding">
-      <el-tree
-        ref="mytree"
-        node-key="projectId"
-        :highlight-current="true"
-        :data="organizedata"
-        :props="props?.GroupsProps"
-        @node-click="leftRowClick"
-      ></el-tree>
+      <el-tree ref="mytree" node-key="projectId" :highlight-current="true" :data="organizedata"
+        :props="props?.GroupsProps" @node-click="leftRowClick"></el-tree>
     </el-main>
   </el-container>
 </template>
@@ -100,7 +90,7 @@ const FetchLeftTreeDataList = async (row: baseObject) => {
           mytree.value!.setCurrentKey(
             props?.GetTreePrimeId(organizedata.value[0], null)
           );
-        props.AfterSelected(organizedata.value[0]);
+        if (props.AfterSelected) props.AfterSelected(organizedata.value[0]);
       });
       showasideing.value = false;
     })

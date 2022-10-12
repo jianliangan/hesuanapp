@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-header v-if="props.HasHeader==true">
       <el-space>
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
@@ -26,7 +26,7 @@
       </el-space>
     </el-header>
     <el-main>
-      <hot-table :settings="settings" v-on:dblclick="dblClick" style="height: 100%" ref="myHotTable">
+      <hot-table :settings="settings" v-on:dblclick="dblClick" v-on:click="click" style="height: 100%" ref="myHotTable">
         <slot name="tableitem"></slot>
       </hot-table>
     </el-main>
@@ -89,8 +89,12 @@ const dblClick = (event: any) => {
   let hot = myHotTable.value.hotInstance;
   let cell = hot.getSelectedLast();
   //let testcontainerOffset = myHotTable.value.offset(hot.rootElement);
-  console.log("aaaaaaaaaa", cell, hot.rootElement);
   if (props.CellDblClick) props.CellDblClick(cell, event);
+};
+const click = (event: any) => {
+  let hot = myHotTable.value.hotInstance;
+  let cell = hot.getSelectedLast();
+  if (props.Click) props.Click(cell, event);
 };
 const mainframe = ref<baseObject>({});
 
@@ -200,7 +204,26 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+  AfterDocumentKeyDown: {
+    type: Function,
+    default: null,
+  },
+  AutoSelectFirst: {
+    type: String,
+    default: "yes",
+  },
+  HasHeader: {
+    type: Boolean,
+    default: true,
+  },
+  Click: {
+    type: Function,
+    default: null,
+  }
 });
+const myAfterDocumentKeyDown = (e: any) => {
+  if (props.AfterDocumentKeyDown) props.AfterDocumentKeyDown(e);
+}
 const myRender = () => {
   let hot = myHotTable.value.hotInstance;
   let rows = hot.countRows();
@@ -257,12 +280,20 @@ let settings = ref({
   data: [props.GetInitHotTable()],
   nestedHeaders: props.NestedHeaders,
   cell: [],
-
+  afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
+    console.log("aaaaaaaaaaa", 33);
+  }
+  ,
+  afterDocumentKeyDown: function (event: any) {
+    if (!event.target.onkeyup)
+      event.target.onkeyup = myAfterDocumentKeyDown
+  },
   afterUpdateSettings: function () {
     if (firstApiLoad) {
       let hot = myHotTable.value.hotInstance;
-
-      hot.selectCell(0, 0);
+      //AfterSelected
+      if (props.AutoSelectFirst == "yes")
+        hot.selectCell(0, 0);
       firstApiLoad = false;
     }
     myRender();

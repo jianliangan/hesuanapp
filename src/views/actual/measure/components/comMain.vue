@@ -1,25 +1,9 @@
 <template>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentPushRow="ActualMeasurePushRow"
-    :MainContentFetchList="ActualMeasureTree"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="true"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-  >
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="ActualMeasurePushRow" :MainContentFetchList="ActualMeasureTree"
+    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
+    :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -31,67 +15,15 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" type="numeric" title="含量" />
-      <hot-column
-        width="120"
-        data="workAmount"
-        type="numeric"
-        title="招标工程量"
-      />
-      <hot-column
-        width="120"
-        data="budgetWorkAmount"
-        type="numeric"
-        title="预算工程量"
-      />
-      <hot-column
-        width="120"
-        data="costUnitprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本单价"
-      />
-      <hot-column
-        width="120"
-        data="costSumprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本合价"
-      />
-      <hot-column
-        width="120"
-        data="costManprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本人工费"
-      />
-      <hot-column
-        width="120"
-        data="costMaterialsprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本材料费"
-      />
-      <hot-column
-        width="120"
-        data="costMechanicsprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本机械费"
-      />
-      <hot-column
-        width="120"
-        data="costDeviceprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="成本设备费"
-      />
-      <hot-column
-        width="120"
-        data="costSubpackageprice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="专业分包费"
-      />
+      <hot-column width="120" data="workAmount" type="numeric" title="招标工程量" />
+      <hot-column width="120" data="budgetWorkAmount" type="numeric" title="预算工程量" />
+      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="成本单价" />
+      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="成本合价" />
+      <hot-column width="120" data="costManprice" type="numeric" :numeric-format="formatJP" title="成本人工费" />
+      <hot-column width="120" data="costMaterialsprice" type="numeric" :numeric-format="formatJP" title="成本材料费" />
+      <hot-column width="120" data="costMechanicsprice" type="numeric" :numeric-format="formatJP" title="成本机械费" />
+      <hot-column width="120" data="costDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
+      <hot-column width="120" data="costSubpackageprice" type="numeric" :numeric-format="formatJP" title="专业分包费" />
     </template>
   </aj-hot-table>
 </template>
@@ -143,7 +75,7 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.measureId;
 };
 const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
+  if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({

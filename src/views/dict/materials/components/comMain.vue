@@ -1,25 +1,9 @@
 <template>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentPushRow="MaterialsPushRow"
-    :MainContentFetchList="MaterialsList"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnDel="true"
-    :BtnInsertChildren="false"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-  >
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="MaterialsPushRow" :MainContentFetchList="MaterialsList"
+    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
+    :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="false" :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected">
     <template v-slot:tableitem>
       <hot-column width="0" data="materialsId" title="" />
       <hot-column width="120" data="materialsName" title="材料名称" />
@@ -80,7 +64,7 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.materialsId;
 };
 const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
+  if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({

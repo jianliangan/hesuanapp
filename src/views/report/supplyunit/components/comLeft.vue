@@ -1,12 +1,6 @@
 <template>
-  <aj-Tree
-    ref="ajtree"
-    :LeftTreeFetchList="SubPackageList"
-    :GroupsProps="groupsProps"
-    :GetTreePrimeName="getTreePrimeName"
-    :AfterSelected="afterSelected"
-    :GetTreePrimeId="getTreePrimeId"
-  ></aj-Tree>
+  <aj-Tree ref="ajtree" :LeftTreeFetchList="SubPackageList" :GroupsProps="groupsProps"
+    :GetTreePrimeName="getTreePrimeName" :AfterSelected="afterSelected" :GetTreePrimeId="getTreePrimeId"></aj-Tree>
 </template>
 <script lang="ts" setup>
 import numbro from "numbro";
@@ -49,7 +43,7 @@ const getTreePrimeName = (item: baseObject, value: Object) => {
 };
 
 const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
+  if (props.AfterSelected) props.AfterSelected(selected);
 };
 
 /**

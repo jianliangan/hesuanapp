@@ -4,10 +4,11 @@
       <el-main>
         <div style="height: 300px">
           <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
-          <div style="height: 250px; background-color: white">
-            <span style="font-size: 14px">清单:</span>
-            <com-down ref="comdown"></com-down>
-          </div>
+
+        </div>
+        <div style="height: 250px; background-color: white">
+          <span style="font-size: 14px">清单:</span>
+          <com-down ref="comdown"></com-down>
         </div>
       </el-main>
     </el-container>

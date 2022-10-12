@@ -143,7 +143,7 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.divisionId;
 };
 const afterSelected = (selected: baseObject) => {
-  props.AfterSelected(selected);
+  if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
