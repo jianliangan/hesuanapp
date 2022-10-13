@@ -1,9 +1,12 @@
 <template>
+  <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
+  <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="ActualMeasurePushRow" :MainContentFetchList="ActualMeasureTree"
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected">
+    :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
+    :AfterDocumentKeyDown="afterDocumentKeyDown">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -25,6 +28,9 @@
       <hot-column width="120" data="costDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
       <hot-column width="120" data="costSubpackageprice" type="numeric" :numeric-format="formatJP" title="专业分包费" />
     </template>
+    <template v-slot:expendcondition>
+      <el-button @click="onSearch">查询</el-button>
+    </template>
   </aj-hot-table>
 </template>
 <script lang="ts" setup>
@@ -32,7 +38,8 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import InventorySearch from "../../../components/inventorysearch/index.vue";
+import MaterialsSearch from "../../../components/materialssearch/index.vue";
 import {
   ActualMeasurePushRow,
   ActualMeasureTree,
@@ -61,15 +68,16 @@ const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 numbro.registerLanguage(languages["zh-CN"]);
-
+let selectDiv = ref<baseObject>({});
 const formatJP = {
   pattern: "0,0.00 $",
   culture: "ja-JP",
 };
 const ajhottable = ref<baseObject>({});
-
+let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
-
+const listUriParams = {} as baseObject;
+document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;
@@ -77,6 +85,43 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
 const afterSelected = (selected: baseObject) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };
+const click = (cell: any, event: any) => {
+  if (event.target.nodeName == "TD") {
+    selectDiv.value.SetVisible(false);
+  }
+}
+const materialsSelected = (row: baseObject) => {
+  // subPackageName
+  // rows: Array<>
+
+  let map = new Map<String, Object>();
+
+  map.set("name", row.materialsName);
+  map.set("code", row.code);
+  map.set("category", row.category);
+  map.set("distinction", row.distinction);
+  map.set("unit", row.unit);
+
+  console.log("iiiiiiiii", row);
+  ajhottable.value.PageUpdateRows(map, row.materialsName);
+};
+const afterDocumentKeyDown = (event: any) => {
+  let element = event.target;
+
+  var current = element.parentNode
+  let rect = element.getBoundingClientRect();
+
+
+  selectDiv.value.PageLoaded("", null);
+  selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
+};
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  ajhottable.value.PageLoaded(listUriParams, listUriParams.ownId);
+}
+let onSearch = () => {
+  inventorysearch.value.PageLoaded(null, null);
+}
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
@@ -121,6 +166,7 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
+  tools_objToobj(uri, listUriParams);
   ajhottable.value.PageLoaded(uri, ownId);
 }
 

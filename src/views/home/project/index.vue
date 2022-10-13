@@ -1,8 +1,7 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
-    :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
-    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
-    :ExtendButtons="[{call:boRedirect,name:'单位工程',confirm:false}]">
+    :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
+    :PreSubmit="preSubmit" :BtnNew="true" :ExtendButtons="[{call:boRedirect,name:'单位工程',confirm:false}]">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="项目名称">
@@ -12,11 +11,14 @@
           <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
             @change="cityOnChange" />
         </el-form-item>
+
         <el-form-item label="开工日期">
-          <el-input v-model="formInstance.startTime" />
+          <el-date-picker v-model="formInstance.startTime" type="date" placeholder="" size="default" />
+
         </el-form-item>
         <el-form-item label="竣工日期">
-          <el-input v-model="formInstance.completeTime" />
+          <el-date-picker v-model="formInstance.completeTime" type="date" placeholder="" size="default" />
+
         </el-form-item>
         <el-form-item label="业主姓名">
           <el-input v-model="formInstance.username"></el-input>
@@ -37,7 +39,8 @@
           <el-input v-model="formInstance.contractPrice"></el-input>
         </el-form-item>
         <el-form-item label="结算时间">
-          <el-input v-model="formInstance.finalTime"></el-input>
+          <el-date-picker v-model="formInstance.finalTime" type="date" placeholder="" size="default" />
+
         </el-form-item>
         <el-form-item label="预计总收入">
           <el-input v-model="formInstance.estimateIncome"></el-input>

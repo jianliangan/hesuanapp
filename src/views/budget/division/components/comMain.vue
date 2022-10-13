@@ -1,6 +1,7 @@
 <template>
+  <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
   <div style="height: 300px">
-    <com-materials-list ref="selectDiv" :AfterSelected="materialsSelected"></com-materials-list>
+    <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
 
     <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow"
       :MainContentFetchList="BudgetDivisionTree" ImportUri="http://localhost:8001/budget/import/" MaxFileNums="1"
@@ -28,6 +29,9 @@
         <hot-column width="120" data="manageSumprice" type="numeric" :numeric-format="formatJP" title="管理费合价" />
         <hot-column width="120" data="profitSumprice" type="numeric" :numeric-format="formatJP" title="利润合价" />
       </template>
+      <template v-slot:expendcondition>
+        <el-button @click="onSearch">查询</el-button>
+      </template>
     </aj-hot-table>
   </div>
 </template>
@@ -37,9 +41,9 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
-import { ProjectFetchTree } from "@/api/model/home/project";
+import InventorySearch from "../../../components/inventorysearch/index.vue";
 //import ajSelectDiv from "@/components/ajSelectDiv/index.vue";
-import comMaterialsList from "./comMaterialsList.vue";
+import MaterialsSearch from "../../../components/materialssearch/index.vue";
 import {
   BudgetDivisionPushRow,
   BudgetDivisionTree,
@@ -47,6 +51,8 @@ import {
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 let selectDiv = ref<baseObject>({});
+let inventorysearch = ref<baseObject>({});
+const listUriParams = {} as baseObject;
 interface baseObject {
   [key: string]: any;
 }
@@ -102,9 +108,14 @@ const tableData2 = ref(new Array<baseObject>());
 //     },
 //   },
 // };
-let divonscroll = () => {
-  alert();
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  ajhottable.value.PageLoaded(listUriParams, listUriParams.ownId);
 }
+let onSearch = () => {
+  inventorysearch.value.PageLoaded(null, null);
+}
+
 const getMainNameMaterials = (item: baseObject) => {
   return item.materialsName;
 };
@@ -120,16 +131,6 @@ const afterDocumentKeyDown = (event: any) => {
   let rect = element.getBoundingClientRect();
 
 
-  // while (current !== null) {
-  //   actualTop += current.offsetTop;
-  //   actualLeft += current.offsetLeft
-  //   current = current.parentNode
-  //   //console.log("eeeeeeeeeeeeeee", current);
-  // }
-  //window.getComputedStyle(element)
-  //actualTop = actualTop + element.clientHeight;
-  // console.log("eeeeeeeeeeeeeee", window.getComputedStyle(element)["left"]);
-  //if (cell[1] == 4)
   selectDiv.value.PageLoaded("", null);
   selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
 };
@@ -195,6 +196,7 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
+  tools_objToobj(uri, listUriParams);
   ajhottable.value.PageLoaded(uri, ownId);
 }
 

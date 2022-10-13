@@ -273,7 +273,7 @@ let settings = ref({
   nestedRows: true,
   rowHeaders: true,
   colHeaders: true,
-  contextMenu: true,
+  contextMenu: false,
   comments: true,
   height: "auto",
   licenseKey: "d50be-b4e43-2af78-46c17-f1be1",

@@ -1,9 +1,12 @@
 <template>
+  <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
+  <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanMeasurePushRow" :MainContentFetchList="PlanMeasureTree"
     ImportUri="http://localhost:8001/plan/import/" MaxFileNums="1" MaxFileSize="20" TableKey="name"
     :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnDel="true"
     :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment" :GetComments="getComments" :AfterSelected="afterSelected">
+    :AddComment="addComment" :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
+    :AfterDocumentKeyDown="afterDocumentKeyDown">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -24,6 +27,8 @@
       <hot-column width="120" data="costMechanicsprice" type="numeric" :numeric-format="formatJP" title="成本机械费" />
       <hot-column width="120" data="costDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
       <hot-column width="120" data="costSubpackageprice" type="numeric" :numeric-format="formatJP" title="专业分包费" />
+    </template><template v-slot:expendcondition>
+      <el-button @click="onSearch">查询</el-button>
     </template>
   </aj-hot-table>
 </template>
@@ -32,7 +37,8 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import InventorySearch from "../../../components/inventorysearch/index.vue";
+import MaterialsSearch from "../../../components/materialssearch/index.vue";
 import { PlanMeasurePushRow, PlanMeasureTree } from "@/api/model/plan/measure";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
@@ -63,14 +69,53 @@ const formatJP = {
   pattern: "0,0.00 $",
   culture: "ja-JP",
 };
+let selectDiv = ref<baseObject>({});
 const ajhottable = ref<baseObject>({});
-
+const listUriParams = {} as baseObject;
+let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
+document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
+const materialsSelected = (row: baseObject) => {
+  // subPackageName
+  // rows: Array<>
 
+  let map = new Map<String, Object>();
+
+  map.set("name", row.materialsName);
+  map.set("code", row.code);
+  map.set("category", row.category);
+  map.set("distinction", row.distinction);
+  map.set("unit", row.unit);
+
+  console.log("iiiiiiiii", row);
+  ajhottable.value.PageUpdateRows(map, row.materialsName);
+};
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;
 };
+const click = (cell: any, event: any) => {
+  if (event.target.nodeName == "TD") {
+    selectDiv.value.SetVisible(false);
+  }
+}
+const afterDocumentKeyDown = (event: any) => {
+  let element = event.target;
+
+  var current = element.parentNode
+  let rect = element.getBoundingClientRect();
+
+
+  selectDiv.value.PageLoaded("", null);
+  selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
+};
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  ajhottable.value.PageLoaded(listUriParams, listUriParams.ownId);
+}
+let onSearch = () => {
+  inventorysearch.value.PageLoaded(null, null);
+}
 const afterSelected = (selected: baseObject) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };
@@ -118,6 +163,7 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
+  tools_objToobj(uri, listUriParams);
   ajhottable.value.PageLoaded(uri, ownId);
 }
 
