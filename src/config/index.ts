@@ -14,7 +14,7 @@ const DEFAULT_CONFIG = {
 
     //接口地址
     //API_URL: process.env.NODE_ENV === 'development' && process.env.VUE_APP_PROXY === 'true' ? "/api" : process.env.VUE_APP_API_BASEURL,
-    API_URL: 'http://localhost:8001',
+    API_URL: 'http://localhost:8002',
     //请求超时
     TIMEOUT: 1000,
 

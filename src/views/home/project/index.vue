@@ -1,29 +1,16 @@
 <template>
-  <aj-table
-    ref="ajtable"
-    :MainContentPushRow="ProjectPushRow"
-    :MainContentFetchList="ProjectFetchList"
-    :GetTreePrimeId="getTreePrimeId"
-    :GetTreePrimeName="getTreePrimeName"
-    :GetFormInstance="getFormInstance"
-    :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog"
-    :HasPage="true"
-    :PreSubmit="preSubmit"
-    :BtnNew="true"
-  >
+  <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
+    :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
+    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    :ExtendButtons="[{call:boRedirect,name:'单位工程',confirm:false}]">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="项目名称">
           <el-input v-model="formInstance.projectName" />
         </el-form-item>
         <el-form-item label="地区">
-          <el-cascader
-            v-model="formInstance.groupcity"
-            :options="chinaAreas"
-            :props="groupsProps"
-            @change="cityOnChange"
-          />
+          <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
+            @change="cityOnChange" />
         </el-form-item>
         <el-form-item label="开工日期">
           <el-input v-model="formInstance.startTime" />
@@ -68,11 +55,11 @@
       <el-table-column label="省/市区">
         <template #default="scope">
           {{
-            planAreas.get(scope.row.province)?.name +
-            "/" +
-            planAreas.get(scope.row.city)?.name +
-            "/" +
-            planAreas.get(scope.row.region)?.name
+          planAreas.get(scope.row.province)?.name +
+          "/" +
+          planAreas.get(scope.row.city)?.name +
+          "/" +
+          planAreas.get(scope.row.region)?.name
           }}
         </template>
       </el-table-column>
@@ -100,6 +87,7 @@ import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
 import chinaAreas from "@/components/chinaareas/index";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick } from "vue";
+import { useRouter } from 'vue-router'
 interface baseObject {
   [key: string]: any;
 }
@@ -108,6 +96,7 @@ const groupsProps = {
   label: "name",
 };
 const ajtable = ref<baseObject>({});
+const router = useRouter();
 const formInstance = ref<baseObject>({});
 let projectFetchList = ProjectFetchList;
 let planAreas = new Map<string, baseObject>();
@@ -147,6 +136,18 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
     return formInstance.value;
   }
 };
+const boRedirect = (row: baseObject) => {
+  router.replace({
+    path: '/home/projectindex',
+    // name: 'index',
+    query: {
+      ownId: row.projectId,
+      rootId: row.projectId,
+      cmd: "self"
+    }
+  });
+};
+
 const onOpenDialog = (type: String) => {
   if (type == "add") formInstance.value.parentId = formInstance.value.ownId;
 };

@@ -8,12 +8,7 @@
           <span>{{ $CONFIG.APP_NAME }}</span>
         </div>
         <ul v-if="!ismobile" class="nav">
-          <li
-            v-for="item in menu"
-            :key="item"
-            :class="pmenu.path == item.path ? 'active' : ''"
-            @click="showMenu(item)"
-          >
+          <li v-for="item in menu" :key="item" :class="pmenu.path == item.path ? 'active' : ''" @click="showMenu(item)">
             <el-icon>
               <component :is="item.meta.icon || 'el-icon-menu'" />
             </el-icon>
@@ -26,29 +21,20 @@
       </div>
     </header>
     <section class="aminui-wrapper">
-      <div
-        v-if="(!ismobile && nextMenu.length > 0) || !pmenu.component"
-        :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'"
-      >
+      <div v-if="(!ismobile && nextMenu.length > 0) || !pmenu.component"
+        :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div v-if="!menuIsCollapse" class="adminui-side-top">
           <h2>{{ pmenu.meta.title }}</h2>
         </div>
         <div class="adminui-side-scroll">
           <el-scrollbar>
-            <el-menu
-              :default-active="active"
-              router
-              :collapse="menuIsCollapse"
-              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED"
-            >
+            <el-menu :default-active="active" router :collapse="menuIsCollapse"
+              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
               <NavMenu :navMenus="nextMenu"></NavMenu>
             </el-menu>
           </el-scrollbar>
         </div>
-        <div
-          class="adminui-side-bottom"
-          @click="$store.commit('TOGGLE_menuIsCollapse')"
-        >
+        <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
           <el-icon>
             <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else />
@@ -62,11 +48,7 @@
         <div class="adminui-main" id="adminui-main">
           <router-view v-slot="{ Component }">
             <keep-alive :include="this.$store.state.keepAlive.keepLiveRoute">
-              <component
-                :is="Component"
-                :key="$route.fullPath"
-                v-if="$store.state.keepAlive.routeShow"
-              />
+              <component :is="Component" :key="$route.fullPath" v-if="$store.state.keepAlive.routeShow" />
             </keep-alive>
           </router-view>
           <iframe-view></iframe-view>
@@ -89,26 +71,16 @@
       </div>
     </header>
     <section class="aminui-wrapper">
-      <div
-        v-if="!ismobile"
-        :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'"
-      >
+      <div v-if="!ismobile" :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div class="adminui-side-scroll">
           <el-scrollbar>
-            <el-menu
-              :default-active="active"
-              router
-              :collapse="menuIsCollapse"
-              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED"
-            >
+            <el-menu :default-active="active" router :collapse="menuIsCollapse"
+              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
               <NavMenu :navMenus="menu"></NavMenu>
             </el-menu>
           </el-scrollbar>
         </div>
-        <div
-          class="adminui-side-bottom"
-          @click="$store.commit('TOGGLE_menuIsCollapse')"
-        >
+        <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
           <el-icon>
             <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else />
@@ -122,11 +94,7 @@
         <div class="adminui-main" id="adminui-main">
           <router-view v-slot="{ Component }">
             <keep-alive :include="this.$store.state.keepAlive.keepLiveRoute">
-              <component
-                :is="Component"
-                :key="$route.fullPath"
-                v-if="$store.state.keepAlive.routeShow"
-              />
+              <component :is="Component" :key="$route.fullPath" v-if="$store.state.keepAlive.routeShow" />
             </keep-alive>
           </router-view>
           <iframe-view></iframe-view>
@@ -146,14 +114,8 @@
       </div>
       <div class="adminui-header-right">
         <div v-if="!ismobile" class="adminui-header-menu">
-          <el-menu
-            mode="horizontal"
-            :default-active="active"
-            router
-            background-color="#222b45"
-            text-color="#fff"
-            active-text-color="var(--el-color-primary)"
-          >
+          <el-menu mode="horizontal" :default-active="active" router background-color="#222b45" text-color="#fff"
+            active-text-color="var(--el-color-primary)">
             <NavMenu :navMenus="menu"></NavMenu>
           </el-menu>
         </div>
@@ -167,11 +129,7 @@
         <div class="adminui-main" id="adminui-main">
           <router-view v-slot="{ Component }">
             <keep-alive :include="this.$store.state.keepAlive.keepLiveRoute">
-              <component
-                :is="Component"
-                :key="$route.fullPath"
-                v-if="$store.state.keepAlive.routeShow"
-              />
+              <component :is="Component" :key="$route.fullPath" v-if="$store.state.keepAlive.routeShow" />
             </keep-alive>
           </router-view>
           <iframe-view></iframe-view>
@@ -185,20 +143,15 @@
     <section class="aminui-wrapper">
       <div v-if="!ismobile" class="aminui-side-split">
         <div class="aminui-side-split-top">
-          <router-link :to="$CONFIG.DASHBOARD_URL"
-            >4444
+          <router-link :to="$CONFIG.DASHBOARD_URL">4444
             <img class="logo" :title="$CONFIG.APP_NAME" src="img/logo-r.png" />
           </router-link>
         </div>
         <div class="adminui-side-split-scroll">
           <el-scrollbar>
             <ul>
-              <li
-                v-for="item in menu"
-                :key="item"
-                :class="pmenu.path == item.path ? 'active' : ''"
-                @click="showMenu(item)"
-              >
+              <li v-for="item in menu" :key="item" :class="pmenu.path == item.path ? 'active' : ''"
+                @click="showMenu(item)">
                 <el-icon>
                   <component :is="item.meta.icon || el - icon - menu" />
                 </el-icon>
@@ -208,29 +161,20 @@
           </el-scrollbar>
         </div>
       </div>
-      <div
-        v-if="(!ismobile && nextMenu.length > 0) || !pmenu.component"
-        :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'"
-      >
+      <div v-if="(!ismobile && nextMenu.length > 0) || !pmenu.component"
+        :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div v-if="!menuIsCollapse" class="adminui-side-top">
           <h2>{{ pmenu.meta.title }}</h2>
         </div>
         <div class="adminui-side-scroll">
           <el-scrollbar>
-            <el-menu
-              :default-active="active"
-              router
-              :collapse="menuIsCollapse"
-              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED"
-            >
+            <el-menu :default-active="active" router :collapse="menuIsCollapse"
+              :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
               <NavMenu :navMenus="nextMenu"></NavMenu>
             </el-menu>
           </el-scrollbar>
         </div>
-        <div
-          class="adminui-side-bottom"
-          @click="$store.commit('TOGGLE_menuIsCollapse')"
-        >
+        <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
           <el-icon>
             <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else />
@@ -246,11 +190,7 @@
         <div class="adminui-main" id="adminui-main">
           <router-view v-slot="{ Component }">
             <keep-alive :include="this.$store.state.keepAlive.keepLiveRoute">
-              <component
-                :is="Component"
-                :key="$route.fullPath"
-                v-if="$store.state.keepAlive.routeShow"
-              />
+              <component :is="Component" :key="$route.fullPath" v-if="$store.state.keepAlive.routeShow" />
             </keep-alive>
           </router-view>
           <iframe-view></iframe-view>
@@ -264,20 +204,14 @@
       <el-icon-close />
     </el-icon>
   </div>
-  <!--
-	<div class="layout-setting" @click="openSetting">
-		<el-icon>
-			<el-icon-brush-filled />
-		</el-icon>
-	</div>-->
 
-  <el-drawer
-    title="布局实时演示"
-    v-model="settingDialog"
-    :size="400"
-    append-to-body
-    destroy-on-close
-  >
+  <!--<div class="layout-setting" @click="openSetting">
+    <el-icon>
+      <el-icon-brush-filled />
+    </el-icon>
+  </div>-->
+
+  <el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
     <setting></setting>
   </el-drawer>
 </template>

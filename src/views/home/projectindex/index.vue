@@ -1,42 +1,18 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <aj-Tree
-        ref="ajtree"
-        :LeftTreeFetchList="ProjectFetchList"
-        :GroupsProps="groupsProps"
-        :GetTreePrimeName="getTreePrimeName"
-        :AfterSelected="afterSelected"
-        :GetTreePrimeId="getTreePrimeId"
-      ></aj-Tree>
-    </el-aside>
-    <aj-table
-      ref="ajtable"
-      :MainContentPushRow="ProjectPushRow"
-      :MainContentFetchList="ProjectFetchTree"
-      :GetFormInstance="getFormInstance"
-      :OnOpenDialog="onOpenDialog"
-      :OnCancelDialog="onCancelDialog"
-      :PreSubmit="preSubmit"
-      :TableKey="tableKey"
-      :BtnNew="true"
-      :PreInstanData="preInstanData"
-    >
+
+    <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchTree"
+      :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog"
+      :PreSubmit="preSubmit" :TableKey="tableKey" :BtnNew="true" :PreInstanData="preInstanData" :DefaultBtn="false"
+      :ExtendButtons="[{call:extendDelBtn,name:'删除',confirm:true},{call:extendEditBtn,name:'编1辑',confirm:false}]"
+      :CmdFirst="true" :CellClass="cellClass">
       <template v-slot:formitem>
         <el-form :model="formInstance" label-width="120px">
           <el-form-item label="项目id">
             <el-input v-model="formInstance.ownId" disabled />
           </el-form-item>
-          <el-form-item label="项目名称">
-            <el-input v-model="formInstance.ownName" disabled />
-          </el-form-item>
           <el-form-item label="上级名称">
-            <el-cascader
-              v-model="formInstance.parentId"
-              :options="tableData2"
-              :props="groupsProps2"
-              clearable
-            />
+            <el-cascader v-model="formInstance.parentId" :options="tableData2" :props="groupsProps2" clearable />
           </el-form-item>
           <el-form-item label="名称">
             <el-input v-model="formInstance.projectName" />
@@ -56,7 +32,7 @@
 
 <script lang="ts" setup>
 import {
-  ProjectFetchList,
+
   ProjectPushRow,
   ProjectFetchTree,
 } from "@/api/model/home/project";
@@ -64,36 +40,17 @@ import {
 import { tools_objToobj } from "@/components/jrTools";
 import { ElMessage } from "element-plus";
 import { ref, nextTick } from "vue";
+import { useRouter } from 'vue-router'
 interface baseObject {
   [key: string]: any;
 }
+let listUriParams: baseObject = {};
+const router = useRouter();
+let routerParams = router.currentRoute.value.query
 /**
  * tree
  */
-const ajtree = ref<baseObject>({});
-const groupsProps = {
-  value: "projectId",
-  label: "projectName",
-  emitPath: false,
-  checkStrictly: true,
-};
-let getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.projectId = value;
 
-  return item.projectId;
-};
-let getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.projectName = value;
-  return item.projectName;
-};
-
-const afterSelected = (selected: baseObject) => {
-  //链接右侧
-  ajtable.value.PageLoaded({
-    ownId: selected.projectId,
-    rootId: selected.projectId,
-  });
-};
 /**
  * main
  */
@@ -111,13 +68,23 @@ const groupsProps2 = {
 const onOpenDialog = (type: String) => {
   tableData2.value = ajtable.value.ExportDataList();
 };
+const cellClass = (row: baseObject) => {
+  console.log("tttttttttt", row);
+  if (row.rowIndex == 0) {
+    return "golalFirstLine";
+  }
+}
 const preInstanData = () => {
-  let treenode = ajtree.value.GetCurrentNode();
-  if (!treenode) return false;
-  formInstance.value.ownId = treenode.projectId;
-  formInstance.value.ownName = treenode.projectName;
+  formInstance.value.ownId = listUriParams.ownId;
+
   return true;
 };
+const extendDelBtn = (row: baseObject) => {
+  ajtable.value.DeleteRow(row);
+}
+const extendEditBtn = (row: baseObject) => {
+  ajtable.value.ClkEditData(row);
+}
 const preSubmit = () => {
   console.log("ccccccccc", formInstance.value);
   if (
@@ -154,10 +121,21 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
 };
 
 function PageLoaded(uri: baseObject) {
-  ajtree.value.PageLoaded(uri);
+  tools_objToobj(uri, listUriParams);
+  ajtable.value.PageLoaded({
+    ownId: listUriParams.ownId,
+    rootId: listUriParams.rootId,
+    cmd: listUriParams.cmd
+  });
+
 }
 
 nextTick(() => {
-  PageLoaded({ ownId: "0" });
+  PageLoaded({ ownId: routerParams.ownId, rootId: routerParams.rootId, cmd: routerParams.cmd });
 });
 </script>
+<style>
+.golalFirstLine {
+  font-weight: bold;
+}
+</style>
