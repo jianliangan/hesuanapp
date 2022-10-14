@@ -1,18 +1,8 @@
 <template>
-  <aj-table
-    ref="ajtable"
-    :MainContentPushRow="UsersPushRow"
-    :MainContentFetchList="UsersFetchList"
-    :GetTreePrimeId="getTreePrimeId"
-    :GetTreePrimeName="getTreePrimeName"
-    :GetFormInstance="getFormInstance"
-    :GetExtendData="getExtendData"
-    :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog"
-    :HasPage="true"
-    :PreSubmit="preSubmit"
-    :BtnNew="true"
-  >
+  <aj-table ref="ajtable" :MainContentPushRow="UsersPushRow" :MainContentFetchList="UsersFetchList"
+    :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
+    :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
+    :PreSubmit="preSubmit" :BtnNew="true">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="用户名称">
@@ -24,14 +14,12 @@
         <el-form-item label="电话">
           <el-input v-model="formInstance.phone" />
         </el-form-item>
-        <el-select v-model="formInstance.roleId" class="m-2" placeholder="角色">
-          <el-option
-            v-for="item in extendData.roles"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+        <el-form-item label="角色">
+          <el-select v-model="formInstance.roleId" class="m-2">
+            <el-option v-for="item of extendData.rolesMap.values()" :key="item.roleId" :label="item.roleName"
+              :value="item.roleId" />
+          </el-select>
+        </el-form-item>
       </el-form>
     </template>
     <template v-slot:tableitem>
@@ -48,7 +36,7 @@
   </aj-table>
 </template>
   
-  <script lang="ts" setup>
+<script lang="ts" setup>
 import { UsersFetchList, UsersPushRow } from "@/api/model/system/users";
 
 import { tools_objToobj, tools_objToStrMap } from "@/components/jrTools";
@@ -84,10 +72,13 @@ const preSubmit = () => {
   return true;
 };
 let getExtendData = (value: any) => {
+
   extendData.value = value;
   extendData.value.rolesMap = tools_objToStrMap(extendData.value.roles);
-  console.log(value);
-  console.log(extendData.value.rolesMap);
+  for (let i of extendData.value.rolesMap.values()) {
+    console.log("ffffffffff", i.roleName);
+  }
+
 };
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {

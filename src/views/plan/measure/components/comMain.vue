@@ -2,10 +2,10 @@
   <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
   <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanMeasurePushRow" :MainContentFetchList="PlanMeasureTree"
-    ImportUri="http://localhost:8001/plan/import/" MaxFileNums="1" MaxFileSize="20" TableKey="name"
-    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnDel="true"
-    :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment" :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
+    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
+    :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
     :AfterDocumentKeyDown="afterDocumentKeyDown">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
@@ -74,7 +74,7 @@ const ajhottable = ref<baseObject>({});
 const listUriParams = {} as baseObject;
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
-document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
 const materialsSelected = (row: baseObject) => {
   // subPackageName
   // rows: Array<>

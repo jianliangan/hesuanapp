@@ -4,12 +4,12 @@
     <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
 
     <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow"
-      :MainContentFetchList="BudgetDivisionTree" ImportUri="http://localhost:8001/budget/import/" MaxFileNums="1"
-      MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
-      :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
-      :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-      :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-      :AfterDocumentKeyDown="afterDocumentKeyDown">
+      :MainContentFetchList="BudgetDivisionTree"
+      :ImportUri="appContext.config.globalProperties.$CONFIG.API_URL+'/budget/import/'" MaxFileNums="1" MaxFileSize="20"
+      TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true"
+      :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
+      :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
+      :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown">
       <template v-slot:tableitem>
         <hot-column width="0" data="divisionId" title="" />
         <hot-column width="120" data="projectName" title="项目相关" />
@@ -38,6 +38,7 @@
 <script lang="ts" setup>
 import numbro from "numbro";
 
+
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
@@ -49,13 +50,15 @@ import {
   BudgetDivisionTree,
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, defineProps, getCurrentInstance } from "vue";
+const { appContext } = getCurrentInstance();
 let selectDiv = ref<baseObject>({});
 let inventorysearch = ref<baseObject>({});
 const listUriParams = {} as baseObject;
 interface baseObject {
   [key: string]: any;
 }
+
 const props = defineProps({
   AfterSelected: {
     type: Function,
@@ -69,7 +72,7 @@ const props = defineProps({
 /**
  * right main
  */
-document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");

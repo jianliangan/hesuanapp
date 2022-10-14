@@ -1,13 +1,12 @@
 <template>
-  <aj-select-dialog ref="selectDialog" :MainContentFetchList="MaterialsList" :ClkOk="clkOk1"
-    :GetMainName="getMainNameMaterials" Title="材料库"></aj-select-dialog>
+
   <aj-hot-table ref="ajhottable" :MainContentFetchList="ReportSearchList" MaxFileNums="1" MaxFileSize="20"
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
     :AfterSelected="afterSelected" :CellDblClick="cellDblClick">
     <template v-slot:tableitem>
-      <hot-column width="0" data="divisionId" title="" />
+      <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
@@ -44,12 +43,12 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
 import { ReportSearchList } from "@/api/model/report/search";
-import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
+
 
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
-let selectDialog = ref("");
+
 let searchsubject = ref("");
 let searchcode = ref("");
 let searchcategory = ref("");
@@ -113,7 +112,7 @@ const getMainNameMaterials = (item: baseObject) => {
   return item.materialsName;
 };
 const ClkSign = () => {
-  //   let selectDialog = ref("");
+
   // let searchsubject = ref("");
   // let searchcode = ref("");
   // let searchcategory = ref("");
@@ -126,8 +125,7 @@ const ClkSign = () => {
   ajhottable.value.PageLoaded(uri, 0);
 }
 const cellDblClick = (cell: any, event: any) => {
-  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
-};
+}
 const clkOk1 = (rows: Array<baseObject>) => {
   // subPackageName
   // rows: Array<>
@@ -139,13 +137,14 @@ const clkOk1 = (rows: Array<baseObject>) => {
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.divisionId = value;
-  return item.divisionId;
+  if (value != null) item.id = value;
+  return item.id;
 };
 const afterSelected = (selected: baseObject) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
+
   cell.push({
     row: i,
     col: 6,

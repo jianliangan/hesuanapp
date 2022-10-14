@@ -77,7 +77,7 @@ const ajhottable = ref<baseObject>({});
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 const listUriParams = {} as baseObject;
-document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;

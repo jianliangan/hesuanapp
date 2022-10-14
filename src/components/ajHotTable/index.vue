@@ -319,7 +319,7 @@ let settings = ref({
     let hot = myHotTable.value.hotInstance;
 
     changes.forEach(([row, prop, oldValue, newValue]) => {
-      console.log("change2", oldValue, newValue);
+
       if (oldValue == newValue || (oldValue == null && newValue == "")) {
         return;
       }
@@ -336,7 +336,9 @@ let settings = ref({
       delete tmpp.children;
       tmpp.cmd = "edit";
       PushDataRow([tmpp], () => {
-        myLoadData(tableData.value.list);
+        //myLoadData(tableData.value.list);
+
+        LoadData(listUriParams);
       });
     });
   },
@@ -862,6 +864,7 @@ const myLoadData = (listData: Array<baseObject>) => {
   tableData.value.map = new Map<Object, baseObject>();
 
   if (props.GetMainPrimeId(listData[0])) {
+
     filterRow(listData, tableData.value.map, 0);
   }
   let indexi = 0;

@@ -1,26 +1,33 @@
 <template>
+
   <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
     :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
     :PreSubmit="preSubmit" :BtnNew="true" :ExtendButtons="[{call:boRedirect,name:'单位工程',confirm:false}]">
     <template v-slot:formitem>
-      <el-form :model="formInstance" label-width="120px">
-        <el-form-item label="项目名称">
+
+
+
+      <el-form :model="formInstance" ref="formEl" label-width="120px" :rules="rules">
+        <el-form-item label="项目名称" prop="projectName">
           <el-input v-model="formInstance.projectName" />
         </el-form-item>
-        <el-form-item label="地区">
+        <el-form-item label="地区" prop="groupcity">
+
           <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
             @change="cityOnChange" />
         </el-form-item>
 
-        <el-form-item label="开工日期">
-          <el-date-picker v-model="formInstance.startTime" type="date" placeholder="" size="default" />
+        <el-form-item label="开工日期" prop="startTime">
+          <el-date-picker v-model="formInstance.startTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+            placeholder="" size="default" />
 
         </el-form-item>
-        <el-form-item label="竣工日期">
-          <el-date-picker v-model="formInstance.completeTime" type="date" placeholder="" size="default" />
+        <el-form-item label="竣工日期" prop="completeTime">
+          <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+            placeholder="" size="default" />
 
         </el-form-item>
-        <el-form-item label="业主姓名">
+        <el-form-item label="业主姓名" prop="username">
           <el-input v-model="formInstance.username"></el-input>
         </el-form-item>
         <el-form-item label="业主性质">
@@ -38,8 +45,9 @@
         <el-form-item label="合同额">
           <el-input v-model="formInstance.contractPrice"></el-input>
         </el-form-item>
-        <el-form-item label="结算时间">
-          <el-date-picker v-model="formInstance.finalTime" type="date" placeholder="" size="default" />
+        <el-form-item label="结算时间" prop="finalTime">
+          <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+            placeholder="" size="default" />
 
         </el-form-item>
         <el-form-item label="预计总收入">
@@ -51,6 +59,7 @@
         <el-form-item label="计税方式">
           <el-input v-model="formInstance.taxWay"></el-input>
         </el-form-item>
+
       </el-form>
     </template>
     <template v-slot:tableitem>
@@ -89,11 +98,16 @@
 import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
 import chinaAreas from "@/components/chinaareas/index";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick } from "vue";
+import { ref, nextTick, reactive } from "vue";
 import { useRouter } from 'vue-router'
+import type { FormRules } from 'element-plus'
+
 interface baseObject {
   [key: string]: any;
 }
+////////////////
+
+////////////////
 const groupsProps = {
   value: "code",
   label: "name",
@@ -101,8 +115,56 @@ const groupsProps = {
 const ajtable = ref<baseObject>({});
 const router = useRouter();
 const formInstance = ref<baseObject>({});
+
+const formEl = ref<baseObject>({});
 let projectFetchList = ProjectFetchList;
 let planAreas = new Map<string, baseObject>();
+
+const rules = reactive<FormRules>({
+  projectName: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  groupcity: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  username: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  startTime: [
+    {
+      type: 'date',
+      required: true,
+      message: '必填项',
+      trigger: 'change',
+    },
+  ],
+  completeTime: [
+    {
+      type: 'date',
+      required: true,
+      message: '必填项',
+      trigger: 'change',
+    },
+  ],
+  finalTime: [
+    {
+      type: 'date',
+      required: true,
+      message: '必填项',
+      trigger: 'change',
+    },
+  ],
+
+  // type: [
+  //   {
+  //     type: 'array',
+  //     required: true,
+  //     message: 'Please select at least one activity type',
+  //     trigger: 'change',
+  //   },
+  // ],
+
+})
 function getAllAreas(
   areas: Array<baseObject>,
   result: Map<string, baseObject>
@@ -119,8 +181,16 @@ let cityOnChange = () => {
   formInstance.value.city = formInstance.value.groupcity[1];
   formInstance.value.region = formInstance.value.groupcity[2];
 };
-const preSubmit = () => {
-  return true;
+const preSubmit = async () => {
+
+  if (!formEl.value) return false;
+  return await formEl.value.validate((valid: any, fields: any) => {
+    if (valid) {
+      return true;
+    } else {
+      return false;
+    }
+  })
 };
 
 let getFormInstance = (cmd: string, field: string, value: any) => {

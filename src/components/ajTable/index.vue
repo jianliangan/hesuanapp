@@ -10,7 +10,7 @@
   </el-dialog>
 
   <el-container>
-    <el-header>
+    <el-header v-if="props.HasHeader==true">
       <el-space>
         <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true">新增</el-button>
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
@@ -259,7 +259,11 @@ const props = defineProps({
   CellClass: {
     type: Function,
     default: null,
-  }
+  },
+  HasHeader: {
+    type: Boolean,
+    default: true,
+  },
 });
 //
 tableData.value.tableHeight = computed({
@@ -464,13 +468,13 @@ function ClkEditData(row: baseObject) {
  * api call
  */
 
-const OnSubmit = () => {
+const OnSubmit = async () => {
   if (props.PreSubmit) {
-    if (props.PreSubmit() == false) {
+    if ((await props.PreSubmit()) == false) {
       return;
     }
   }
-
+  console.log("55555555555  666");
   SubMitLoading.value = true;
 
   if (dialogIsAdd.value == true) {

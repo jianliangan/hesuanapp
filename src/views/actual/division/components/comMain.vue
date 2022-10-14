@@ -18,16 +18,15 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" type="numeric" title="含量" />
-      <hot-column width="120" data="actualWorkAmount" type="numeric" title="招标工程量" />
+      <hot-column width="120" data="WorkAmount" type="numeric" title="招标工程量" />
       <hot-column width="120" data="budgetWorkAmount" type="numeric" title="预算工程量" />
-      <hot-column width="120" data="actualCostUnitprice" type="numeric" :numeric-format="formatJP" title="成本单价" />
-      <hot-column width="120" data="actualCostSumprice" type="numeric" :numeric-format="formatJP" title="成本合价" />
-      <hot-column width="120" data="actualCostManprice" type="numeric" :numeric-format="formatJP" title="成本人工费" />
-      <hot-column width="120" data="actualCostMaterialsprice" type="numeric" :numeric-format="formatJP" title="成本材料费" />
-      <hot-column width="120" data="actualCostMechanicsprice" type="numeric" :numeric-format="formatJP" title="成本机械费" />
-      <hot-column width="120" data="actualCostDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
-      <hot-column width="120" data="actualCostSubpackageprice" type="numeric" :numeric-format="formatJP"
-        title="专业分包费" />
+      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="成本单价" />
+      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="成本合价" />
+      <hot-column width="120" data="costManprice" type="numeric" :numeric-format="formatJP" title="成本人工费" />
+      <hot-column width="120" data="costMaterialsprice" type="numeric" :numeric-format="formatJP" title="成本材料费" />
+      <hot-column width="120" data="costMechanicsprice" type="numeric" :numeric-format="formatJP" title="成本机械费" />
+      <hot-column width="120" data="costDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
+      <hot-column width="120" data="costSubpackageprice" type="numeric" :numeric-format="formatJP" title="专业分包费" />
       <hot-column width="120" data="schedule" type="numeric" :numeric-format="formatJP" title="进度" />
     </template>
     <template v-slot:expendcondition>
@@ -77,7 +76,7 @@ const formatJP = {
   culture: "ja-JP",
 };
 const ajhottable = ref<baseObject>({});
-document.addEventListener('scroll', function (e) { selectDiv.value.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 const listUriParams = {} as baseObject;

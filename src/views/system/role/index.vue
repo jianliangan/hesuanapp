@@ -1,30 +1,13 @@
 <template>
-  <aj-table
-    ref="ajtable"
-    :MainContentPushRow="RolePushRow"
-    :MainContentFetchList="RoleFetchList"
-    :GetTreePrimeId="getTreePrimeId"
-    :GetTreePrimeName="getTreePrimeName"
-    :GetFormInstance="getFormInstance"
-    :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog"
-    :HasPage="true"
-    :PreSubmit="preSubmit"
-    :BtnNew="true"
-  >
+  <aj-table ref="ajtable" :MainContentPushRow="RolePushRow" :MainContentFetchList="RoleFetchList"
+    :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
+    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="角色名称">
           <el-input v-model="formInstance.roleName" />
         </el-form-item>
-        <el-form-item label="角色权限">
-          <el-input
-            type="textarea"
-            rows="10"
-            disabled
-            v-model="formInstance.author"
-          />
-        </el-form-item>
+
       </el-form>
     </template>
     <template v-slot:tableitem>
@@ -34,7 +17,7 @@
   </aj-table>
 </template>
     
-    <script lang="ts" setup>
+<script lang="ts" setup>
 import { RoleFetchList, RolePushRow } from "@/api/model/system/role";
 
 import { tools_objToobj } from "@/components/jrTools";
