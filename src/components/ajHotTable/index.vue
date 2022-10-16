@@ -58,6 +58,7 @@ import {
 } from "element-plus";
 import Big from "big.js";
 import { RowsSpan } from "hyperformula/typings/Span";
+import { ConfigValueTooSmallError } from "hyperformula";
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
@@ -219,6 +220,10 @@ const props = defineProps({
   Click: {
     type: Function,
     default: null,
+  },
+  AfterBeginEditing: {
+    type: Function,
+    default: null,
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -280,11 +285,16 @@ let settings = ref({
   data: [props.GetInitHotTable()],
   nestedHeaders: props.NestedHeaders,
   cell: [],
+  afterBeginEditing: (row: any, column: any) => {
+    //// console.log("aafter edit");
+    if (props.AfterBeginEditing) props.AfterBeginEditing(row, column);
+  },
   afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
     console.log("aaaaaaaaaaa", 33);
   }
   ,
   afterDocumentKeyDown: function (event: any) {
+    //console.log("key down");
     if (!event.target.onkeyup)
       event.target.onkeyup = myAfterDocumentKeyDown
   },
@@ -306,6 +316,7 @@ let settings = ref({
     preventScrolling: any,
     selectionLayerLevel: any
   ) => {
+
     let hot = myHotTable.value.hotInstance;
     let primeId = hot.getCopyableText(row, 0, row, 0);
     let tmp;
@@ -313,6 +324,7 @@ let settings = ref({
       tmp = tableData.value.map.get(primeId);
     }
     if (props.AfterSelected) props.AfterSelected(tmp);
+
   },
   afterChange: (changes: []) => {
     if (changes == null) return;

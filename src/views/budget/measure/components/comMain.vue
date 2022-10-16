@@ -6,7 +6,7 @@
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-    :AfterDocumentKeyDown="afterDocumentKeyDown">
+    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -72,6 +72,7 @@ const formatJP = {
   culture: "ja-JP",
 };
 let selectDiv = ref<baseObject>({});
+let isEditting = false;
 const ajhottable = ref<baseObject>({});
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
@@ -97,6 +98,9 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
 };
 const afterSelected = (selected: baseObject) => {
   if (props.AfterSelected) props.AfterSelected(selected);
+  isEditting = false;
+  console.log("afterSelected");
+  selectDiv.value.SetVisible(false);
 };
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);
@@ -107,16 +111,25 @@ let onSearch = () => {
 }
 const click = (cell: any, event: any) => {
   if (event.target.nodeName == "TD") {
-    selectDiv.value.SetVisible(false);
+
   }
+}
+const afterBeginEditing = (row, column) => {
+  console.log("afterBeginEditing");
+  isEditting = true;
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
 
   var current = element.parentNode
   let rect = element.getBoundingClientRect();
-
-
+  console.log("afterDocumentKeyDown");
+  if (isEditting) {
+    selectDiv.value.SetVisible(true);
+  } else {
+    return;
+  }
+  console.log("afterDocumentKeyDown 1");
   selectDiv.value.PageLoaded("", null);
   selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
 };

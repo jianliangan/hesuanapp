@@ -6,7 +6,7 @@
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-    :AfterDocumentKeyDown="afterDocumentKeyDown">
+    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="120" data="projectName" title="项目相关" />
@@ -86,9 +86,10 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.divisionId;
 };
 const click = (cell: any, event: any) => {
-  if (event.target.nodeName == "TD") {
-    selectDiv.value.SetVisible(false);
-  }
+
+}
+const afterBeginEditing = (row, column) => {
+  selectDiv.value.SetVisible(false);
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;

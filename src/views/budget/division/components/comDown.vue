@@ -5,7 +5,7 @@
       :MainContentFetchList="BudgetDivisionMachineTree" MaxFileNums="1" MaxFileSize="20" TableKey="name"
       :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true"
       :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-      :GetComments="getComments" :AfterSelected="afterSelected">
+      :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false">
       <template v-slot:tableitem>
         <hot-column width="0" data="id" title="" />
         <hot-column width="120" data="code" title="编码" />

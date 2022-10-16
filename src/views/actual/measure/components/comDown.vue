@@ -1,23 +1,9 @@
 <template>
-  <aj-hot-table
-    ref="ajhottable"
-    :MainContentPushRow="ActualMeasureMachinePushRow"
-    :MainContentFetchList="ActualMeasureMachineTree"
-    MaxFileNums="1"
-    MaxFileSize="20"
-    TableKey="name"
-    :HighlightCurrentRow="true"
-    :BtnUpMove="true"
-    :BtnDownMove="true"
-    :BtnInsert="true"
-    :BtnSign="true"
-    :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId"
-    :GetInitHotTable="getInitHotTable"
-    :AddComment="addComment"
-    :GetComments="getComments"
-    :AfterSelected="afterSelected"
-  >
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="ActualMeasureMachinePushRow"
+    :MainContentFetchList="ActualMeasureMachineTree" MaxFileNums="1" MaxFileSize="20" TableKey="name"
+    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnNew="false"
+    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
@@ -27,27 +13,10 @@
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="have" title="含量" />
       <hot-column width="120" data="count" type="numeric" title="数量" />
-      <hot-column
-        width="120"
-        data="price"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="市场价"
-      />
-      <hot-column
-        width="120"
-        data="combinedPrice"
-        type="numeric"
-        :numeric-format="formatJP"
-        title="合价"
-      />
+      <hot-column width="120" data="price" type="numeric" :numeric-format="formatJP" title="市场价" />
+      <hot-column width="120" data="combinedPrice" type="numeric" :numeric-format="formatJP" title="合价" />
       <hot-column width="120" data="taxRate" type="numeric" title="税率" />
-      <hot-column
-        width="120"
-        data="referenceValue"
-        type="numeric"
-        title="参考值"
-      />
+      <hot-column width="120" data="referenceValue" type="numeric" title="参考值" />
     </template>
   </aj-hot-table>
 </template>

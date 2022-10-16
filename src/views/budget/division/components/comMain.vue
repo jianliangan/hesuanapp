@@ -9,7 +9,8 @@
       TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true"
       :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
       :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-      :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown">
+      :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown"
+      :AfterBeginEditing="afterBeginEditing">
       <template v-slot:tableitem>
         <hot-column width="0" data="divisionId" title="" />
         <hot-column width="120" data="projectName" title="项目相关" />
@@ -124,8 +125,11 @@ const getMainNameMaterials = (item: baseObject) => {
 };
 const click = (cell: any, event: any) => {
   if (event.target.nodeName == "TD") {
-    selectDiv.value.SetVisible(false);
+
   }
+}
+const afterBeginEditing = (row, column) => {
+  selectDiv.value.SetVisible(false);
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
