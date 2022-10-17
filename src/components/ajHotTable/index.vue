@@ -323,7 +323,7 @@ let settings = ref({
     if (tableData.value.map) {
       tmp = tableData.value.map.get(primeId);
     }
-    if (props.AfterSelected) props.AfterSelected(tmp);
+    if (props.AfterSelected) props.AfterSelected(tmp, row, column, row2, column2);
 
   },
   afterChange: (changes: []) => {

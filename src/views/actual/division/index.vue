@@ -38,7 +38,7 @@ const leftAfterSelected = (selected: baseObject) => {
     selected.ownId
   );
 };
-const mainAfterSelected = (selected: baseObject) => {
+const mainAfterSelected = (selected: baseObject, row, column, row2, column2) => {
   comdown.value.PageLoaded(
     {
       ownId: selected.divisionId,

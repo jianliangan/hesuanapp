@@ -1,6 +1,6 @@
 <template>
   <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
-  <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
+  <materials-search ref="materialsSearch" :AfterSelected="materialsSelected"></materials-search>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="ActualDivisionPushRow" :MainContentFetchList="ActualDivisionTree"
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
@@ -70,13 +70,14 @@ const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 numbro.registerLanguage(languages["zh-CN"]);
-let selectDiv = ref<baseObject>({});
+let materialsSearch = ref<baseObject>({});
+let currentColumn = -1;
 const formatJP = {
   pattern: "0,0.00 $",
   culture: "ja-JP",
 };
 const ajhottable = ref<baseObject>({});
-document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 const listUriParams = {} as baseObject;
@@ -86,22 +87,33 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   return item.divisionId;
 };
 const click = (cell: any, event: any) => {
-
+  if (event.target.nodeName == "TD") {
+    materialsSearch.value.SetVisible(false);
+  }
 }
 const afterBeginEditing = (row, column) => {
-  selectDiv.value.SetVisible(false);
+  if (currentColumn == 4 || currentColumn == 2)
+    materialsSearch.value.SetVisible(false);
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
 
   var current = element.parentNode
   let rect = element.getBoundingClientRect();
+  if (currentColumn == 4 || currentColumn == 2) {
+    let tmp: baseObject = {};
+    if (currentColumn == 4) {
+      tmp.code = element.value;
+    } else {
+      tmp.materialsName = element.value;
+    }
+    materialsSearch.value.PageLoaded(tmp, null);
+    materialsSearch.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
+  }
 
-
-  selectDiv.value.PageLoaded("", null);
-  selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
 };
-const afterSelected = (selected: baseObject) => {
+const afterSelected = (selected: baseObject, row, column, row2, column2) => {
+  currentColumn = column;
   if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {

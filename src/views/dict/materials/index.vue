@@ -16,7 +16,7 @@ interface baseObject {
  * comleft
  */
 
-const mainAfterSelected = (selected: baseObject) => {
+const mainAfterSelected = (selected: baseObject, row, column, row2, column2) => {
   // comdown.value.PageLoaded({
   //   supplyUnitId: selected.supplyUnitId,
   // });

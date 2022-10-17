@@ -63,7 +63,7 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.materialsId = value;
   return item.materialsId;
 };
-const afterSelected = (selected: baseObject) => {
+const afterSelected = (selected: baseObject, row, column, row2, column2) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {

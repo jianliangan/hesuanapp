@@ -29,7 +29,7 @@ const leftAfterSelected = (selected: baseObject) => {
     selected.projectId
   );
 };
-const mainAfterSelected = (selected: baseObject) => {};
+const mainAfterSelected = (selected: baseObject, row, column, row2, column2) => { };
 /**
  * commain
  */

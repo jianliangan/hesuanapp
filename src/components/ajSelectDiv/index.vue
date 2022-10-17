@@ -149,6 +149,7 @@ function PageLoaded(uri: baseObject, selected: Array<String>) {
   ui_dialog_visible.value = true;
   nodes_list.value?.splice(0);
   tools_objToobj(uri, listUriParams);
+
   AfterSelected(uri, selected);
 }
 function SetPosition(x: int, y: int) {

@@ -74,7 +74,7 @@ const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
     comment: { value: "" },
   });
 };
-const afterSelected = (selected: baseObject) => {
+const afterSelected = (selected: baseObject, row, column, row2, column2) => {
   return;
 };
 const getComments = () => {

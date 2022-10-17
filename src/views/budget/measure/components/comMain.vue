@@ -1,6 +1,6 @@
 <template>
   <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
-  <materials-search ref="selectDiv" :AfterSelected="materialsSelected"></materials-search>
+  <materials-search ref="materialsSearch" :AfterSelected="materialsSelected"></materials-search>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetMeasurePushRow" :MainContentFetchList="BudgetMeasureTree"
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
@@ -61,7 +61,7 @@ const props = defineProps({
 /**
  * right main
  */
-document.addEventListener('scroll', function (e) { selectDiv.value?.SetVisible(false) }, true);
+document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
@@ -71,8 +71,9 @@ const formatJP = {
   pattern: "0,0.00 $",
   culture: "ja-JP",
 };
-let selectDiv = ref<baseObject>({});
+let materialsSearch = ref<baseObject>({});
 let isEditting = false;
+let currentColumn = -1;
 const ajhottable = ref<baseObject>({});
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
@@ -96,11 +97,12 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;
 };
-const afterSelected = (selected: baseObject) => {
+const afterSelected = (selected: baseObject, row, column, row2, column2) => {
+  currentColumn = column;
   if (props.AfterSelected) props.AfterSelected(selected);
   isEditting = false;
   console.log("afterSelected");
-  selectDiv.value.SetVisible(false);
+  materialsSearch.value.SetVisible(false);
 };
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);
@@ -111,12 +113,12 @@ let onSearch = () => {
 }
 const click = (cell: any, event: any) => {
   if (event.target.nodeName == "TD") {
-
+    materialsSearch.value.SetVisible(false);
   }
 }
 const afterBeginEditing = (row, column) => {
-  console.log("afterBeginEditing");
-  isEditting = true;
+  if (currentColumn == 4 || currentColumn == 2)
+    isEditting = true;
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
@@ -125,13 +127,20 @@ const afterDocumentKeyDown = (event: any) => {
   let rect = element.getBoundingClientRect();
   console.log("afterDocumentKeyDown");
   if (isEditting) {
-    selectDiv.value.SetVisible(true);
+    materialsSearch.value.SetVisible(true);
   } else {
     return;
   }
-  console.log("afterDocumentKeyDown 1");
-  selectDiv.value.PageLoaded("", null);
-  selectDiv.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
+  if (currentColumn == 4 || currentColumn == 2) {
+    let tmp: baseObject = {};
+    if (currentColumn == 4) {
+      tmp.code = element.value;
+    } else {
+      tmp.materialsName = element.value;
+    }
+    materialsSearch.value.PageLoaded(tmp, null);
+    materialsSearch.value.SetPosition(700, 300, rect.x, rect.y + rect.height);
+  }
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({

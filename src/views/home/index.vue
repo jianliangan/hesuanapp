@@ -52,7 +52,7 @@ export default {
     },
     methods: {
         goIssue() {
-            window.open("https://gitee.com/lolicode/scui/issues")
+
         }
     }
 }
