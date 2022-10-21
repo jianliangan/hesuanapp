@@ -12,7 +12,8 @@ import ajTable from './components/ajTable/index.vue'
 import ajHotTable from './components/ajHotTable/index.vue'
 import ajTree from './components/ajTree/index.vue'
 import ajSelectInput from './components/ajSelectInput/index.vue'
-import * as scIcons from './assets/icons'
+import * as ajIcons from './assets/icons'
+
 
 import { HotTable, HotColumn } from "@handsontable/vue3";
 
@@ -23,8 +24,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(`ElIcon${key}`, component)
 }
-for (let icon in scIcons) {
-    app.component(`ScIcon${icon}`, scIcons[icon as keyof typeof scIcons])
+for (let icon in ajIcons) {
+    app.component(`AjIcon${icon}`, ajIcons[icon as keyof typeof ajIcons])
 }
 app.component("ajTable", ajTable)
 app.component("ajHotTable", ajHotTable)

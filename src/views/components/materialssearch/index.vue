@@ -1,5 +1,6 @@
 <template>
-  <div v-show="ui_dialog_visible" :title="props.Title" class="aj-select-div" :style="position">
+  <!-- :style="position" -->
+  <div v-show="ui_dialog_visible" :title="props.Title" class="aj-select-div" style="height: 0px;width: 0px;" >
     <aj-hot-table ref="ajhottable" :MainContentPushRow="MaterialsPushRow" :MainContentFetchList="MaterialsList"
       MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="false" :BtnUpMove="false"
       :BtnDownMove="false" :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false"

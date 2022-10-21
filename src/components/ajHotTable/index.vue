@@ -1,7 +1,7 @@
 <template>
   <el-container>
-    <el-header v-if="props.HasHeader==true">
-      <el-space>
+    <el-header :class="[props.BtnInsertChildren == true?'headeh':'headeh2']" v-if="props.HasHeader==true">
+      <el-space class="ajtre " :class="[props.BtnInsertChildren == true?'spach':'spach2']">
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
@@ -22,9 +22,22 @@
             <el-button type="primary">导入</el-button>
           </el-upload>
         </template>
-        <slot name="expendcondition"></slot>
+        <slot name="expendcondition" ></slot>
       </el-space>
     </el-header>
+    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == true" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+      
+    </div>
+    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == false" @click="ab2">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div>
     <el-main>
       <hot-table :settings="settings" v-on:dblclick="dblClick" v-on:click="click" style="height: 100%" ref="myHotTable">
         <slot name="tableitem"></slot>
@@ -80,6 +93,30 @@ function getAllAreas(
     getAllAreas(areas[i].children, result);
     result.set(areas[i].code, { code: areas[i].code, name: areas[i].name });
   }
+}
+
+function ab() {
+  const space=document.getElementsByClassName('spach')[0];
+  const header=document.getElementsByClassName('headeh')[0];
+  if(space.offsetHeight == 0){
+    space.style.height="";
+    header.style.height="";
+  }else{
+    space.style.height="0";
+    header.style.height="0";
+  } 
+}
+
+function ab2() {
+  const space=document.getElementsByClassName('spach2')[0];
+  const header=document.getElementsByClassName('headeh2')[0];
+  if(space.offsetHeight == 0){
+    space.style.height="";
+    header.style.height="";
+  }else{
+    space.style.height="0";
+    header.style.height="0";
+  } 
 }
 
 /**
@@ -993,6 +1030,21 @@ body .handsontable .onlyRead {
 .el-main {
   padding: 0px;
 }
+
+.topbottom{
+  width: 100px;
+  position:fixed;
+  left: 95%;
+  margin-top: -30px;
+}
+.el-space {
+    overflow: hidden;
+    display: inline-flex;
+    vertical-align: top;
+}
+.el-container{
+  overflow: hidden;
+}
 </style>
-  
+
     

@@ -110,9 +110,9 @@ function PageLoaded(uri: baseObject, ownId: Object) {
   ajhottable.value.PageLoaded(uri, ownId);
 }
 
-// nextTick(() => {
-//   PageLoaded({ rootId: "0" });
-// });
+nextTick(() => {
+  PageLoaded({ rootId: "0" });
+});
 
 defineExpose({ PageLoaded });
 </script>

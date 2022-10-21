@@ -1,7 +1,14 @@
+
 <template>
   <el-container>
-    <el-aside width="200px">
-      <com-left ref="comleft" :AfterSelected="leftAfterSelected"></com-left>
+    <el-aside width="200px" class="ajtree">
+      <com-left ref="comleft" :AfterSelected="leftAfterSelected" class="adminui"></com-left>
+      <div class="adminui-side-bottom" @click="a">
+          <el-icon>
+            <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else />
+          </el-icon>
+        </div>
     </el-aside>
     <el-container direction="vertical">
       <el-main>
@@ -27,6 +34,18 @@ const leftAfterSelected = (selected: baseObject) => {
     subPackageId: selected.subPackageId,
   });
 };
+function a() {
+  const className=document.getElementsByClassName('el-aside ajtree')[0];
+  const inputa=document.getElementsByClassName('el-input__wrapper')[0];
+  console.log(className.offsetWidth)
+  if(className.offsetWidth == 200){
+    className.style.width="20px";
+    inputa.style.display="none"
+  }else{
+    className.style.width="200px";
+    inputa.style.display=""
+  }
+}
 const mainAfterSelected = (selected: baseObject) => {};
 /**
  * commain
@@ -49,4 +68,19 @@ const childMounted = () => {
 nextTick(() => {
   PageLoaded({ rootId: "0" });
 });
+
 </script>
+<style>
+element.style {
+    --el-aside-width: 0px;
+}
+.adminui{
+  height: 92.6%;
+}
+.ajtree{
+  width: 200px;
+}
+/* .nopadding{
+  display: none;
+} */
+</style>

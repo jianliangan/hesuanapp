@@ -1,8 +1,8 @@
 <template>
   <!-- 通栏布局 -->
   <template v-if="layout == 'header'">
-    <header class="adminui-header">
-      <div class="adminui-header-left">
+    <header class="adminui-header headerh">
+      <div class="adminui-header-left ajtre spaceh">
         <div class="logo-bar">
           <img class="logo" src="img/logo.png" />
           <span>{{ $CONFIG.APP_NAME }}</span>
@@ -16,7 +16,7 @@
           </li>
         </ul>
       </div>
-      <div class="adminui-header-right">
+      <div class="adminui-header-right ajtre spaceh">
         <userbar></userbar>
       </div>
     </header>
@@ -55,21 +55,33 @@
         </div>
       </div>
     </section>
+    <!-- <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div> -->
   </template>
 
   <!-- 经典布局 -->
   <template v-else-if="layout == 'menu'">
-    <header class="adminui-header">
-      <div class="adminui-header-left">
+    <header class="adminui-header headerh">
+      <div class="adminui-header-left ajtre spaceh">
         <div class="logo-bar">
           <img class="logo" src="img/logo.png" />
           <span>{{ $CONFIG.APP_NAME }}</span>
         </div>
       </div>
-      <div class="adminui-header-right">
+      <div class="adminui-header-right ajtre spaceh">
         <userbar></userbar>
       </div>
     </header>
+    <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div>
     <section class="aminui-wrapper">
       <div v-if="!ismobile" :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div class="adminui-side-scroll">
@@ -101,18 +113,24 @@
         </div>
       </div>
     </section>
+    <!-- <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div> -->
   </template>
 
   <!-- 功能坞布局 -->
   <template v-else-if="layout == 'dock'">
-    <header class="adminui-header">
-      <div class="adminui-header-left">
+    <header class="adminui-header headerh">
+      <div class="adminui-header-left ajtre spaceh">
         <div class="logo-bar">
           <img class="logo" src="img/logo.png" />
           <span>{{ $CONFIG.APP_NAME }}</span>
         </div>
       </div>
-      <div class="adminui-header-right">
+      <div class="adminui-header-right ajtre spaceh">
         <div v-if="!ismobile" class="adminui-header-menu">
           <el-menu mode="horizontal" :default-active="active" router background-color="#222b45" text-color="#fff"
             active-text-color="var(--el-color-primary)">
@@ -123,6 +141,12 @@
         <userbar></userbar>
       </div>
     </header>
+    <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div>
     <section class="aminui-wrapper">
       <div class="aminui-body el-container">
         <Tags v-if="!ismobile && layoutTags"></Tags>
@@ -136,6 +160,12 @@
         </div>
       </div>
     </section>
+    <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div>
   </template>
 
   <!-- 默认布局 -->
@@ -197,6 +227,12 @@
         </div>
       </div>
     </section>
+    <div class="adminui-side-bottom topbott" @click="ab">
+      <el-icon>
+        <el-icon-expand v-if="menuIsCollapse" />
+        <el-icon-fold v-else />
+      </el-icon>
+    </div>
   </template>
 
   <div class="main-maximize-exit" @click="exitMaximize">
@@ -224,7 +260,15 @@ import NavMenu from "./components/NavMenu.vue";
 import userbar from "./components/userbar.vue";
 import setting from "./components/setting.vue";
 import iframeView from "./components/iframeView.vue";
-
+// function ab() {
+//   const header=document.getElementsByClassName('adminui-header')[0];
+//   console.log(header.offsetHeight)
+//   if(header.offsetHeight == 0){
+//     header.style.height="56px";
+//   }else{
+//     header.style.height="0";
+//   } 
+// }
 export default {
   name: "index",
   components: {
@@ -236,6 +280,8 @@ export default {
     setting,
     iframeView,
   },
+
+  
   data() {
     return {
       settingDialog: false,
@@ -278,6 +324,18 @@ export default {
     },
   },
   methods: {
+
+    ab() {
+      const header=document.getElementsByClassName('adminui-header')[0];
+      console.log(header.offsetHeight)
+      if(header.offsetHeight == 0){
+        header.style.height="56px";
+      }else{
+        header.style.height="0";
+      } 
+    },
+
+
     openSetting() {
       this.settingDialog = true;
     },
@@ -331,3 +389,25 @@ export default {
   },
 };
 </script>
+<style>
+.topbott{
+  width: 100px;
+  position:relative;
+  left: 95%;
+  height: 10px;
+  top:10px;
+}
+.el-space {
+    overflow: hidden;
+    display: inline-flex;
+    vertical-align: top;
+}
+.adminui-header {
+    overflow: hidden;
+    height: 56px;
+    background: #222b45;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+}
+</style>

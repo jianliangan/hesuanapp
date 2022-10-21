@@ -17,6 +17,7 @@ import 'element-plus/theme-chalk/el-message.css'
 interface baseObject {
     [key: string]: any;
 }
+alert(config.API_URL)
 const service = axios.create({
     baseURL: config.API_URL, // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
@@ -35,10 +36,12 @@ service.interceptors.request.use(
         //     config.params['_'] = new Date().getTime();
         // }
         Object.assign(configtmp.headers, config.HEADERS)
+
         return configtmp;
 
     },
     error => {
+        
         ElMessage.error('发生错误：' + error)
 
         return Promise.reject(error)
