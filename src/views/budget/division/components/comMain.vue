@@ -51,7 +51,7 @@ import {
   BudgetDivisionTree,
 } from "@/api/model/budget/division";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps, getCurrentInstance } from "vue";
+import { ref, nextTick, defineProps, getCurrentInstance, onBeforeUnmount } from "vue";
 const { appContext } = getCurrentInstance();
 let materialsSearch = ref<baseObject>({});
 let inventorysearch = ref<baseObject>({});
@@ -74,7 +74,15 @@ const props = defineProps({
 /**
  * right main
  */
-document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
+function scrollHancle() {
+  materialsSearch.value?.SetVisible(false)
+}
+document.addEventListener('scroll', scrollHancle, true);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    'scroll', scrollHancle, true
+  );
+})
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");

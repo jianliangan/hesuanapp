@@ -43,7 +43,7 @@ import {
   BudgetMeasureTree,
 } from "@/api/model/budget/measure";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, defineProps, onBeforeUnmount } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -61,7 +61,15 @@ const props = defineProps({
 /**
  * right main
  */
-document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
+function scrollHancle() {
+  materialsSearch.value?.SetVisible(false)
+}
+document.addEventListener('scroll', scrollHancle, true);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    'scroll', scrollHancle, true
+  );
+})
 const HotCommentIndex = [4];
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");

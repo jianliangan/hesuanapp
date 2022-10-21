@@ -45,7 +45,7 @@ import {
   ActualMeasureTree,
 } from "@/api/model/actual/measure";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, defineProps, onBeforeUnmount } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -78,7 +78,18 @@ let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 const listUriParams = {} as baseObject;
 let currentColumn = -1;
-document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
+
+function scrollHancle() {
+  materialsSearch.value?.SetVisible(false)
+}
+document.addEventListener('scroll', scrollHancle, true);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    'scroll', scrollHancle, true
+  );
+})
+
+
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;

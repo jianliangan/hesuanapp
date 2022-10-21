@@ -26,6 +26,10 @@ export default {
 			state.theme = key
 		},
 		TOGGLE_menuIsCollapse(state: any) {
+			setTimeout(() => {
+				var ev = new Event("pagecontentCollapse", { "bubbles": true, "cancelable": true });
+				document.dispatchEvent(ev);
+			}, 300);
 			state.menuIsCollapse = !state.menuIsCollapse
 		},
 		TOGGLE_layoutTags(state: any) {

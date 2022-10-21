@@ -9,9 +9,9 @@
         </div>
         <ul v-if="!ismobile" class="nav">
           <li v-for="item in menu" :key="item" :class="pmenu.path == item.path ? 'active' : ''" @click="showMenu(item)">
-            <el-icon>
+            <!-- <el-icon>
               <component :is="item.meta.icon || 'el-icon-menu'" />
-            </el-icon>
+            </el-icon> -->
             <span>{{ item.meta.title }}</span>
           </li>
         </ul>
@@ -34,12 +34,12 @@
             </el-menu>
           </el-scrollbar>
         </div>
-        <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
+        <!-- <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
           <el-icon>
             <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else />
           </el-icon>
-        </div>
+        </div> -->
       </div>
       <Side-m v-if="ismobile"></Side-m>
       <div class="aminui-body el-container">
@@ -77,9 +77,11 @@
       </div>
     </header>
     <div class="adminui-side-bottom topbott" @click="ab">
-      <el-icon>
-        <el-icon-expand v-if="menuIsCollapse" />
-        <el-icon-fold v-else />
+      <el-icon class="">
+        <!-- <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else /> -->
+        <CaretBottom class="jianto" />
+        <!-- <CaretRight /> -->
       </el-icon>
     </div>
     <section class="aminui-wrapper">
@@ -93,10 +95,13 @@
           </el-scrollbar>
         </div>
         <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
-          <el-icon>
-            <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else />
+          <el-icon class="el-icon--left">
+            <!-- <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else /> -->
+            <CaretRight v-if="menuIsCollapse" />
+            <CaretLeft v-else />
           </el-icon>
+
         </div>
       </div>
       <Side-m v-if="ismobile"></Side-m>
@@ -253,6 +258,7 @@
 </template>
 
 <script>
+import { CaretLeft, CaretRight, CaretTop, CaretBottom } from "@element-plus/icons-vue";
 import SideM from "./components/sideM.vue";
 import Topbar from "./components/topbar.vue";
 import Tags from "./components/tags.vue";
@@ -279,9 +285,11 @@ export default {
     userbar,
     setting,
     iframeView,
+    CaretLeft,
+    CaretRight,
+    CaretTop,
+    CaretBottom,
   },
-
-  
   data() {
     return {
       settingDialog: false,
@@ -302,6 +310,8 @@ export default {
       return false; //this.$store.state.global.layoutTags
     },
     menuIsCollapse() {
+
+
       return this.$store.state.global.menuIsCollapse;
     },
   },
@@ -311,6 +321,7 @@ export default {
     var menu = this.$router.sc_getMenu();
     this.menu = this.filterUrl(menu);
     this.showThis();
+
   },
   watch: {
     $route() {
@@ -326,15 +337,17 @@ export default {
   methods: {
 
     ab() {
-      const header=document.getElementsByClassName('adminui-header')[0];
+      const header = document.getElementsByClassName('adminui-header')[0];
+      const jianto = document.getElementsByClassName('jianto')[0];
       console.log(header.offsetHeight)
-      if(header.offsetHeight == 0){
-        header.style.height="56px";
-      }else{
-        header.style.height="0";
-      } 
+      if (header.offsetHeight == 0) {
+        header.style.height = "56px";
+        jianto.style.transform = "rotate(180deg)";
+      } else {
+        header.style.height = "0";
+        jianto.style.transform = "";
+      }
     },
-
 
     openSetting() {
       this.settingDialog = true;
@@ -390,24 +403,26 @@ export default {
 };
 </script>
 <style>
-.topbott{
+.topbott {
   width: 100px;
-  position:relative;
+  position: relative;
   left: 95%;
   height: 10px;
-  top:10px;
+  top: 10px;
 }
+
 .el-space {
-    overflow: hidden;
-    display: inline-flex;
-    vertical-align: top;
+  overflow: hidden;
+  display: inline-flex;
+  vertical-align: top;
 }
+
 .adminui-header {
-    overflow: hidden;
-    height: 56px;
-    background: #222b45;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
+  overflow: hidden;
+  height: 56px;
+  background: #222b45;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

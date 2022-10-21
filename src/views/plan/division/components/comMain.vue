@@ -69,7 +69,15 @@ let currentColumn = -1;
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 numbro.registerLanguage(languages["zh-CN"]);
-document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
+function scrollHancle() {
+  materialsSearch.value?.SetVisible(false)
+}
+document.addEventListener('scroll', scrollHancle, true);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    'scroll', scrollHancle, true
+  );
+})
 const formatJP = {
   pattern: "0,0.00 $",
   culture: "ja-JP",

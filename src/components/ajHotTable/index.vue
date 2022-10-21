@@ -2,40 +2,77 @@
   <el-container>
     <el-header :class="[props.BtnInsertChildren == true?'headeh':'headeh2']" v-if="props.HasHeader==true">
       <el-space class="ajtre " :class="[props.BtnInsertChildren == true?'spach':'spach2']">
-        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
-        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
+        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">
+          <el-icon><img class="iconimgq" src="../../icons/svg/moveUp.svg" /></el-icon>
+        </el-button>
+        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/moveDown.svg" />
+          </el-icon>
+        </el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
           <template #reference>
-            <el-button type="primary" v-if="props.BtnDel == true">删除</el-button>
+            <el-button type="primary" v-if="props.BtnDel == true">
+              <el-icon>
+                <img class="iconimgq" src="../../icons/svg/delete.svg" />
+              </el-icon>
+            </el-button>
           </template>
         </el-popconfirm>
 
-        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true">增加子项</el-button>
-        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true">前增加</el-button>
-        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true">后增加</el-button>
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">标记</el-button>
-        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true">取消标记</el-button>
+        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/addChild.svg" />
+          </el-icon>
+        </el-button>
+        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/addition.svg" />
+          </el-icon>
+        </el-button>
+        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/postAddition.svg" />
+          </el-icon>
+        </el-button>
+        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/mark.svg" />
+          </el-icon>
+        </el-button>
+        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true">
+          <el-icon>
+            <img class="iconimgq" src="../../icons/svg/unMark.svg" />
+          </el-icon>
+        </el-button>
         <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
             :on-change="handleChange" auto-upload>
-            <el-button type="primary">导入</el-button>
+            <el-button type="primary">
+              <el-icon>
+                <img class="iconimgq" src="../../icons/svg/import.svg" />
+              </el-icon>
+            </el-button>
           </el-upload>
         </template>
-        <slot name="expendcondition" ></slot>
+        <slot name="expendcondition"></slot>
       </el-space>
     </el-header>
     <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == true" @click="ab">
-      <el-icon>
-        <el-icon-expand v-if="menuIsCollapse" />
-        <el-icon-fold v-else />
+      <el-icon class="">
+        <!-- <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else /> -->
+        <CaretBottom class="jianto1" />
+        <!-- <CaretRight /> -->
       </el-icon>
-      
     </div>
-    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == false" @click="ab2">
+    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == false" @click="ac">
       <el-icon>
-        <el-icon-expand v-if="menuIsCollapse" />
-        <el-icon-fold v-else />
+        <!-- <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else /> -->
+        <CaretBottom class="jianto2" />
+        <!-- <CaretRight /> -->
       </el-icon>
     </div>
     <el-main>
@@ -52,11 +89,11 @@
     
 <script lang="ts" setup>
 import numbro from "numbro";
-
+import { CaretLeft, CaretRight, CaretTop, CaretBottom } from "@element-plus/icons-vue";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import { computed, nextTick, ref, watch, defineProps, defineExpose } from "vue";
+import { computed, nextTick, ref, watch, defineProps, defineExpose, onBeforeUnmount } from "vue";
 import {
   tools_objToobj,
   tools_sort_map_loop,
@@ -96,29 +133,33 @@ function getAllAreas(
 }
 
 function ab() {
-  const space=document.getElementsByClassName('spach')[0];
-  const header=document.getElementsByClassName('headeh')[0];
-  if(space.offsetHeight == 0){
-    space.style.height="";
-    header.style.height="";
-  }else{
-    space.style.height="0";
-    header.style.height="0";
-  } 
+  const space = document.getElementsByClassName('spach')[0];
+  const header = document.getElementsByClassName('headeh')[0];
+  const jianto1 = document.getElementsByClassName('jianto1')[0];
+  if (space.offsetHeight == 0) {
+    space.style.height = "";
+    header.style.height = "";
+    jianto1.style.transform = "rotate(180deg)";
+  } else {
+    space.style.height = "0";
+    header.style.height = "0";
+    jianto1.style.transform = "";
+  }
 }
-
-function ab2() {
-  const space=document.getElementsByClassName('spach2')[0];
-  const header=document.getElementsByClassName('headeh2')[0];
-  if(space.offsetHeight == 0){
-    space.style.height="";
-    header.style.height="";
-  }else{
-    space.style.height="0";
-    header.style.height="0";
-  } 
+function ac() {
+  const space = document.getElementsByClassName('spach2')[0];
+  const header = document.getElementsByClassName('headeh2')[0];
+  const jianto1 = document.getElementsByClassName('jianto2')[0];
+  if (space.offsetHeight == 0) {
+    space.style.height = "";
+    header.style.height = "";
+    jianto1.style.transform = "rotate(180deg)";
+  } else {
+    space.style.height = "0";
+    header.style.height = "0";
+    jianto1.style.transform = "";
+  }
 }
-
 /**
  * need to change
  * api call
@@ -829,6 +870,20 @@ const allInstert = (cmd: string) => {
   ///////////////////////////////
   //////////////////////////
 };
+function pagecontentCollapseHandle() { PageResize() };
+
+
+
+document.addEventListener(
+  "pagecontentCollapse",
+  pagecontentCollapseHandle, true
+);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    "pagecontentCollapse",
+    pagecontentCollapseHandle, true
+  );
+})
 const ClkPreInsert = () => {
   allInstert("up");
 };
@@ -967,7 +1022,14 @@ let PageLoaded = (uri: baseObject, ownId: String) => {
   LoadData(uri);
   //
 };
-defineExpose({ PageLoaded, PageUpdateRows });
+let PageResize = () => {
+  let hot = myHotTable.value.hotInstance;
+  hot.updateSettings({
+    width: "100%"
+  });
+}
+
+defineExpose({ PageLoaded, PageUpdateRows, PageResize });
 </script>
 <style scoped>
 .scTable-table {
@@ -983,6 +1045,22 @@ defineExpose({ PageLoaded, PageUpdateRows });
 }
 </style>
 <style>
+.iconimgq {
+  width: 60px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.el-button {
+  background-color: #ffffff;
+  border: none;
+  padding-left: 1px;
+}
+
+.el-button:hover {
+  background-color: #ffffff;
+}
+
 body .handsontable .truncate {
   width: 250px;
   white-space: nowrap;
@@ -990,33 +1068,35 @@ body .handsontable .truncate {
   text-overflow: ellipsis;
   height: 20px;
 }
-
+.handsontable {
+  font-size: 12px;
+}
 body .handsontable .sourceproject_1 {
-  background: rgb(164, 147, 232);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_2 {
-  background: rgb(212, 203, 252);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_3 {
-  background: rgb(240, 236, 254);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_4 {
-  background: rgb(246, 245, 252);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_5 {
-  background: rgb(252, 204, 190);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_6 {
-  background: rgb(253, 226, 218);
+  background: #f0f0f0f0
 }
 
 body .handsontable .sourceproject_7 {
-  background: rgb(251, 242, 239);
+  background: #f0f0f0f0
 }
 
 body .handsontable .mytagrow {
@@ -1031,18 +1111,20 @@ body .handsontable .onlyRead {
   padding: 0px;
 }
 
-.topbottom{
+.topbottom {
   width: 100px;
-  position:fixed;
+  position: fixed;
   left: 95%;
   margin-top: -30px;
 }
+
 .el-space {
-    overflow: hidden;
-    display: inline-flex;
-    vertical-align: top;
+  overflow: hidden;
+  display: inline-flex;
+  vertical-align: top;
 }
-.el-container{
+
+.el-container {
   overflow: hidden;
 }
 </style>

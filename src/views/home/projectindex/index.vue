@@ -2,38 +2,25 @@
 <template>
   <el-container>
     <el-aside ref="menu" class="ajtree">
-      <aj-Tree
-        ref="ajtree"
-        :LeftTreeFetchList="ProjectFetchList"
-        :GroupsProps="groupsProps"
-        :GetTreePrimeName="getTreePrimeName"
-        :AfterSelected="afterSelected"
-        :GetTreePrimeId="getTreePrimeId"
-        class="adminui"
-      >
-    </aj-Tree>
-    <div class="adminui-side-bottom" @click="a">
-          <el-icon>
-            <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else />
-          </el-icon>
-        </div>
-        
+      <aj-Tree ref="ajtree" :LeftTreeFetchList="ProjectFetchList" :GroupsProps="groupsProps"
+        :GetTreePrimeName="getTreePrimeName" :AfterSelected="afterSelected" :GetTreePrimeId="getTreePrimeId"
+        class="adminui">
+      </aj-Tree>
+      <div class="adminui-side-bottom left-right" @click="a">
+        <el-icon class="">
+          <!-- <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else /> -->
+          <CaretLeft class="jianto2" />
+          <!-- <CaretRight /> -->
+        </el-icon>
+      </div>
+
     </el-aside>
-    
-        
-    <aj-table
-      ref="ajtable"
-      :MainContentPushRow="ProjectPushRow"
-      :MainContentFetchList="ProjectFetchTree"
-      :GetFormInstance="getFormInstance"
-      :OnOpenDialog="onOpenDialog"
-      :OnCancelDialog="onCancelDialog"
-      :PreSubmit="preSubmit"
-      :TableKey="tableKey"
-      :BtnNew="true"
-      :PreInstanData="preInstanData"
-    >
+
+
+    <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchTree"
+      :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog"
+      :PreSubmit="preSubmit" :TableKey="tableKey" :BtnNew="true" :PreInstanData="preInstanData">
       <template v-slot:formitem>
         <el-form :model="formInstance" label-width="120px">
           <el-form-item label="项目id">
@@ -43,12 +30,7 @@
             <el-input v-model="formInstance.ownName" disabled />
           </el-form-item>
           <el-form-item label="上级名称">
-            <el-cascader
-              v-model="formInstance.parentId"
-              :options="tableData2"
-              :props="groupsProps2"
-              clearable
-            />
+            <el-cascader v-model="formInstance.parentId" :options="tableData2" :props="groupsProps2" clearable />
           </el-form-item>
           <el-form-item label="名称">
             <el-input v-model="formInstance.projectName" />
@@ -66,19 +48,22 @@
   </el-container>
 </template>
 
-<script lang="ts" setup>
+
+<script lang="ts" setup >
 import {
   ProjectFetchList,
   ProjectPushRow,
   ProjectFetchTree,
 } from "@/api/model/home/project";
-
+import { CaretLeft, CaretRight } from "@element-plus/icons-vue";
 import { tools_objToobj } from "@/components/jrTools";
 import { ElMessage } from "element-plus";
 import { ref, nextTick } from "vue";
+
 interface baseObject {
   [key: string]: any;
 }
+
 
 /**
  * tree
@@ -90,21 +75,23 @@ const groupsProps = {
   emitPath: false,
   checkStrictly: true,
 };
-
 function a() {
-  const className=document.getElementsByClassName('el-aside ajtree')[0];
-  const inputa=document.getElementsByClassName('el-input__wrapper')[0];
-  console.log(className.offsetWidth)
-  if(className.offsetWidth == 200){
-    className.style.width="20px";
-    inputa.style.display="none"
-  }else{
-    className.style.width="200px";
-    inputa.style.display=""
+  setTimeout(() => {
+    var ev = new Event("pagecontentCollapse", { "bubbles": true, "cancelable": true });
+    document.dispatchEvent(ev);
+  }, 300);
+  const className = document.getElementsByClassName('el-aside ajtree')[0];
+  const inputa = document.getElementsByClassName('el-input__wrapper')[0];
+  const jianto = document.getElementsByClassName('jianto2')[0];
+  if (className.offsetWidth == 200) {
+    className.style.width = "20px";
+    inputa.style.display = "none";
+    jianto.style.transform = "rotate(180deg)";
+  } else {
+    className.style.width = "200px";
+    inputa.style.display = "";
+    jianto.style.transform = "";
   }
- 
-
-
 }
 
 let getTreePrimeId = (item: baseObject, value: Object) => {
@@ -130,6 +117,7 @@ const afterSelected = (selected: baseObject) => {
 
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
+
 const tableKey = "projectName";
 const tableData2 = ref(new Array<baseObject>());
 const groupsProps2 = {
@@ -195,15 +183,21 @@ nextTick(() => {
 
 <style>
 element.style {
-    --el-aside-width: 0px;
+  --el-aside-width: 0px;
 }
-.adminui{
+
+.adminui {
   height: 92.6%;
 }
-.ajtree{
+
+.ajtree {
   width: 200px;
 }
+
 /* .nopadding{
   display: none;
+} */
+/* .left-right svg{
+  transform: rotate(90deg);
 } */
 </style>

@@ -47,7 +47,7 @@ import {
   ActualDivisionTree,
 } from "@/api/model/actual/division";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, defineProps, onBeforeUnmount } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -77,7 +77,15 @@ const formatJP = {
   culture: "ja-JP",
 };
 const ajhottable = ref<baseObject>({});
-document.addEventListener('scroll', function (e) { materialsSearch.value?.SetVisible(false) }, true);
+function scrollHancle() {
+  materialsSearch.value?.SetVisible(false)
+}
+document.addEventListener('scroll', scrollHancle, true);
+onBeforeUnmount(() => {
+  document.removeEventListener(
+    'scroll', scrollHancle, true
+  );
+})
 let inventorysearch = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 const listUriParams = {} as baseObject;
