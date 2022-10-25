@@ -2,17 +2,17 @@
   <el-container>
     <el-header :class="[props.BtnInsertChildren == true?'headeh':'headeh2']" v-if="props.HasHeader==true">
       <el-space class="ajtre " :class="[props.BtnInsertChildren == true?'spach':'spach2']">
-        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">
+        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
           <el-icon><img class="iconimgq" src="../../icons/svg/moveUp.svg" /></el-icon>
         </el-button>
-        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">
+        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/moveDown.svg" />
           </el-icon>
         </el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
           <template #reference>
-            <el-button type="primary" v-if="props.BtnDel == true">
+            <el-button type="primary" v-if="props.BtnDel == true" id="bu">
               <el-icon>
                 <img class="iconimgq" src="../../icons/svg/delete.svg" />
               </el-icon>
@@ -20,27 +20,27 @@
           </template>
         </el-popconfirm>
 
-        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true">
+        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/addChild.svg" />
           </el-icon>
         </el-button>
-        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true">
+        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/addition.svg" />
           </el-icon>
         </el-button>
-        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true">
+        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/postAddition.svg" />
           </el-icon>
         </el-button>
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">
+        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/mark.svg" />
           </el-icon>
         </el-button>
-        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true">
+        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true" id="bu">
           <el-icon>
             <img class="iconimgq" src="../../icons/svg/unMark.svg" />
           </el-icon>
@@ -49,7 +49,7 @@
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
             :on-change="handleChange" auto-upload>
-            <el-button type="primary">
+            <el-button type="primary" id="bu">
               <el-icon>
                 <img class="iconimgq" src="../../icons/svg/import.svg" />
               </el-icon>
@@ -1051,13 +1051,17 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize });
   cursor: pointer;
 }
 
-.el-button {
+#bu {
   background-color: #ffffff;
   border: none;
   padding-left: 1px;
+  border-color: #ffffff;
 }
 
-.el-button:hover {
+#bu:hover {
+  background-color: #ffffff;
+}
+#bu--primary{
   background-color: #ffffff;
 }
 

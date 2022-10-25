@@ -5,12 +5,12 @@
 
     <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow"
       :MainContentFetchList="BudgetDivisionTree"
-      :ImportUri="appContext.config.globalProperties.$CONFIG.API_URL+'/budget/import/'" MaxFileNums="1" MaxFileSize="20"
-      TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true"
-      :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
-      :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-      :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown"
-      :AfterBeginEditing="afterBeginEditing">
+      :ImportUri="appContext.config.globalProperties.$CONFIG.API_URL + '/budget/import/'" MaxFileNums="1"
+      MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
+      :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
+      :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+      :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
+      :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing">
       <template v-slot:tableitem>
         <hot-column width="0" data="divisionId" title="" />
         <hot-column width="120" data="projectName" title="项目相关" />
@@ -31,7 +31,11 @@
         <hot-column width="120" data="profitSumprice" type="numeric" :numeric-format="formatJP" title="利润合价" />
       </template>
       <template v-slot:expendcondition>
-        <el-button @click="onSearch">查询</el-button>
+        <el-button @click="onSearch">
+          <el-icon>
+            <img class="iconimgq" src="../../../../icons/svg/search.svg" />
+          </el-icon>
+        </el-button>
       </template>
     </aj-hot-table>
   </div>

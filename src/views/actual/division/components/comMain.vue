@@ -30,7 +30,11 @@
       <hot-column width="120" data="schedule" type="numeric" :numeric-format="formatJP" title="进度" />
     </template>
     <template v-slot:expendcondition>
-      <el-button @click="onSearch">查询</el-button>
+      <el-button @click="onSearch">
+        <el-icon>
+          <img class="iconimgq" src="../../../../icons/svg/search.svg" />
+        </el-icon>
+      </el-button>
     </template>
   </aj-hot-table>
 </template>
