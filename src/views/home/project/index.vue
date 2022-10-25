@@ -235,3 +235,12 @@ nextTick(() => {
   PageLoaded({ ownId: "0" });
 });
 </script>
+<style>
+.el-table{
+  --el-table-header-bg-color:#409eff;
+  --el-table-header-text-color:#ffffff;
+}
+.el-table .cell{
+  padding: 0 10px;
+}
+</style>

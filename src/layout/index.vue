@@ -80,7 +80,8 @@
       <el-icon class="">
         <!-- <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else /> -->
-        <CaretBottom class="jianto" />
+            <img src="../icons/svg/fullscreen.svg" class="iconim"/>
+        <!-- <CaretBottom class="jianto" />fullscreen -->
         <!-- <CaretRight /> -->
       </el-icon>
     </div>
@@ -338,14 +339,16 @@ export default {
 
     ab() {
       const header = document.getElementsByClassName('adminui-header')[0];
-      const jianto = document.getElementsByClassName('jianto')[0];
+      const iconim = document.getElementsByClassName('iconim')[0];
       console.log(header.offsetHeight)
       if (header.offsetHeight == 0) {
         header.style.height = "56px";
-        jianto.style.transform = "rotate(180deg)";
+        iconim.style.height = "20px";
+        iconim.style.width = "20px";
       } else {
         header.style.height = "0";
-        jianto.style.transform = "";
+        iconim.style.height = "15px";
+        iconim.style.width = "15px";
       }
     },
 
@@ -424,5 +427,9 @@ export default {
   color: #fff;
   display: flex;
   justify-content: space-between;
+}
+.iconim {
+  width: 20px;
+  height: 20px;
 }
 </style>

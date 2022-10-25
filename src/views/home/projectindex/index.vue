@@ -1,39 +1,21 @@
-
 <template>
   <el-container>
-    <el-aside ref="menu" class="ajtree">
-      <aj-Tree ref="ajtree" :LeftTreeFetchList="ProjectFetchList" :GroupsProps="groupsProps"
-        :GetTreePrimeName="getTreePrimeName" :AfterSelected="afterSelected" :GetTreePrimeId="getTreePrimeId"
-        class="adminui">
-      </aj-Tree>
-      <div class="adminui-side-bottom left-right" @click="a">
-        <el-icon class="">
-          <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
-          <CaretLeft class="jianto2" />
-          <!-- <CaretRight /> -->
-        </el-icon>
-      </div>
-
-    </el-aside>
-
 
     <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchTree"
       :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog"
-      :PreSubmit="preSubmit" :TableKey="tableKey" :BtnNew="true" :PreInstanData="preInstanData">
+      :PreSubmit="preSubmit" :TableKey="tableKey" :BtnNew="true" :PreInstanData="preInstanData" :DefaultBtn="false"
+      :ExtendButtons="[{ call: extendDelBtn, name: '删除', confirm: true }, { call: extendEditBtn, name: '编1辑', confirm: false }]"
+      :CmdFirst="true" :CellClass="cellClass">
       <template v-slot:formitem>
-        <el-form :model="formInstance" label-width="120px">
-          <el-form-item label="项目id">
-            <el-input v-model="formInstance.ownId" disabled />
+        <el-form :model="formInstance" ref="formEl" label-width="120px" :rules="rules">
+          <el-form-item label="项目id" style="display:none" prop="ownId">
+            <el-input v-model="formInstance.ownId" />
           </el-form-item>
-          <el-form-item label="项目名称">
-            <el-input v-model="formInstance.ownName" disabled />
-          </el-form-item>
-          <el-form-item label="上级名称">
+          <el-form-item label="上级名称" prop="parentId">
             <el-cascader v-model="formInstance.parentId" :options="tableData2" :props="groupsProps2" clearable />
           </el-form-item>
-          <el-form-item label="名称">
-            <el-input v-model="formInstance.projectName" />
+          <el-form-item label="名称" prop="projectName">
+            <el-input v-model="formInstance.projectName" prop="projectName" />
           </el-form-item>
           <el-form-item label="序号">
             <el-input v-model="formInstance.sort" />
@@ -48,76 +30,34 @@
   </el-container>
 </template>
 
-
-<script lang="ts" setup >
+<script lang="ts" setup>
 import {
-  ProjectFetchList,
+
   ProjectPushRow,
   ProjectFetchTree,
 } from "@/api/model/home/project";
-import { CaretLeft, CaretRight } from "@element-plus/icons-vue";
+
 import { tools_objToobj } from "@/components/jrTools";
 import { ElMessage } from "element-plus";
-import { ref, nextTick } from "vue";
-
+import { ref, nextTick, reactive } from "vue";
+import { useRouter } from 'vue-router'
+import type { FormRules } from 'element-plus'
 interface baseObject {
   [key: string]: any;
 }
-
-
+let listUriParams: baseObject = {};
+const router = useRouter();
+let routerParams = router.currentRoute.value.query
 /**
  * tree
  */
-const ajtree = ref<baseObject>({});
-const groupsProps = {
-  value: "projectId",
-  label: "projectName",
-  emitPath: false,
-  checkStrictly: true,
-};
-function a() {
-  setTimeout(() => {
-    var ev = new Event("pagecontentCollapse", { "bubbles": true, "cancelable": true });
-    document.dispatchEvent(ev);
-  }, 300);
-  const className = document.getElementsByClassName('el-aside ajtree')[0];
-  const inputa = document.getElementsByClassName('el-input__wrapper')[0];
-  const jianto = document.getElementsByClassName('jianto2')[0];
-  if (className.offsetWidth == 200) {
-    className.style.width = "20px";
-    inputa.style.display = "none";
-    jianto.style.transform = "rotate(180deg)";
-  } else {
-    className.style.width = "200px";
-    inputa.style.display = "";
-    jianto.style.transform = "";
-  }
-}
 
-let getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.projectId = value;
-
-  return item.projectId;
-};
-let getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.projectName = value;
-  return item.projectName;
-};
-
-const afterSelected = (selected: baseObject) => {
-  //链接右侧
-  ajtable.value.PageLoaded({
-    ownId: selected.projectId,
-    rootId: selected.projectId,
-  });
-};
 /**
  * main
  */
-
+const formEl = ref<baseObject>({});
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
-
 const tableKey = "projectName";
 const tableData2 = ref(new Array<baseObject>());
 const groupsProps2 = {
@@ -129,27 +69,61 @@ const groupsProps2 = {
 const onOpenDialog = (type: String) => {
   tableData2.value = ajtable.value.ExportDataList();
 };
+const cellClass = (row: baseObject) => {
+  console.log("tttttttttt", row);
+  if (row.rowIndex == 0) {
+    return "golalFirstLine";
+  }
+}
+const rules = reactive<FormRules>({
+  ownId: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  projectName: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  parentId: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
 
+})
 const preInstanData = () => {
-  let treenode = ajtree.value.GetCurrentNode();
-  if (!treenode) return false;
-  formInstance.value.ownId = treenode.projectId;
-  formInstance.value.ownName = treenode.projectName;
+  formInstance.value.ownId = listUriParams.ownId;
+
   return true;
 };
-const preSubmit = () => {
-  console.log("ccccccccc", formInstance.value);
-  if (
-    formInstance.value.parentId &&
-    formInstance.value.parentId == formInstance.value.projectId
-  ) {
-    ElMessage.error("上级节点不能等于自己");
-    return false;
-  }
-  if (!formInstance.value.parentId) {
-    formInstance.value.parentId = formInstance.value.ownId;
-  }
-  return true;
+const extendDelBtn = (row: baseObject) => {
+  ajtable.value.DeleteRow(row);
+}
+const extendEditBtn = (row: baseObject) => {
+  ajtable.value.ClkEditData(row);
+}
+const preSubmit = async () => {
+
+  if (!formEl.value) return false;
+  return await formEl.value.validate((valid: any, fields: any) => {
+
+    if (valid) {
+      if (
+        formInstance.value.parentId &&
+        formInstance.value.parentId == formInstance.value.projectId
+      ) {
+        ElMessage.error("上级节点不能等于自己");
+        return false;
+      }
+      if (!formInstance.value.parentId) {
+        formInstance.value.parentId = formInstance.value.ownId;
+      }
+      return true;
+    } else {
+      alert("有必填项没填");
+      return false;
+    }
+  })
+
+
+
+
 };
 const onCancelDialog = () => {
   return;
@@ -173,31 +147,21 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
 };
 
 function PageLoaded(uri: baseObject) {
-  ajtree.value.PageLoaded(uri);
+  tools_objToobj(uri, listUriParams);
+  ajtable.value.PageLoaded({
+    ownId: listUriParams.ownId,
+    rootId: listUriParams.rootId,
+    cmd: listUriParams.cmd
+  });
+
 }
 
 nextTick(() => {
-  PageLoaded({ ownId: "0" });
+  PageLoaded({ ownId: routerParams.ownId, rootId: routerParams.rootId, cmd: routerParams.cmd });
 });
 </script>
-
 <style>
-element.style {
-  --el-aside-width: 0px;
+.golalFirstLine {
+  font-weight: bold;
 }
-
-.adminui {
-  height: 92.6%;
-}
-
-.ajtree {
-  width: 200px;
-}
-
-/* .nopadding{
-  display: none;
-} */
-/* .left-right svg{
-  transform: rotate(90deg);
-} */
 </style>
