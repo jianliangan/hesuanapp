@@ -6,30 +6,30 @@
     :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
-      <hot-column width="120" data="projectName" title="项目相关" />
+      <hot-column width="150" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="have" type="numeric" title="含量" />
+      <hot-column width="90" data="have" type="numeric" title="含量" />
 
-      <hot-column width="120" data="workAmount" type="numeric" title="招标工程量" />
-      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="综合单价" />
-      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="综合合价" />
-      <hot-column width="120" data="workAmount2" type="numeric" title="招标工程量" />
-      <hot-column width="120" data="costUnitprice2" type="numeric" :numeric-format="formatJP" title="综合单价" />
-      <hot-column width="120" data="costSumprice2" type="numeric" :numeric-format="formatJP" title="综合合价" />
-      <hot-column width="120" data="manageUnitprice" type="numeric" :numeric-format="formatJP" title="管理费单价" />
-      <hot-column width="120" data="profitUnitprice" type="numeric" :numeric-format="formatJP" title="利润单价" />
-      <hot-column width="120" data="manageSumprice" type="numeric" :numeric-format="formatJP" title="管理费合价" />
-      <hot-column width="120" data="profitSumprice" type="numeric" :numeric-format="formatJP" title="利润合价" />
+      <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
+      <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="综合单价" />
+      <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="综合合价" />
+      <hot-column width="90" data="workAmount2" type="numeric" title="招标工程量" />
+      <hot-column width="90" data="costUnitprice2" type="numeric" numeric-format="formatJP" title="综合单价" />
+      <hot-column width="90" data="costSumprice2" type="numeric" numeric-format="formatJP" title="综合合价" />
+      <hot-column width="90" data="manageUnitprice" type="numeric" numeric-format="formatJP" title="管理费单价" />
+      <hot-column width="90" data="profitUnitprice" type="numeric" numeric-format="formatJP" title="利润单价" />
+      <hot-column width="90" data="manageSumprice" type="numeric" numeric-format="formatJP" title="管理费合价" />
+      <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
     </template>
     <template v-slot:expendcondition>
       <aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
         :GetMainPrimeId="getProjectSelectMainPrimeId" :GetMainName="getProjectSelectMainName"
-        :ItemSelect="projectItemSelect"></aj-select-input>
+        :ItemSelect="projectItemSelect" :HasButton="true"></aj-select-input>
     </template>
   </aj-hot-table>
 </template>
@@ -73,21 +73,10 @@ const getProjectSelectMainName = (item: baseObject) => {
  */
 const nestedHeaders = [
   [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
+    { label: "基本信息", colspan: 9 },
     { label: "实际", colspan: 3 },
     { label: "计划", colspan: 3 },
-    "",
-    "",
-    "",
-    "",
+    { label: "其他信息", colspan: 4 },
   ],
   [
     "",
@@ -113,13 +102,7 @@ const nestedHeaders = [
 ];
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
 
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());

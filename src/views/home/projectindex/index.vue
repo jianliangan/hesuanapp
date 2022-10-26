@@ -12,7 +12,7 @@
             <el-input v-model="formInstance.ownId" />
           </el-form-item>
           <el-form-item label="上级名称" prop="parentId">
-            <el-cascader v-model="formInstance.parentId" :options="tableData2" :props="groupsProps2" clearable />
+            <el-cascader v-model="formInstance.parentId" :options="tableData2" :props="groupsProps2" clearable trigger="onclick" />
           </el-form-item>
           <el-form-item label="名称" prop="projectName">
             <el-input v-model="formInstance.projectName" prop="projectName" />

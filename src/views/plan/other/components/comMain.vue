@@ -7,7 +7,7 @@
     <template v-slot:tableitem>
       <hot-column width="0" data="otherId" title="" />
       <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="cost" type="numeric" :numeric-format="formatJP" title="费用" />
+      <hot-column width="90" data="cost" type="numeric" numeric-format="formatJP" title="费用" />
     </template>
   </aj-hot-table>
 </template>
@@ -40,13 +40,7 @@ const props = defineProps({
 
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
 
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());

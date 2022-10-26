@@ -15,11 +15,11 @@
         <hot-column width="120" data="type" title="规格型号" />
         <hot-column width="120" data="unit" title="单位" />
 
-        <hot-column width="120" data="loss" title="损耗率" />
-        <hot-column width="120" data="have" title="含量" />
-        <hot-column width="120" data="count" type="numeric" title="数量" />
-        <hot-column width="120" data="price" type="numeric" :numeric-format="formatJP" title="市场价" />
-        <hot-column width="120" data="combinedPrice" type="numeric" :numeric-format="formatJP" title="合价" />
+        <hot-column width="90" data="loss" title="损耗率" />
+        <hot-column width="90" data="have" title="含量" />
+        <hot-column width="90" data="count" type="numeric" title="数量" />
+        <hot-column width="90" data="price" type="numeric" numeric-format="formatJP" title="市场价" />
+        <hot-column width="90" data="combinedPrice" type="numeric" numeric-format="formatJP" title="合价" />
       </template>
     </aj-hot-table>
   </div>
@@ -60,13 +60,8 @@ const props = defineProps({
 
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
 
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
+
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());

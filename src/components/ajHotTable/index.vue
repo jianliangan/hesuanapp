@@ -1,7 +1,27 @@
 <template>
   <el-container>
-    <el-header :class="[props.BtnInsertChildren == true?'headeh':'headeh2']" v-if="props.HasHeader==true">
-      <el-space class="ajtre " :class="[props.BtnInsertChildren == true?'spach':'spach2']">
+    <el-header :class="[props.BtnInsertChildren == true ? 'headeh' : 'headeh2']" v-if="props.HasHeader==true">
+      <el-space class="ajtre " :class="[props.BtnInsertChildren == true ? 'spach' : 'spach2']">
+
+
+        <template v-if="props.BtnField == true">
+          <el-popover placement="bottom-start" title="" :width="70" trigger="click">
+            <template #reference>
+              <el-button>显示</el-button>
+            </template>
+            <template #default>
+              <div style="height:300px;overflow-y:auto;overflow-x: hidden;">
+                <template v-for="(item, index) in userColumn" :key="index">
+                  <el-checkbox v-model="item.isshow" :label="item.label"
+                    @change="(p) => { selectedField(p, item.index) }" />
+                </template>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+
+
+
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
           <el-icon><img class="iconimgq" src="../../icons/svg/moveUp.svg" /></el-icon>
         </el-button>
@@ -114,11 +134,15 @@ var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
   [key: string]: any;
 }
+const userColumn = ref(new Array<baseObject>());
 var firstApiLoad = true;
 const myHotTable = ref<baseObject>({});
 let listUriParamsOwnId = {};
 let planAreas = ref(new Map<string, baseObject>());
-
+const formatJP = {
+  pattern: "0,0.00 ",
+  culture: "ja-JP",
+};
 numbro.registerLanguage(languages["zh-CN"]);
 
 function getAllAreas(
@@ -159,6 +183,16 @@ function ac() {
     header.style.height = "0";
     jianto1.style.transform = "";
   }
+}
+const selectedField = (p, index) => {
+  let hot = myHotTable.value.hotInstance;
+  const hiddenColumnsPlugin = hot.getPlugin('hiddenColumns');
+  if (p == false) {
+    hiddenColumnsPlugin.hideColumn(index);
+  } else {
+    hiddenColumnsPlugin.showColumn(index);
+  }
+  myRender();
 }
 /**
  * need to change
@@ -302,6 +336,10 @@ const props = defineProps({
   AfterBeginEditing: {
     type: Function,
     default: null,
+  },
+  BtnField: {
+    type: Boolean,
+    default: false
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -328,20 +366,26 @@ const myRender = () => {
       if (maprow.tag == 1) {
         classall = "mytagrow";
       }
+      let readOnly = false;
       if (maprow.source == "project") {
         classall += " sourceproject_" + maprow.__level;
+        readOnly = true;
       } else if (maprow.children && maprow.children.length > 0) {
         classall += " sourceproject_" + maprow.__level;
+        readOnly = true;
       }
       for (let i = 0; i < cols; i++) {
         if (props.GetComments().indexOf(i) != -1) {
           classall += " truncate";
         }
         hot.setCellMeta(j, i, "className", classall);
+        hot.setCellMeta(j, i, "readOnlyanjianliang", readOnly);
+
       }
     } else {
       for (let i = 0; i < cols; i++) {
         hot.setCellMeta(j, i, "className", "");
+        hot.setCellMeta(j, i, "readOnly", false);
       }
     }
   }
@@ -591,7 +635,7 @@ const upAllMove = (cmd: String) => {
   tools_objToobj(selectRow, postSelectRow);
   delete postToRow.children;
   delete postSelectRow.children;
-  console.log("bbbbbbbbb", postToRow, postSelectRow);
+
   props
     .MainContentPushRow([postToRow, postSelectRow])
     .then((response: any) => {
@@ -1028,8 +1072,13 @@ let PageResize = () => {
     width: "100%"
   });
 }
-
-defineExpose({ PageLoaded, PageUpdateRows, PageResize });
+const SetColumns = (columns: Array) => {
+  userColumn.value.splice(0);
+  for (let i = 0; i < columns.length; i++) {
+    userColumn.value.push(columns[i]);
+  }
+}
+defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns });
 </script>
 <style scoped>
 .scTable-table {
@@ -1061,7 +1110,8 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize });
 #bu:hover {
   background-color: #ffffff;
 }
-#bu--primary{
+
+#bu--primary {
   background-color: #ffffff;
 }
 
@@ -1072,9 +1122,11 @@ body .handsontable .truncate {
   text-overflow: ellipsis;
   height: 20px;
 }
+
 .handsontable {
   font-size: 12px;
 }
+
 body .handsontable .sourceproject_1 {
   background: #f0f0f0f0
 }

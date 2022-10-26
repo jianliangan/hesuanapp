@@ -19,7 +19,7 @@
 
         </el-form>
         <el-form-item>
-            <el-button type="primary" @click="OnSubmit">查询
+            <el-button id="anniu" type="primary" @click="OnSubmit">查询
             </el-button>
             <el-button @click="onCancel">取消</el-button>
         </el-form-item>
@@ -60,5 +60,7 @@ function PageLoaded(uri: baseObject, selected: Array<String>) {
 defineExpose({ PageLoaded });
 </script>
 <style scoped>
-
+#anniu {
+margin-left: 44%;
+}
 </style>

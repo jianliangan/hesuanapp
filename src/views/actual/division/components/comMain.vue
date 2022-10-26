@@ -6,10 +6,10 @@
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing">
+    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
-      <hot-column width="120" data="projectName" title="项目相关" />
+      <hot-column width="150" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
@@ -17,17 +17,17 @@
 
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="have" type="numeric" title="含量" />
-      <hot-column width="120" data="WorkAmount" type="numeric" title="招标工程量" />
-      <hot-column width="120" data="budgetWorkAmount" type="numeric" title="预算工程量" />
-      <hot-column width="120" data="costUnitprice" type="numeric" :numeric-format="formatJP" title="成本单价" />
-      <hot-column width="120" data="costSumprice" type="numeric" :numeric-format="formatJP" title="成本合价" />
-      <hot-column width="120" data="costManprice" type="numeric" :numeric-format="formatJP" title="成本人工费" />
-      <hot-column width="120" data="costMaterialsprice" type="numeric" :numeric-format="formatJP" title="成本材料费" />
-      <hot-column width="120" data="costMechanicsprice" type="numeric" :numeric-format="formatJP" title="成本机械费" />
-      <hot-column width="120" data="costDeviceprice" type="numeric" :numeric-format="formatJP" title="成本设备费" />
-      <hot-column width="120" data="costSubpackageprice" type="numeric" :numeric-format="formatJP" title="专业分包费" />
-      <hot-column width="120" data="schedule" type="numeric" :numeric-format="formatJP" title="进度" />
+      <hot-column width="90" data="have" type="numeric" title="含量" />
+      <hot-column width="90" data="WorkAmount" type="numeric" title="招标工程量" />
+      <hot-column width="90" data="budgetWorkAmount" type="numeric" title="预算工程量" />
+      <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="成本单价" />
+      <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="成本合价" />
+      <hot-column width="90" data="costManprice" type="numeric" numeric-format="formatJP" title="成本人工费" />
+      <hot-column width="90" data="costMaterialsprice" type="numeric" numeric-format="formatJP" title="成本材料费" />
+      <hot-column width="90" data="costMechanicsprice" type="numeric" numeric-format="formatJP" title="成本机械费" />
+      <hot-column width="90" data="costDeviceprice" type="numeric" numeric-format="formatJP" title="成本设备费" />
+      <hot-column width="90" data="costSubpackageprice" type="numeric" numeric-format="formatJP" title="专业分包费" />
+      <hot-column width="90" data="schedule" type="numeric" numeric-format="formatJP" title="进度" />
     </template>
     <template v-slot:expendcondition>
       <el-button @click="onSearch">
@@ -72,14 +72,11 @@ const props = defineProps({
 
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
+
 let materialsSearch = ref<baseObject>({});
 let currentColumn = -1;
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
+let isEditting = false;
+
 const ajhottable = ref<baseObject>({});
 function scrollHancle() {
   materialsSearch.value?.SetVisible(false)
@@ -104,12 +101,17 @@ const click = (cell: any, event: any) => {
   }
 }
 const afterBeginEditing = (row, column) => {
-  if (currentColumn == 4 || currentColumn == 2)
-    materialsSearch.value.SetVisible(false);
+  if (currentColumn == 4 || currentColumn == 2) {
+    isEditting = true;
+  }
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
+  if (isEditting) {
 
+  } else {
+    return;
+  }
   var current = element.parentNode
   let rect = element.getBoundingClientRect();
   if (currentColumn == 4 || currentColumn == 2) {
@@ -127,6 +129,7 @@ const afterDocumentKeyDown = (event: any) => {
 const afterSelected = (selected: baseObject, row, column, row2, column2) => {
   currentColumn = column;
   if (props.AfterSelected) props.AfterSelected(selected);
+  isEditting = false;
 };
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
@@ -199,9 +202,53 @@ function PageLoaded(uri: baseObject, ownId: Object) {
   ajhottable.value.PageLoaded(uri, ownId);
 }
 
-// nextTick(() => {
-//   PageLoaded({ rootId: "0" });
-// });
+let userColumn = [
+  {
+    label: "项目相关",
+    index: 1,
+    isshow: true,
+  },
+  {
+    label: "名称",
+    index: 2,
+    isshow: true,
+  },
+  {
+    label: "成本科目",
+    index: 3,
+    isshow: true,
+  },
+  {
+    label: "编码",
+    index: 4,
+    isshow: true,
+  },
+  {
+    label: "类别",
+    index: 5,
+    isshow: true,
+  },
+  {
+    label: "项目特征",
+    index: 6,
+    isshow: true,
+  },
+  {
+    label: "单位",
+    index: 7,
+    isshow: true,
+  },
+  {
+    label: "含量",
+    index: 8,
+    isshow: true,
+  },
+
+];
+
+nextTick(() => {
+  ajhottable.value.SetColumns(userColumn);
+});
 
 defineExpose({ PageLoaded });
 </script>

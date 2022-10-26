@@ -1,6 +1,6 @@
 <template>
   <!-- :style="position" -->
-  <div v-show="ui_dialog_visible" :title="props.Title" class="aj-select-div" style="height: 0px;width: 0px;" >
+  <div v-show="ui_dialog_visible" :title="props.Title" class="aj-select-div" :style="position">
     <aj-hot-table ref="ajhottable" :MainContentPushRow="MaterialsPushRow" :MainContentFetchList="MaterialsList"
       MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="false" :BtnUpMove="false"
       :BtnDownMove="false" :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false"
@@ -53,13 +53,7 @@ const props = defineProps({
 
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
 
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
@@ -68,7 +62,7 @@ function SetPosition(width: int, height: int, x: int, y: int) {
   position.value.height = height + "px";
   position.value.left = x + "px";
   position.value.top = y + "px";
-
+  console.log("111111111111111", position.value);
 }
 function SetVisible(visible: any) {
   ui_dialog_visible.value = visible;
@@ -127,7 +121,9 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
+  console.log("11111111111111111333");
   ajhottable.value.PageLoaded(uri, ownId);
+  console.log("11111111111111111444");
   ui_dialog_visible.value = true;
 }
 

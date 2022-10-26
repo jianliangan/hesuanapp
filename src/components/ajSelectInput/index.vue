@@ -1,8 +1,11 @@
 <template>
-  <el-select v-model="conditionValue" filterable :placeholder="props.Placeholder" @change="onchange">
-    <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label" :value="item.value"
-      popper-class="eloption" />
-  </el-select>
+  <el-space>
+    <el-select v-model="conditionValue" filterable :placeholder="props.Placeholder" @change="onchange">
+      <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label" :value="item.value"
+        popper-class="eloption" />
+    </el-select>
+    <el-button @click="handleSelect" v-if="props.HasButton == true">搜索</el-button>
+  </el-space>
 </template>
 
 <script lang="ts" setup>
@@ -46,14 +49,23 @@ const props = defineProps({
   Placeholder: {
     type: String,
     default: "请选择",
+  },
+  HasButton: {
+    type: Boolean,
+    default: false,
   }
 });
 const color_config_array = ["", "success", "info", "warning", "danger"];
 const ui_dialog_visible = ref(false);
 
 const allemits = defineEmits(["patheditok"]);
-const onchange = (value: String) => {
+const handleSelect = () => {
+  let value = conditionValue.value
   change(value);
+};
+const onchange = (value: String) => {
+  if (props.HasButton == false)
+    change(value);
 };
 const change = (value: String) => {
   if (props.ItemSelect) props.ItemSelect(value);

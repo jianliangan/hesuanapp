@@ -1,6 +1,6 @@
 <template>
   <div class="login_bg">
-    <div class="login_adv" style="background-image: url(img/auth_banner.jpg)">
+    <!-- <div class="login_adv" style="background-image: url(img/auth_banner.jpg)">
       <div class="login_adv__title">
         <h2>成本预算</h2>
         <h4>{{ $t("login.slogan") }}</h4>
@@ -27,7 +27,7 @@
       <div class="login_adv__bottom">
         © {{ $CONFIG.APP_NAME }} {{ $CONFIG.APP_VER }}
       </div>
-    </div>
+    </div> -->
     <div class="login_main">
       <div class="login_config">
         <el-dropdown

@@ -2,94 +2,115 @@
 
   <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
     :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
-    :PreSubmit="preSubmit" :BtnNew="true" :ExtendButtons="[{call:boRedirect,name:'单位工程',confirm:false}]">
+    :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
+    :ExtendButtons="[{ call: boRedirect, name: '单位工程', confirm: false }]">
     <template v-slot:formitem>
 
 
 
-      <el-form :model="formInstance" ref="formEl" label-width="120px" :rules="rules">
-        <el-form-item label="项目名称" prop="projectName">
-          <el-input v-model="formInstance.projectName" />
-        </el-form-item>
-        <el-form-item label="地区" prop="groupcity">
+      <el-form :model="formInstance" ref="formEl" :rules="rules">
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="项目名称" prop="projectName">
+              <el-input v-model="formInstance.projectName" />
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="地区" prop="groupcity">
 
-          <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
-            @change="cityOnChange" />
-        </el-form-item>
+              <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
+                @change="cityOnChange" trigger="onclick" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="开工日期" prop="startTime">
+              <el-date-picker v-model="formInstance.startTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+                placeholder="" size="default" />
 
-        <el-form-item label="开工日期" prop="startTime">
-          <el-date-picker v-model="formInstance.startTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="竣工日期" prop="completeTime">
+              <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
+                type="date" placeholder="" size="default" />
 
-        </el-form-item>
-        <el-form-item label="竣工日期" prop="completeTime">
-          <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        </el-form-item>
-        <el-form-item label="业主姓名" prop="username">
-          <el-input v-model="formInstance.username"></el-input>
-        </el-form-item>
-        <el-form-item label="业主性质">
-          <el-input v-model="formInstance.nature"></el-input>
-        </el-form-item>
-        <el-form-item label="工程类别">
-          <el-input v-model="formInstance.category"></el-input>
-        </el-form-item>
-        <el-form-item label="工程类别细项">
-          <el-input v-model="formInstance.categoryDetail"></el-input>
-        </el-form-item>
-        <el-form-item label="项目状态">
-          <el-input v-model="formInstance.status"></el-input>
-        </el-form-item>
-        <el-form-item label="合同额">
-          <el-input v-model="formInstance.contractPrice"></el-input>
-        </el-form-item>
-        <el-form-item label="结算时间" prop="finalTime">
-          <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="业主姓名" prop="username">
+              <el-input v-model="formInstance.username"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="业主性质">
+              <el-input v-model="formInstance.nature"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        </el-form-item>
-        <el-form-item label="预计总收入">
-          <el-input v-model="formInstance.estimateIncome"></el-input>
-        </el-form-item>
-        <el-form-item label="预计总成本">
-          <el-input v-model="formInstance.estimateCost"></el-input>
-        </el-form-item>
-        <el-form-item label="计税方式">
-          <el-input v-model="formInstance.taxWay"></el-input>
-        </el-form-item>
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="工程类别">
+              <el-input v-model="formInstance.category"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="工程类别细项">
+              <el-input v-model="formInstance.categoryDetail"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="项目状态">
+              <el-input v-model="formInstance.status"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="合同额">
+              <el-input v-model="formInstance.contractPrice"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="结算时间" prop="finalTime">
+              <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+                placeholder="" size="default" />
+
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="预计总收入">
+              <el-input v-model="formInstance.estimateIncome"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="预计总成本">
+              <el-input v-model="formInstance.estimateCost"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="12">
+            <el-form-item label="计税方式">
+              <el-input v-model="formInstance.taxWay"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
 
       </el-form>
     </template>
     <template v-slot:tableitem>
-      <el-table-column prop="projectName" label="项目名称" fixed />
-      <el-table-column label="省/市区">
-        <template #default="scope">
-          {{
-          planAreas.get(scope.row.province)?.name +
-          "/" +
-          planAreas.get(scope.row.city)?.name +
-          "/" +
-          planAreas.get(scope.row.region)?.name
-          }}
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="startTime" label="开工日期" />
-
-      <el-table-column prop="completeTime" label="竣工日期" />
-      <el-table-column prop="username" label="业主姓名" />
-      <el-table-column prop="nature" label="业务性质" />
-      <el-table-column prop="category" label="工程类别" />
-      <el-table-column prop="categoryDetail" label="工程类别细项" />
-
-      <el-table-column prop="status" label="项目状态" />
-      <el-table-column prop="contractPrice" label="合同额" />
-      <el-table-column prop="finalTime" label="结算时间" />
-      <el-table-column prop="estimateIncome" label="预计总收入" />
-      <el-table-column prop="estimateCost" label="预计总成本" />
-      <el-table-column prop="taxWay" label="计税方式" />
     </template>
   </aj-table>
 </template>
@@ -115,7 +136,7 @@ const groupsProps = {
 const ajtable = ref<baseObject>({});
 const router = useRouter();
 const formInstance = ref<baseObject>({});
-
+let abc: baseObject = { isview: false };
 const formEl = ref<baseObject>({});
 let projectFetchList = ProjectFetchList;
 let planAreas = new Map<string, baseObject>();
@@ -165,6 +186,9 @@ const rules = reactive<FormRules>({
   // ],
 
 })
+
+
+
 function getAllAreas(
   areas: Array<baseObject>,
   result: Map<string, baseObject>
@@ -181,6 +205,7 @@ let cityOnChange = () => {
   formInstance.value.city = formInstance.value.groupcity[1];
   formInstance.value.region = formInstance.value.groupcity[2];
 };
+
 const preSubmit = async () => {
 
   if (!formEl.value) return false;
@@ -220,6 +245,121 @@ const boRedirect = (row: baseObject) => {
     }
   });
 };
+let userColumn = [
+  {
+    label: "项目名称",
+    prop: "projectName",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: true,
+    isshow: true,
+  },
+  {
+    label: "省/市区",
+    prop: "province",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "开工日期",
+    prop: "startTime",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "竣工日期",
+    prop: "completeTime",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "业主姓名",
+    prop: "username",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "业务性质",
+    prop: "nature",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "工程类别",
+    prop: "category",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "工程类别细项",
+    prop: "categoryDetail",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "状态",
+    prop: "status",
+    width: "50",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "合同额",
+    prop: "contractPrice",
+    width: "80",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "结算时间",
+    prop: "finalTime",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "预计收入",
+    prop: "estimateIncome",
+    width: "80",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "预计成本",
+    prop: "estimateCost",
+    width: "80",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "计税方式",
+    prop: "taxWay",
+    width: "80",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+
+];
 
 const onOpenDialog = (type: String) => {
   if (type == "add") formInstance.value.parentId = formInstance.value.ownId;
@@ -232,15 +372,17 @@ function PageLoaded(uri: baseObject, ownId: Object) {
 }
 
 nextTick(() => {
+  ajtable.value.SetColumns(userColumn);
   PageLoaded({ ownId: "0" });
 });
 </script>
 <style>
-.el-table{
-  --el-table-header-bg-color:#409eff;
-  --el-table-header-text-color:#ffffff;
+.el-table {
+  --el-table-header-bg-color: #409eff;
+  --el-table-header-text-color: #ffffff;
 }
-.el-table .cell{
+
+.el-table .cell {
   padding: 0 10px;
 }
 </style>

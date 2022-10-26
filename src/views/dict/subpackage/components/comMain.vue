@@ -42,13 +42,7 @@ const props = defineProps({
 
 const HotCommentIndex = [4];
 registerAllModules();
-var languages = require("numbro/dist/languages.min.js");
-numbro.registerLanguage(languages["zh-CN"]);
 
-const formatJP = {
-  pattern: "0,0.00 $",
-  culture: "ja-JP",
-};
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());

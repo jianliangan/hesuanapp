@@ -10,8 +10,26 @@
   </el-dialog>
 
   <el-container>
-    <el-header v-if="props.HasHeader==true">
+    <el-header v-if="props.HasHeader == true">
       <el-space>
+
+        <template v-if="props.BtnField == true">
+          <el-popover placement="bottom-start" title="" :width="70" trigger="click">
+            <template #reference>
+              <el-button>显示</el-button>
+            </template>
+
+            <template #default>
+              <div style="height:300px;overflow-y:auto;overflow-x: hidden;">
+                <template v-for="(item, index) in userColumn" :key="index">
+                  <el-checkbox v-model="item.isshow" :label="item.label" @change="selectUserColumn(item)" />
+                </template>
+              </div>
+            </template>
+
+          </el-popover>
+        </template>
+
         <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true">新增</el-button>
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
@@ -33,30 +51,50 @@
         :highlight-current-row="props.HighlightCurrentRow" @current-change="currentChange"
         :cell-class-name="props.CellClass">
         <slot name="tableitem"></slot>
-
-        <el-table-column label="操作" fixed="right" width="150" v-if="props.hasOptions == true">
-          <template #default="scope">
-            <template v-if="!(props.CmdFirst==true&&scope.$index==0)">
-              <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn==true">
-                <template #reference>
-                  <el-button link type="primary" size="small"> 删除 </el-button>
-                </template>
-              </el-popconfirm>
-              <span v-if="props.DefaultBtn==true">
-                <el-button text type="primary" @click.stop="ClkEditData(scope.row)">编辑</el-button>
-              </span>
-
-              <span v-for="(item, index) in props.ExtendButtons" v-bind:key="index">
-                <el-button v-if="item.confirm==false" text type="primary" @click.stop="item.call(scope.row)">
-                  {{item.name}}
-                </el-button>
-                <el-popconfirm v-else :title="'确定'+item.name+'吗'" @confirm="item.call(scope.row)">
-                  <template #reference>
-                    <el-button link type="primary" size="small"> {{item.name}} </el-button>
-                  </template>
-                </el-popconfirm>
-              </span>
+        <template v-for="(item, index) in userColumn" :key="index">
+          <el-table-column v-if="item.isshow" :column-key="item.prop" :label="item.label" :prop="item.prop"
+            :width="item.width" :fixed="item.fixed" :show-overflow-tooltip="item.showOverflowTooltip">
+            <template #default="scope">
+              <slot :name="item.prop" v-bind="scope">
+                {{ scope.row[item.prop] }}
+              </slot>
             </template>
+          </el-table-column>
+        </template>
+        <el-table-column label="操作" fixed="right" width="70" v-if="props.hasOptions == true">
+          <template #default="scope">
+
+            <el-popover placement="top-start" title="" :width="70" trigger="click">
+              <template #reference>
+                <el-button type="text">更多</el-button>
+              </template>
+              <template #default>
+                <template v-if="!(props.CmdFirst == true && scope.$index == 0)">
+                  <el-space direction="vertical">
+                    <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn == true">
+                      <template #reference>
+                        <el-button link type="primary" size="small"> 删除 </el-button>
+                      </template>
+                    </el-popconfirm>
+                    <span v-if="props.DefaultBtn == true">
+                      <el-button text type="primary" @click.stop="ClkEditData(scope.row)">编辑</el-button>
+                    </span>
+
+                    <span v-for="(item, index) in props.ExtendButtons" v-bind:key="index">
+                      <el-button v-if="item.confirm == false" text type="primary" @click.stop="item.call(scope.row)">
+                        {{ item.name }}
+                      </el-button>
+                      <el-popconfirm v-else :title="'确定' + item.name + '吗'" @confirm="item.call(scope.row)">
+                        <template #reference>
+                          <el-button link type="primary" size="small"> {{ item.name }} </el-button>
+                        </template>
+                      </el-popconfirm>
+                    </span>
+                  </el-space>
+                </template>
+              </template>
+            </el-popover>
+
           </template>
         </el-table-column>
       </el-table>
@@ -76,6 +114,7 @@ import {
 } from "@/components/jrTools/index";
 
 import {
+  collapseContextKey,
   ElMessage,
   UploadFile,
   UploadFiles,
@@ -126,6 +165,7 @@ let currentRow: baseObject;
 const listUriParams = {} as baseObject;
 const tableData = ref<baseObject>({});
 const selectData = ref(new Array<baseObject>());
+const userColumn = ref(new Array<baseObject>());
 const props = defineProps({
   MainContentFetchList: {
     type: Function,
@@ -264,6 +304,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  BtnField: {
+    type: Boolean,
+    default: false,
+  },
+
 });
 //
 tableData.value.tableHeight = computed({
@@ -280,6 +325,7 @@ tableData.value.tablePackageHeight = computed({
   },
   set() { },
 });
+
 watch(filterText, (newValue, oldValue) => {
   organizedata.value = organizedata2.filter((data) => {
     if (newValue) {
@@ -292,6 +338,10 @@ watch(filterText, (newValue, oldValue) => {
     }
   });
 });
+const selectUserColumn = (val: baseObject) => {
+  alert();
+  console.log("dddddddddddddddddd", val);
+}
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
   AfterSelected(listUriParams);
@@ -452,6 +502,7 @@ const ClkInsert = () => {
 const onCancel = () => {
   if (props.GetDialogAddVisible) props?.GetDialogAddVisible(false);
   if (props.OnCancelDialog) props?.OnCancelDialog();
+  dialogAddVisible.value = false;
 };
 function ClkEditData(row: baseObject) {
   if (props.GetFormInstance) props?.GetFormInstance("SET", "*", row);
@@ -546,12 +597,20 @@ const AfterSelected = async (row: any) => {
 const ExportDataList = () => {
   return tableData.value.list;
 };
+const SetColumns = (columns: Array) => {
+  userColumn.value.splice(0);
+  for (let i = 0; i < columns.length; i++) {
+    userColumn.value.push(columns[i]);
+  }
+
+}
 function PageLoaded(uri: baseObject) {
   tools_objToobj(uri, listUriParams);
   AfterSelected(uri);
   //
 }
-defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow });
+
+defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns });
 </script>
 <style scoped>
 .scTable-table {

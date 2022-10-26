@@ -4,28 +4,17 @@
       <el-space alignment="top">
         <div>
           <el-space direction="vertical" class="myspace">
-            <el-tag
-              v-for="(item, index) in selected_tags"
-              closable
-              :key="index"
-              :type="color_config_array[0]"
-              @close="selected_tags_close(index)"
-            >
+            <el-tag v-for="(item, index) in selected_tags" closable :key="index" :type="color_config_array[0]"
+              @close="selected_tags_close(index)">
               {{ props.GetMainName(item) }}
             </el-tag>
           </el-space>
         </div>
         <el-divider direction="vertical" style="height: 100%" />
-        <el-table
-          :data="filterTableData"
-          style="width: 100%"
-          height="300"
-          :loading="loading"
-        >
+        <el-table :data="filterTableData" style="width: 100%" height="300" :loading="loading">
           <el-table-column width="180">
             <template #header>
-              <el-space
-                ><span>总条数({{ node_number }})</span>
+              <el-space><span>总条数({{ node_number }})</span>
               </el-space>
             </template>
             <template #default="scope">
@@ -38,19 +27,12 @@
             </template>
 
             <template #default="scope">
-              <el-button size="small" round @click="handleSelect(scope.row)"
-                >选择</el-button
-              >
+              <el-button size="small" round @click="handleSelect(scope.row)">选择</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-space>
-      <el-button
-        type="primary"
-        v-if="props.MultiSelete"
-        class="my-smallbutton"
-        @click="handleSave"
-      >
+      <el-button type="primary" v-if="props.MultiSelete" class="my-smallbutton" @click="handleSave">
         确认
       </el-button>
     </el-space>
@@ -135,7 +117,6 @@ const AfterSelected = async (row: any, selected: Array<String>) => {
     props
       .MainContentFetchList(row)
       .then((resdata: any) => {
-        console.log("ttttttttttttt", resdata.list);
         nodes_list.value = resdata.list;
         for (let i = 0; i < resdata.list.length; i++) {
           let value = resdata.list[i];
@@ -175,7 +156,7 @@ defineExpose({ PageLoaded });
   margin-right: 40px;
 }
 
-.el-table >>> .header-row th {
+.el-table>>>.header-row th {
   background-color: #81d3f8 !important;
   color: #333333;
   font-size: 10px;
@@ -185,7 +166,7 @@ defineExpose({ PageLoaded });
   padding-bottom: 3px;
 }
 
-.el-table >>> td {
+.el-table>>>td {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
@@ -193,14 +174,14 @@ defineExpose({ PageLoaded });
   padding-bottom: 3px;
 }
 
-.el-table >>> td span {
+.el-table>>>td span {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
   padding: 3px;
 }
 
-.el-table >>> td .cell {
+.el-table>>>td .cell {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;
@@ -208,7 +189,7 @@ defineExpose({ PageLoaded });
   margin: 3px;
 }
 
-.el-table >>> td button {
+.el-table>>>td button {
   font-size: 10px;
   font-weight: normal;
   line-height: 10px;

@@ -106,6 +106,7 @@
         </div>
       </div>
       <Side-m v-if="ismobile"></Side-m>
+      <div style="width: 20px;"></div>
       <div class="aminui-body el-container">
         <Topbar v-if="!ismobile"></Topbar>
         <Tags v-if="!ismobile && layoutTags"></Tags>
