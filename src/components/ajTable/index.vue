@@ -100,8 +100,8 @@
       </el-table>
     </el-main>
     <el-footer v-if="HasPage == true">
-      <el-pagination layout="prev, pager, next" :total="pageInfo.itemTotal" :page-size="pageInfo.pageSize" small
-        background @current-change="HandleCurrentChange" />
+      <el-pagination layout="prev, pager, next,total" :total="pageInfo.itemTotal" :page-size="20" small background
+        @current-change="HandleCurrentChange" />
     </el-footer>
   </el-container>
 </template>
@@ -339,8 +339,7 @@ watch(filterText, (newValue, oldValue) => {
   });
 });
 const selectUserColumn = (val: baseObject) => {
-  alert();
-  console.log("dddddddddddddddddd", val);
+
 }
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
@@ -525,7 +524,7 @@ const OnSubmit = async () => {
       return;
     }
   }
-  console.log("55555555555  666");
+
   SubMitLoading.value = true;
 
   if (dialogIsAdd.value == true) {
@@ -574,11 +573,13 @@ const AfterSelected = async (row: any) => {
     props
       .MainContentFetchList(row)
       .then((resdata: any) => {
+        // pageInfo.value.current = listUriParams.page;
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
-        pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
+        //pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
+
         tableData.value.list = resdata["list"];
         if (props.GetExtendData) {
-          props.GetExtendData(resdata["extend"]);
+          props.GetExtendData(resdata);
         }
         tableData.value.map = new Map<any, baseObject>();
         for (let i = 0; i < tableData.value.list.length; i++) {
@@ -587,7 +588,7 @@ const AfterSelected = async (row: any) => {
             i
           );
         }
-        console.log("tttttttttt", tableData.value.map);
+
         loading.value = false;
       })
       .catch((err: any) => {
@@ -605,6 +606,7 @@ const SetColumns = (columns: Array) => {
 
 }
 function PageLoaded(uri: baseObject) {
+
   tools_objToobj(uri, listUriParams);
   AfterSelected(uri);
   //

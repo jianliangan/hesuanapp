@@ -1,98 +1,42 @@
 <template>
-  <aj-table
-    ref="ajtable"
-    :MainContentFetchList="proxyMainContentFetchList"
-    :GetTreePrimeId="getTreePrimeId"
-    :GetTreePrimeName="getTreePrimeName"
-    :GetFormInstance="getFormInstance"
-    :GetExtendData="getExtendData"
-    :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog"
-    :HasPage="true"
-    :PreSubmit="preSubmit"
-    :BtnNew="false"
-    TableKey="name"
-    :hasOptions="false"
-  >
+  <aj-table ref="ajtable" :MainContentFetchList="proxyMainContentFetchList" :GetTreePrimeId="getTreePrimeId"
+    :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance" :GetExtendData="getExtendData"
+    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="false"
+    TableKey="name" :hasOptions="false">
     <template v-slot:formitem> </template>
     <template v-slot:tableitem>
       <el-table-column prop="meta.title" label="菜单名称" />
       <el-table-column label="">
         <template #header>
-          <el-space
-            ><span>权限</span>
-            <el-checkbox
-              label="可读"
-              name="type"
-              checked
-              v-if="
-                extendData.authormap &&
-                extendData.authormap.get('all') &&
-                extendData.authormap.get('all')['read'] == '1'
-              "
-              @change="(value) => readChange(value, { path: 'all' })"
-            />
-            <el-checkbox
-              v-else
-              label="可读"
-              name="type"
-              @change="(value) => readChange(value, { path: 'all' })"
-            />
-            <el-checkbox
-              v-if="
-                extendData.authormap &&
-                extendData.authormap.get('all') &&
-                extendData.authormap.get('all')['write'] == '1'
-              "
-              checked
-              label="可写"
-              @change="(value) => readChange2(value, { path: 'all' })"
-              name="type"
-            />
-            <el-checkbox
-              v-else
-              label="可写"
-              @change="(value) => readChange2(value, { path: 'all' })"
-              name="type"
-            />
+          <el-space><span>权限</span>
+            <el-checkbox label="可读" name="type" checked v-if="
+              extendData.authormap &&
+              extendData.authormap.get('all') &&
+              extendData.authormap.get('all')['read'] == '1'
+            " @change="(value) => readChange(value, { path: 'all' })" />
+            <el-checkbox v-else label="可读" name="type" @change="(value) => readChange(value, { path: 'all' })" />
+            <el-checkbox v-if="
+              extendData.authormap &&
+              extendData.authormap.get('all') &&
+              extendData.authormap.get('all')['write'] == '1'
+            " checked label="可写" @change="(value) => readChange2(value, { path: 'all' })" name="type" />
+            <el-checkbox v-else label="可写" @change="(value) => readChange2(value, { path: 'all' })" name="type" />
           </el-space>
         </template>
         <template #default="scope">
           <template v-if="scope.row.component">
-            <el-checkbox
-              checked
-              label="可读"
-              @change="(value) => readChange(value, scope.row)"
-              name="type"
-              v-if="
-                extendData.authormap &&
-                extendData.authormap.get(scope.row.path) &&
-                extendData.authormap.get(scope.row.path)['read'] == '1'
-              "
-            />
-            <el-checkbox
-              label="可读"
-              name="type"
-              @change="(value) => readChange(value, scope.row)"
-              v-else
-            />
-            <el-checkbox
-              checked
-              label="可写"
-              @change="(value) => readChange2(value, scope.row)"
-              name="type"
-              v-if="
-                extendData.authormap &&
-                extendData.authormap.get(scope.row.path) &&
-                extendData.authormap.get(scope.row.path)['write'] == '1'
-              "
-            />
-            <el-checkbox
-              label="可写"
-              @change="(value) => readChange2(value, scope.row)"
-              name="type"
-              v-else
-            />
+            <el-checkbox checked label="可读" @change="(value) => readChange(value, scope.row)" name="type" v-if="
+              extendData.authormap &&
+              extendData.authormap.get(scope.row.path) &&
+              extendData.authormap.get(scope.row.path)['read'] == '1'
+            " />
+            <el-checkbox label="可读" name="type" @change="(value) => readChange(value, scope.row)" v-else />
+            <el-checkbox checked label="可写" @change="(value) => readChange2(value, scope.row)" name="type" v-if="
+              extendData.authormap &&
+              extendData.authormap.get(scope.row.path) &&
+              extendData.authormap.get(scope.row.path)['write'] == '1'
+            " />
+            <el-checkbox label="可写" @change="(value) => readChange2(value, scope.row)" name="type" v-else />
           </template>
         </template>
       </el-table-column>
@@ -100,7 +44,7 @@
   </aj-table>
 </template>
     
-    <script lang="ts" setup>
+<script lang="ts" setup>
 import { SettingMenuFetchList } from "@/api/model/system/author";
 
 import { RolePushRowAuthor } from "@/api/model/system/role";
@@ -123,8 +67,8 @@ const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 const extendRole = ref(new Map<String, String>());
 let getExtendData = (value: any) => {
-  console.log("ddddddddd", value);
-  extendData.value = value;
+
+  extendData.value = value["extend"];;
   extendData.value.authormap = tools_objToStrMap(extendData.value.author);
 
   console.log("dddd3333ddddd", extendData.value.authormap);
@@ -145,7 +89,7 @@ let readChange = (value, p: baseObject) => {
           value["read"] = tmp[1];
         }
     })
-    .catch((err: any) => {});
+    .catch((err: any) => { });
 };
 let readChange2 = (value, p: baseObject) => {
   let tmp = [];
@@ -170,7 +114,7 @@ let readChange2 = (value, p: baseObject) => {
           value["write"] = tmp[2];
         }
     })
-    .catch((err: any) => {});
+    .catch((err: any) => { });
 };
 let cityOnChange = () => {
   formInstance.value.province = formInstance.value.groupcity[0];
@@ -186,7 +130,7 @@ const proxyMainContentFetchList = (row: baseObject) => {
       extendRole.value = resdata["extend"];
       return resdata;
     })
-    .catch((err: any) => {});
+    .catch((err: any) => { });
 };
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {

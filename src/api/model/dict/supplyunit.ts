@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 export const SupplyUnitList = (query: any) => {
     return request({
-        url: '/dict/supplyunit/fetch',
+        url: '/dict/supplyunit/fetchwith',
         method: 'get',
         params: query
     })

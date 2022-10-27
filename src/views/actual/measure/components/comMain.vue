@@ -6,14 +6,15 @@
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true">
+    :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true"
+    :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
       <hot-column width="120" data="name" title="名称" />
-      <hot-column width="120" data="subject" title="成本科目" />
+      <hot-column width="120" data="subject" type="dropdown" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
-      <hot-column width="120" data="category" title="类别" />
+      <hot-column width="120" data="category" type="dropdown" title="类别" />
 
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
@@ -43,6 +44,7 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import InventorySearch from "../../../components/inventorysearch/index.vue";
+import { hottableSettings } from "../../../components/common";
 import MaterialsSearch from "../../../components/materialssearch/index.vue";
 import {
   ActualMeasurePushRow,
@@ -147,6 +149,10 @@ const afterDocumentKeyDown = (event: any) => {
   }
 
 
+};
+let getExtendData = (value: any) => {
+  let hottable = ajhottable.value.GetSettings();
+  hottableSettings(hottable, value);
 };
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);

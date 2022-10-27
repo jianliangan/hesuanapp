@@ -194,10 +194,7 @@ const selectedField = (p, index) => {
   }
   myRender();
 }
-/**
- * need to change
- * api call
- */
+
 const dblClick = (event: any) => {
   let hot = myHotTable.value.hotInstance;
   let cell = hot.getSelectedLast();
@@ -340,6 +337,14 @@ const props = defineProps({
   BtnField: {
     type: Boolean,
     default: false
+  },
+  GetExtendData: {
+    type: Function,
+    default: null,
+  },
+  SuplyReadOnly: {
+    type: Boolean,
+    default: false
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -367,6 +372,7 @@ const myRender = () => {
         classall = "mytagrow";
       }
       let readOnly = false;
+
       if (maprow.source == "project") {
         classall += " sourceproject_" + maprow.__level;
         readOnly = true;
@@ -374,12 +380,15 @@ const myRender = () => {
         classall += " sourceproject_" + maprow.__level;
         readOnly = true;
       }
+      if (props.SuplyReadOnly == false) {
+        readOnly = false;
+      }
       for (let i = 0; i < cols; i++) {
         if (props.GetComments().indexOf(i) != -1) {
           classall += " truncate";
         }
         hot.setCellMeta(j, i, "className", classall);
-        hot.setCellMeta(j, i, "readOnlyanjianliang", readOnly);
+        hot.setCellMeta(j, i, "readOnly", readOnly);
 
       }
     } else {
@@ -937,10 +946,7 @@ const ClkBackInsert = () => {
 const ClkInsertChildren = () => {
   allInstert("children");
 };
-/**
- * need to change
- * api call
- */
+
 
 function SelectionChange(selection: Array<baseObject>) {
   selectData.value = selection;
@@ -979,10 +985,7 @@ const filterRow = (
     filterRow(rows[i].children, lists, level);
   }
 };
-/**
- * need to change
- * api call
- */
+
 const LoadData = async (row: any) => {
   loading.value = true;
 
@@ -997,7 +1000,9 @@ const LoadData = async (row: any) => {
         } else {
           tableData.value.list = resdata["list"];
         }
-
+        if (props.GetExtendData) {
+          props.GetExtendData(resdata);
+        }
         myLoadData(tableData.value.list);
         //////////////////////
 
@@ -1078,7 +1083,11 @@ const SetColumns = (columns: Array) => {
     userColumn.value.push(columns[i]);
   }
 }
-defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns });
+const GetSettings = () => {
+  let hot = myHotTable.value.hotInstance;
+  return hot.getSettings();
+}
+defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings });
 </script>
 <style scoped>
 .scTable-table {

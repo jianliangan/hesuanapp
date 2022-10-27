@@ -3,10 +3,12 @@
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="false" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected">
+    :GetComments="getComments" :AfterSelected="afterSelected" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="supplyUnitId" title="" />
       <hot-column width="120" data="supplyUnitName" title="供应商名称" />
+      <hot-column width="120" data="supplierType" type="dropdown" title="供应商类型" />
+
       <hot-column width="120" data="contact" title="联系人" />
       <hot-column width="120" data="phone" title="电话" />
     </template>
@@ -17,7 +19,7 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import { hottableSettingsSupply } from "../../../components/common";
 import { ProjectFetchTree } from "@/api/model/home/project";
 import { SupplyUnitPushRow, SupplyUnitList } from "@/api/model/dict/supplyunit";
 import { tools_objToobj } from "@/components/jrTools";
@@ -46,7 +48,10 @@ registerAllModules();
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
-
+let getExtendData = (value: any) => {
+  let hottable = ajhottable.value.GetSettings();
+  hottableSettingsSupply(hottable, value);
+};
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.supplyUnitId = value;
   return item.supplyUnitId;
@@ -70,6 +75,7 @@ const getInitHotTable = () => {
     sortR: 0,
     supplyUnitId: "",
     supplyUnitName: "",
+    supplierType: "",
     contact: "",
     phone: "",
     source: "",

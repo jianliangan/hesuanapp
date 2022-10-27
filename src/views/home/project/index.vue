@@ -1,8 +1,8 @@
 <template>
 
   <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
-    :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
-    :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
+    :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
     :ExtendButtons="[{ call: boRedirect, name: '单位工程', confirm: false }]">
     <template v-slot:formitem>
 
@@ -102,7 +102,11 @@
           </el-col>
           <el-col span="12">
             <el-form-item label="计税方式">
-              <el-input v-model="formInstance.taxWay"></el-input>
+              <el-select v-model="formInstance.taxWay" placeholder="Select" size="small">
+                <el-option v-for="item in billmodeList" :key="item.dictName" :label="item.dictName"
+                  :value="item.dictName" />
+              </el-select>
+
             </el-form-item>
           </el-col>
         </el-row>
@@ -218,12 +222,33 @@ const preSubmit = async () => {
   })
 };
 
+let billmodeList = ref([]);
+let getExtendData = (value: any) => {
+  let list = value["list"];
+  let billmode = value["extend"].billmode;
+  billmodeList.value = billmode;
+  for (let i = 0; i < list.length; i++) {
+    list[i].arreaLabel = planAreas.get(list[i].province)?.name +
+      "/" +
+      planAreas.get(list[i].city)?.name +
+      "/" +
+      planAreas.get(list[i].region)?.name;
+    if (!list[i].groupcity) {
+      list[i].groupcity = new Array<String>();
+    }
+    list[i].groupcity[0] = list[i].province;
+    list[i].groupcity[1] = list[i].city;
+    list[i].groupcity[2] = list[i].region;
+  }
+};
+
 let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
       formInstance.value = {};
     } else if (field == "*") {
       tools_objToobj(value, formInstance.value);
+
     } else if (field == "cmd") {
       formInstance.value.cmd = value;
     } else if (field == "children") {
@@ -256,7 +281,7 @@ let userColumn = [
   },
   {
     label: "省/市区",
-    prop: "province",
+    prop: "arreaLabel",
     width: "150",
     showOverflowTooltip: true,
     fixed: false,

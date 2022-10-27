@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 export const ProjectFetchList = (query: any) => {
     return request({
-        url: '/home/project/fetch/',
+        url: '/home/project/fetchwith/',
         method: 'get',
         params: query
     })

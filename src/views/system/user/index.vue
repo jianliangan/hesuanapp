@@ -1,8 +1,7 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="UsersPushRow" :MainContentFetchList="UsersFetchList"
-    :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
-    :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true"
-    :PreSubmit="preSubmit" :BtnNew="true">
+    :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="用户名称">
@@ -73,11 +72,9 @@ const preSubmit = () => {
 };
 let getExtendData = (value: any) => {
 
-  extendData.value = value;
+  extendData.value = value["extend"];;
   extendData.value.rolesMap = tools_objToStrMap(extendData.value.roles);
-  for (let i of extendData.value.rolesMap.values()) {
-    console.log("ffffffffff", i.roleName);
-  }
+
 
 };
 let getFormInstance = (cmd: string, field: string, value: any) => {
