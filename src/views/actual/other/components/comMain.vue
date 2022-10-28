@@ -6,7 +6,7 @@
     :AfterSelected="afterSelected">
     <template v-slot:tableitem>
       <hot-column width="0" data="otherId" title="" />
-      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="200" data="name" title="名称" />
       <hot-column width="90" data="cost" type="numeric" numeric-format="formatJP" title="费用" />
     </template>
   </aj-hot-table>

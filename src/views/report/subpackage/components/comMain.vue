@@ -1,9 +1,10 @@
 <template>
+  <inventory-search ref="inventorysearch" :OnSubmit="onSubmit" AddLabel="确定" Title="其他条件"></inventory-search>
   <aj-hot-table ref="ajhottable" :MainContentFetchList="ReportSubpackageTree" MaxFileNums="1" MaxFileSize="20"
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :SuplyReadOnly="true">
+    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :SuplyReadOnly="true" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
@@ -27,12 +28,20 @@
       <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
     </template>
     <template v-slot:expendcondition>
-      <aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
-        :GetMainPrimeId="getProjectSelectMainPrimeId" Placeholder="请选择项目" :GetMainName="getProjectSelectMainName">
+      <aj-select-input ref="projectSelect" :SelectFirst="true" :MainContentFetchList="ProjectFetchList"
+        :GetMainPrimeId="getProjectSelectMainPrimeId" Placeholder="请选择项目" :GetMainName="getProjectSelectMainName"
+        :ItemSelect="itemSelectedPro">
       </aj-select-input>
-      <aj-select-input ref="subpackageSelect" Placeholder="请选择分包商" :MainContentFetchList="SubPackageList"
-        :GetMainPrimeId="getTreePrimeId" :GetMainName="getTreePrimeName" :ItemSelect="itemSelected"></aj-select-input>
-      <el-button @click="onSearch">搜索</el-button>
+      <aj-select-input ref="subpackageSelect" :SelectFirst="true" Placeholder="请选择分包商"
+        :MainContentFetchList="SubPackageList" :GetMainPrimeId="getTreePrimeId" :GetMainName="getTreePrimeName"
+        :ItemSelect="itemSelectedSub"></aj-select-input>
+
+
+      <el-button @click="onSearchAdvanced">
+        其他条件
+      </el-button>
+
+      <el-button ref="refSearch" @click="onSearch">搜索</el-button>
     </template>
   </aj-hot-table>
 </template>
@@ -42,16 +51,18 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
+import InventorySearch from "../../../components/inventorysearch/index.vue";
 import { SubPackageList } from "@/api/model/dict/subpackage";
 import { ReportSubpackageTree } from "@/api/model/report/subpackage";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
-
+import { hottableSettings } from "../../../components/common";
 interface baseObject {
   [key: string]: any;
 }
 let projectSelect = ref<baseObject>({});
 let subpackageSelect = ref<baseObject>({});
+let inventorysearch = ref<baseObject>({});
 const props = defineProps({
   AfterSelected: {
     type: Function,
@@ -59,6 +70,19 @@ const props = defineProps({
   },
 });
 const listUriParams = {} as baseObject;
+let limitedNum = 2;
+const categoryArray = ref([]);
+const subjectArray = ref([]);
+const refSearch = ref({});
+let getExtendData = (value: any) => {
+  let hottable = ajhottable.value.GetSettings();
+  let divisionarray = hottableSettings(hottable, value);
+  inventorysearch.value.UpdateData(divisionarray[0], divisionarray[1]);
+};
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  //ajhottable.value.PageLoaded(listUriParams, listUriParams.ownId);
+}
 /**
  * left tree
  */
@@ -70,8 +94,20 @@ const onSearch = (value: any) => {
 
   ajhottable.value.PageLoaded(listUriParams, 0);
 };
-const itemSelected = (selected: baseObject) => {
-
+let onSearchAdvanced = () => {
+  inventorysearch.value.PageLoaded(null, null);
+}
+const itemSelectedPro = (selected: baseObject) => {
+  limitedNum--;
+  if (limitedNum == 0) {
+    refSearch.value.$el.click();
+  }
+};
+const itemSelectedSub = (selected: baseObject) => {
+  limitedNum--;
+  if (limitedNum == 0) {
+    refSearch.value.$el.click();
+  }
 };
 const getTreePrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.subPackageId = value;

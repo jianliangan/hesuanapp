@@ -34,10 +34,8 @@
 
       </template>
       <template v-slot:expendcondition>
-        <el-button @click="onSearch">
-          <el-icon>
-            <img class="iconimgq" src="../../../../icons/svg/search.svg" />
-          </el-icon>
+        <el-button @click="onSearch" id="bu">
+          查
         </el-button>
       </template>
     </aj-hot-table>
@@ -293,3 +291,17 @@ window.onscroll = function () {
 }
 defineExpose({ PageLoaded });
 </script>
+<style>
+/* .htCore th{
+  background-color: #409eff;
+}
+.colHeader{
+  color: #ffffff;
+}
+.relative{
+  color: #222222;
+}
+.handsontable th.ht_nestingLevels{
+  background-color: #f0f0f0;
+} */
+</style>

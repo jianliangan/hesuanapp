@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="dialogAddVisible" title="新增" width="50%">
     <slot name="formitem"></slot>
-    <el-form-item>
+    <el-form-item style="margin-left: 80%;">
       <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"><span
           v-if="dialogIsAdd == true">保存增加</span><span v-else>保存修改</span>
       </el-button>
@@ -16,7 +16,7 @@
         <template v-if="props.BtnField == true">
           <el-popover placement="bottom-start" title="" :width="70" trigger="click">
             <template #reference>
-              <el-button>显示</el-button>
+              <el-button style="border: #ebebeb 0.5px solid;">显示</el-button>
             </template>
 
             <template #default>
@@ -30,7 +30,7 @@
           </el-popover>
         </template>
 
-        <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true">新增</el-button>
+        <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true" style="border: #ebebeb 0.5px solid;">新增</el-button>
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
         <el-button type="primary" @click="ClkInsert" v-if="props.BtnInsert == true">插入</el-button>

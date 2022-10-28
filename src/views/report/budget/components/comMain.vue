@@ -1,5 +1,5 @@
 <template>
-  <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
+
   <aj-hot-table ref="ajhottable" :MainContentFetchList="ReportProjectTree" MaxFileNums="1" MaxFileSize="20"
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
@@ -29,11 +29,13 @@
       <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
     </template>
     <template v-slot:expendcondition>
-      <el-button @click="onSearch">
+      <!-- <el-button @click="onSearch">
         <el-icon>
           <img class="iconimgq" src="../../../../icons/svg/search.svg" />
         </el-icon>
-      </el-button>
+      </el-button> -->
+
+      <sheet-search ref="sheetsearch" :OnSubmit="onSubmit"></sheet-search>
     </template>
   </aj-hot-table>
 </template>
@@ -43,7 +45,7 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { hottableSettings } from "../../../components/common";
-import InventorySearch from "../../../components/inventorysearch/index.vue";
+import SheetSearch from "../../../components/sheetsearch/index.vue";
 import { ProjectFetchTree } from "@/api/model/home/project";
 import { ReportProjectTree } from "@/api/model/report/project";
 import { tools_objToobj } from "@/components/jrTools";
@@ -98,10 +100,10 @@ const nestedHeaders = [
 const HotCommentIndex = [4];
 const listUriParams = {} as baseObject;
 registerAllModules();
-let inventorysearch = ref<baseObject>({});
+let sheetsearch = ref<baseObject>({});
 const ajhottable = ref<baseObject>({});
 let onSearch = () => {
-  inventorysearch.value.PageLoaded(null, null);
+  sheetsearch.value.PageLoaded(null, null);
 }
 const tableData2 = ref(new Array<baseObject>());
 let onSubmit = (params: baseObject) => {
@@ -112,7 +114,7 @@ let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
 
   let divisionarray = hottableSettings(hottable, value);
-  inventorysearch.value.UpdateData(divisionarray[0], divisionarray[1]);
+  sheetsearch.value.UpdateData(divisionarray[0], divisionarray[1]);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.divisionId = value;

@@ -95,16 +95,15 @@
             </el-menu>
           </el-scrollbar>
         </div>
-        <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
+      </div>
+      <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
           <el-icon class="el-icon--left">
             <!-- <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else /> -->
             <CaretRight v-if="menuIsCollapse" />
             <CaretLeft v-else />
           </el-icon>
-
         </div>
-      </div>
       <Side-m v-if="ismobile"></Side-m>
       <div style="width: 20px;"></div>
       <div class="aminui-body el-container">

@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="dialogAddVisible" title="查询" width="50%">
+    <el-dialog v-model="dialogAddVisible" :title="props.Title" width="50%">
         <el-form :model="formInstance" label-width="120px">
             <el-form-item label="科目">
                 <el-select v-model="formInstance.subject" filterable>
@@ -25,7 +25,7 @@
 
         </el-form>
         <el-form-item>
-            <el-button id="anniu" type="primary" @click="OnSubmit">查询
+            <el-button id="anniu" type="primary" @click="OnSubmit">{{ props.AddLabel }}
             </el-button>
             <el-button @click="onCancel">取消</el-button>
         </el-form-item>
@@ -52,6 +52,14 @@ const props = defineProps({
         type: Function,
         default: null,
     },
+    AddLabel: {
+        type: String,
+        default: "查询"
+    },
+    Title: {
+        type: String,
+        default: "查询"
+    }
 });
 let OnSubmit = () => {
     props.OnSubmit(formInstance.value);

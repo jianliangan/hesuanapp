@@ -4,7 +4,7 @@
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :CellDblClick="cellDblClick">
+    :AfterSelected="afterSelected" :CellDblClick="cellDblClick" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
@@ -25,12 +25,16 @@
       <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
     </template>
     <template v-slot:expendcondition>
-      <!--<aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
-        :GetMainPrimeId="getProjectSelectMainPrimeId" :GetMainName="getProjectSelectMainName"
-        :ItemSelect="projectItemSelect" Placeholder="单位工程"></aj-select-input>-->
-      <el-input v-model="searchsubject" placeholder="成本科目" />
+
+      <el-select v-model="searchsubject" filterable placeholder="成本科目">
+        <el-option v-for="item in subjectOptions" :key="item" :label="item" :value="item" />
+      </el-select>
       <el-input v-model="searchcode" placeholder="编码" />
-      <el-input v-model="searchcategory" placeholder="类别" />
+
+      <el-select v-model="searchcategory" filterable placeholder="类别">
+        <el-option v-for="item in categoryOptions" :key="item" :label="item" :value="item" />
+      </el-select>
+
       <el-input v-model="searchdistinction" placeholder="项目特征" />
       <el-button @click="ClkSign">搜索</el-button>
     </template>
@@ -43,7 +47,7 @@ import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
 import { ReportSearchList } from "@/api/model/report/search";
-
+import { hottableSettings } from "../../../components/common";
 
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
@@ -53,7 +57,8 @@ let searchsubject = ref("");
 let searchcode = ref("");
 let searchcategory = ref("");
 let searchdistinction = ref("");
-
+let categoryOptions = ref([]);
+let subjectOptions = ref([]);
 interface baseObject {
   [key: string]: any;
 }
@@ -134,6 +139,23 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.id = value;
   return item.id;
 };
+let getExtendData = (value: any) => {
+  let hottable = ajhottable.value.GetSettings();
+
+  let divisionarray = hottableSettings(hottable, value);
+  UpdateData(divisionarray[0], divisionarray[1]);
+};
+function UpdateData(subjectSource: any, categorySource: any) {
+  categoryOptions.value.splice(0);
+  subjectOptions.value.splice(0);
+
+  for (let i = 0; i < subjectSource.length; i++) {
+    subjectOptions.value.push(subjectSource[i]);
+  }
+  for (let i = 0; i < categorySource.length; i++) {
+    categoryOptions.value.push(categorySource[i]);
+  }
+}
 const afterSelected = (selected: baseObject, row, column, row2, column2) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };

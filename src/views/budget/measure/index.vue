@@ -3,14 +3,14 @@
   <el-container>
     <el-aside width="200px" class="ajtree">
       <com-left ref="comleft" @init="init" :AfterSelected="leftAfterSelected" class="adminui"></com-left>
-      <div class="adminui-side-bottom left-right" @click="a">
+      <!-- <div class="adminui-side-bottom left-right" @click="a">
         <el-icon class="">
-          <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
+          <el-icon-expand v-if="menuIsCollapse" />
+            <el-icon-fold v-else />
           <CaretLeft class="jianto8" />
-          <!-- <CaretRight /> -->
+          <CaretRight />
         </el-icon>
-      </div>
+      </div> -->
     </el-aside>
 
     <el-container direction="vertical">
@@ -48,24 +48,24 @@ const leftAfterSelected = (selected: baseObject) => {
     selected.ownId
   );
 };
-function a() {
-  setTimeout(() => {
-    var ev = new Event("pagecontentCollapse", { "bubbles": true, "cancelable": true });
-    document.dispatchEvent(ev);
-  }, 300);
-  const className = document.getElementsByClassName('el-aside ajtree')[0];
-  const inputa = document.getElementsByClassName('el-input__wrapper')[0];
-  const jianto = document.getElementsByClassName('jianto8')[0];
-  if (className.offsetWidth == 200) {
-    className.style.width = "20px";
-    inputa.style.display = "none";
-    jianto.style.transform = "rotate(180deg)";
-  } else {
-    className.style.width = "200px";
-    inputa.style.display = "";
-    jianto.style.transform = "";
-  }
-}
+// function a() {
+//   setTimeout(() => {
+//     var ev = new Event("pagecontentCollapse", { "bubbles": true, "cancelable": true });
+//     document.dispatchEvent(ev);
+//   }, 300);
+//   const className = document.getElementsByClassName('el-aside ajtree')[0];
+//   const inputa = document.getElementsByClassName('el-input__wrapper')[0];
+//   const jianto = document.getElementsByClassName('jianto8')[0];
+//   if (className.offsetWidth == 200) {
+//     className.style.width = "20px";
+//     inputa.style.display = "none";
+//     jianto.style.transform = "rotate(180deg)";
+//   } else {
+//     className.style.width = "200px";
+//     inputa.style.display = "";
+//     jianto.style.transform = "";
+//   }
+// }
 
 const mainAfterSelected = (selected: baseObject) => {
   comdown.value.PageLoaded(

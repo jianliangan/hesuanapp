@@ -24,7 +24,7 @@
     </el-form>
   </el-dialog>
 
-  <el-button text type="primary" @click="ClkAddFlow">新增</el-button>
+  <el-button text type="primary" @click="ClkAddFlow" style="border: #ebebeb 0.5px solid;">新增</el-button>
   <div ref="mainframe" :style="{ height: '100%', overflow: 'hidden' }">
     <div
       class="scTable-table"

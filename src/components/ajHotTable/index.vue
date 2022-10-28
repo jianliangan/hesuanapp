@@ -7,7 +7,7 @@
         <template v-if="props.BtnField == true">
           <el-popover placement="bottom-start" title="" :width="70" trigger="click">
             <template #reference>
-              <el-button>显示</el-button>
+              <el-button id="bu">显</el-button>
             </template>
             <template #default>
               <div style="height:300px;overflow-y:auto;overflow-x: hidden;">
@@ -22,57 +22,42 @@
 
 
 
-        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
-          <el-icon><img class="iconimgq" src="../../icons/svg/moveUp.svg" /></el-icon>
+        <el-button  type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
+          上
         </el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/moveDown.svg" />
-          </el-icon>
+          下
         </el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
           <template #reference>
             <el-button type="primary" v-if="props.BtnDel == true" id="bu">
-              <el-icon>
-                <img class="iconimgq" src="../../icons/svg/delete.svg" />
-              </el-icon>
+              删
             </el-button>
           </template>
         </el-popconfirm>
 
         <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/addChild.svg" />
-          </el-icon>
+          增
         </el-button>
         <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/addition.svg" />
-          </el-icon>
+         前
         </el-button>
         <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/postAddition.svg" />
-          </el-icon>
+          后
         </el-button>
         <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/mark.svg" />
-          </el-icon>
+          标
         </el-button>
         <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true" id="bu">
-          <el-icon>
-            <img class="iconimgq" src="../../icons/svg/unMark.svg" />
-          </el-icon>
+          取
         </el-button>
+        
         <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
-            :on-change="handleChange" auto-upload>
+            :on-change="handleChange" auto-upload >
             <el-button type="primary" id="bu">
-              <el-icon>
-                <img class="iconimgq" src="../../icons/svg/import.svg" />
-              </el-icon>
+             导
             </el-button>
           </el-upload>
         </template>
@@ -87,7 +72,7 @@
         <!-- <CaretRight /> -->
       </el-icon>
     </div>
-    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == false" @click="ac">
+    <div class="adminui-side-bottom topbottom1" v-if="props.BtnInsertChildren == false" @click="ac">
       <el-icon>
         <!-- <el-icon-expand v-if="menuIsCollapse" />
             <el-icon-fold v-else /> -->
@@ -143,6 +128,8 @@ const formatJP = {
   pattern: "0,0.00 ",
   culture: "ja-JP",
 };
+
+
 numbro.registerLanguage(languages["zh-CN"]);
 
 function getAllAreas(
@@ -1119,7 +1106,10 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
   border-color: #ffffff;
   color: #ffffff;
 }
-
+/* 进度条颜色 */
+.ht_master .wtHolder::-webkit-scrollbar-thumb{
+  background-color: #409EFF;
+}
 .handsontable THEAD TH.color1 .collapsibleIndicator {
   box-shadow: 0px 0px 0px 6px #409EFF;
   -webkit-box-shadow: 0px 0px 0px 6px #409EFF;
@@ -1128,19 +1118,28 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
   color: #ffffff;
 }
 
-.iconimgq {
-  width: 60px;
-  height: 32px;
-  cursor: pointer;
-}
 
-#bu {
-  background-color: #ffffff;
+.el-button--default .el-button{
+  width: 70px;
+  border: 1px solid;
+}
+#bu{
+  border: 1px solid rgb(77, 74, 74);
+  width: 50px;
+  height: 38px;
+  background-color: #e7f7ff;
+  color:#96c1ec;
   border: none;
-  padding-left: 1px;
-  border-color: #ffffff;
 }
-
+/* #bu {
+  background-color: #ffffff;
+  border: 1px solid rgb(77, 74, 74);
+  width: 70px;
+  height: 30px;
+} */
+.el-button--default{
+  width: 70px;
+}
 #bu:hover {
   background-color: #ffffff;
 }
@@ -1194,7 +1193,7 @@ body .handsontable .mytagrow {
 }
 
 body .handsontable .onlyRead {
-  background: rgb(227, 229, 230);
+  background: rgb(230, 229, 227);
 }
 
 .el-main {
@@ -1207,7 +1206,13 @@ body .handsontable .onlyRead {
   left: 95%;
   margin-top: -30px;
 }
-
+.topbottom1 {
+  width: 100px;
+  position: fixed;
+  left: 55%;
+  color: #409eff;
+  margin-top: -30px;
+}
 .el-space {
   overflow: hidden;
   display: inline-flex;
