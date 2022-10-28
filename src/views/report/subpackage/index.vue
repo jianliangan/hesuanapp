@@ -1,17 +1,7 @@
 
 <template>
   <el-container>
-    <el-aside width="200px" class="ajtree">
-      <com-left ref="comleft" :AfterSelected="leftAfterSelected" class="adminui"></com-left>
-      <div class="adminui-side-bottom left-right" @click="a">
-        <el-icon class="">
-          <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
-          <CaretLeft class="jiantod" />
-          <!-- <CaretRight /> -->
-        </el-icon>
-      </div>
-    </el-aside>
+
     <el-container direction="vertical">
       <el-main>
         <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
@@ -66,7 +56,7 @@ const comdown = ref<baseObject>({});
  */
 
 function PageLoaded(uri: baseObject) {
-  comleft.value.PageLoaded(uri);
+  commain.value.PageLoaded(uri);
 }
 
 const childMounted = () => {

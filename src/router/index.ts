@@ -128,6 +128,7 @@ function filterAsyncRouter(routerMap: any) {
 		}
 		//MAP转路由对象
 		var route = {
+			click: item.click,
 			path: item.path,
 			name: item.name,
 			meta: item.meta,
@@ -156,10 +157,12 @@ function flatAsyncRoutes(routes: any, breadcrumb = new Array<any>()) {
 		const tmp = { ...route }
 		if (tmp.children) {
 			let childrenBreadcrumb = [...breadcrumb]
+
 			childrenBreadcrumb.push(route)
 			let tmpRoute = { ...route }
 			tmpRoute.meta.breadcrumb = childrenBreadcrumb
 			delete tmpRoute.children
+
 			res.push(tmpRoute)
 			let childrenRoutes = flatAsyncRoutes(tmp.children, childrenBreadcrumb)
 			childrenRoutes.map(item => {

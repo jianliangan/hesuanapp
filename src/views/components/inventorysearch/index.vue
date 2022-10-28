@@ -2,13 +2,19 @@
     <el-dialog v-model="dialogAddVisible" title="查询" width="50%">
         <el-form :model="formInstance" label-width="120px">
             <el-form-item label="科目">
-                <el-input v-model="formInstance.subject" />
+                <el-select v-model="formInstance.subject" filterable>
+                    <el-option v-for="item in subjectOptions" :key="item" :label="item" :value="item" />
+                </el-select>
+
             </el-form-item>
             <el-form-item label="编码">
                 <el-input v-model="formInstance.code" />
             </el-form-item>
             <el-form-item label="分类">
-                <el-input v-model="formInstance.category" />
+                <el-select v-model="formInstance.category" filterable>
+                    <el-option v-for="item in categoryOptions" :key="item" :label="item" :value="item" />
+                </el-select>
+
             </el-form-item>
             <el-form-item label="名称">
                 <el-input v-model="formInstance.name" />
@@ -39,7 +45,8 @@ interface baseObject {
 const listUriParams = {} as baseObject;
 let formInstance = ref<baseObject>({});
 let dialogAddVisible = ref(false);
-
+let categoryOptions = ref([]);
+let subjectOptions = ref([]);
 const props = defineProps({
     OnSubmit: {
         type: Function,
@@ -57,10 +64,21 @@ function PageLoaded(uri: baseObject, selected: Array<String>) {
     dialogAddVisible.value = true;
     // tools_objToobj(uri, listUriParams);
 }
-defineExpose({ PageLoaded });
+function UpdateData(subjectSource: any, categorySource: any) {
+    categoryOptions.value.splice(0);
+    subjectOptions.value.splice(0);
+
+    for (let i = 0; i < subjectSource.length; i++) {
+        subjectOptions.value.push(subjectSource[i]);
+    }
+    for (let i = 0; i < categorySource.length; i++) {
+        categoryOptions.value.push(categorySource[i]);
+    }
+}
+defineExpose({ PageLoaded, UpdateData });
 </script>
 <style scoped>
 #anniu {
-margin-left: 44%;
+    margin-left: 44%;
 }
 </style>

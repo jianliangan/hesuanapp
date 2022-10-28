@@ -2,37 +2,22 @@
   <el-dialog v-model="dialogAddVisible" title="新增" width="50%">
     <slot name="formitem"></slot>
     <el-form-item>
-      <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"
-        ><span v-if="dialogIsAdd == true">保存增加</span
-        ><span v-else>保存修改</span>
+      <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"><span
+          v-if="dialogIsAdd == true">保存增加</span><span v-else>保存修改</span>
       </el-button>
       <el-button @click="onCancel">取消</el-button>
     </el-form-item>
   </el-dialog>
 
   <el-container>
-    <el-aside
-      width="200px"
-      v-loading="showasideing"
-      v-if="props?.HasTree == true"
-    >
+    <el-aside width="200px" v-loading="showasideing" v-if="props?.HasTree == true">
       <el-container>
         <el-header>
-          <el-input
-            placeholder="输入关键字进行过滤"
-            v-model="filterText"
-            clearable
-          ></el-input>
+          <el-input placeholder="输入关键字进行过滤" v-model="filterText" clearable></el-input>
         </el-header>
         <el-main class="nopadding">
-          <el-tree
-            ref="mytree"
-            node-key="projectId"
-            :highlight-current="true"
-            :data="organizedata"
-            :props="props?.GroupsProps"
-            @node-click="leftRowClick"
-          ></el-tree>
+          <el-tree ref="mytree" node-key="projectId" :highlight-current="true" :data="organizedata"
+            :props="props?.GroupsProps" @node-click="leftRowClick"></el-tree>
         </el-main>
       </el-container>
       <slot></slot>
@@ -40,51 +25,15 @@
     <el-container>
       <el-header>
         <el-space>
-          <el-button
-            type="primary"
-            @click="ClkAddData"
-            v-if="props.BtnNew == true"
-            >新增</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkUpMove"
-            v-if="props.BtnUpMove == true"
-            >上移</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkDownMove"
-            v-if="props.BtnDownMove == true"
-            >下移</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkInsert"
-            v-if="props.BtnInsert == true"
-            >插入</el-button
-          >
-          <el-button
-            type="primary"
-            @click="ClkSign"
-            v-if="props.BtnSign == true"
-            >标记</el-button
-          >
-          <template
-            v-if="props?.ImportUri != undefined && props?.ImportUri != ''"
-          >
-            <el-upload
-              :accept="props.FilesExts"
-              :maxSize="props.MaxFileSize"
-              :limit="1"
-              :data="listUriParams"
-              :show-file-list="false"
-              :action="props?.ImportUri"
-              :on-error="handleError"
-              :on-success="handleSuccess"
-              :on-change="handleChange"
-              auto-upload
-            >
+          <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true">新增</el-button>
+          <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
+          <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
+          <el-button type="primary" @click="ClkInsert" v-if="props.BtnInsert == true">插入</el-button>
+          <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">标记</el-button>
+          <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
+            <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
+              :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
+              :on-change="handleChange" auto-upload>
               <el-button type="primary">导入</el-button>
             </el-upload>
           </template>
@@ -92,19 +41,9 @@
       </el-header>
 
       <el-main>
-        <el-table
-          ref="myeltable"
-          v-loading="loading"
-          :data="tableData.list"
-          :row-key="props.TableKey"
-          border
-          default-expand-all
-          stripe
-          :height="tableData.tableHeight"
-          @selection-change="SelectionChange"
-          :highlight-current-row="props.HighlightCurrentRow"
-          @current-change="currentChange"
-        >
+        <el-table ref="myeltable" v-loading="loading" :data="tableData.list" :row-key="props.TableKey" border
+          default-expand-all stripe :height="tableData.tableHeight" @selection-change="SelectionChange"
+          :highlight-current-row="props.HighlightCurrentRow" @current-change="currentChange">
           <slot name="tableitem"></slot>
 
           <el-table-column label="操作" fixed="right" width="150">
@@ -115,32 +54,21 @@
                 </template>
               </el-popconfirm>
               <span>
-                <el-button
-                  text
-                  type="primary"
-                  @click.stop="ClkEditData(scope.row)"
-                  >编辑</el-button
-                >
+                <el-button text type="primary" @click.stop="ClkEditData(scope.row)">编辑</el-button>
               </span>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
       <el-footer v-if="HasPage == true">
-        <el-pagination
-          layout="prev, pager, next"
-          :total="pageInfo.itemTotal"
-          :page-size="pageInfo.pageSize"
-          small
-          background
-          @current-change="HandleCurrentChange"
-        />
+        <el-pagination layout="prev, pager, next" :total="pageInfo.itemTotal" :page-size="pageInfo.pageSize" small
+          background @current-change="HandleCurrentChange" />
       </el-footer>
     </el-container>
   </el-container>
 </template>
     
-    <script lang="ts" setup>
+<script lang="ts" setup>
 import { computed, nextTick, ref, watch, defineProps, defineExpose } from "vue";
 import {
   tools_objToobj,
@@ -324,13 +252,13 @@ tableData.value.tableHeight = computed({
 
     return tt;
   },
-  set() {},
+  set() { },
 });
 tableData.value.tablePackageHeight = computed({
   get() {
     return mainframe.value.offsetHeight - 50 - 32 + "px";
   },
-  set() {},
+  set() { },
 });
 watch(filterText, (newValue, oldValue) => {
   organizedata.value = organizedata2.filter((data) => {
@@ -351,10 +279,10 @@ const HandleCurrentChange = (val: number) => {
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
     "文件超过限制：文件不能超过 " +
-      props?.MaxFileNums +
-      ",单文件大小不能超过 " +
-      props?.MaxFileSize +
-      "M"
+    props?.MaxFileNums +
+    ",单文件大小不能超过 " +
+    props?.MaxFileSize +
+    "M"
   );
 };
 
@@ -658,7 +586,7 @@ const FetchDataList = async (row: any) => {
             i
           );
         }
-        console.log("tttttttttt", tableData.value.map);
+
         loading.value = false;
       })
       .catch((err: any) => {
@@ -682,7 +610,7 @@ PageLoaded();
 defineExpose({ ExportDataList });
 type functree = (query: any) => any;
 </script>
-    <style scoped>
+<style scoped>
 .scTable-table {
   height: calc(100% - 50px);
 }

@@ -100,8 +100,9 @@
       </el-table>
     </el-main>
     <el-footer v-if="HasPage == true">
-      <el-pagination layout="prev, pager, next,total" :total="pageInfo.itemTotal" :page-size="20" small background
-        @current-change="HandleCurrentChange" />
+
+      <el-pagination layout="prev, pager, next,total" :total="itemTotal" :page-size="pageSize" small background
+        @current-change="HandleCurrentChange" @size-change="handleSizeChange" />
     </el-footer>
   </el-container>
 </template>
@@ -153,7 +154,8 @@ function getAllAreas(
 //getAllAreas(chinaAreas, planAreas.value)
 
 // do not use same name with ref
-
+const itemTotal = ref(0);
+const pageSize = ref(0);
 const filterText = ref("");
 const showasideing = ref(false);
 const mainframe = ref<baseObject>({});
@@ -341,6 +343,7 @@ watch(filterText, (newValue, oldValue) => {
 const selectUserColumn = (val: baseObject) => {
 
 }
+const handleSizeChange = (val: number) => { }
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
   AfterSelected(listUriParams);
@@ -574,8 +577,8 @@ const AfterSelected = async (row: any) => {
       .MainContentFetchList(row)
       .then((resdata: any) => {
         // pageInfo.value.current = listUriParams.page;
-        pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
-        //pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
+        itemTotal.value = resdata["itemTotal"];
+        pageSize.value = resdata["pageSize"];
 
         tableData.value.list = resdata["list"];
         if (props.GetExtendData) {

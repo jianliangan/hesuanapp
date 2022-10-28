@@ -1,5 +1,6 @@
 export var hottableSettings = (hottable: any, value: any) => {
     let list = value["extend"].subject;
+
     let subjecttmp = new Array<String>();
     for (let i = 0; i < list.length; i++) {
         subjecttmp.push(list[i].dictName);
@@ -19,6 +20,7 @@ export var hottableSettings = (hottable: any, value: any) => {
     hottable.columns[5].source = categorytmp;
     hottable.columns[5].strict = false;
     hottable.columns[5].allowInvalid = false;
+    return [subjecttmp, categorytmp];
 }
 export var hottableSettingsSupply = (hottable: any, value: any) => {
     let list = value["extend"].suppliertype;

@@ -3,7 +3,7 @@
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders">
+    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :SuplyReadOnly="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
@@ -28,8 +28,11 @@
     </template>
     <template v-slot:expendcondition>
       <aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
-        :GetMainPrimeId="getProjectSelectMainPrimeId" :GetMainName="getProjectSelectMainName"
-        :ItemSelect="projectItemSelect" :HasButton="true"></aj-select-input>
+        :GetMainPrimeId="getProjectSelectMainPrimeId" Placeholder="请选择项目" :GetMainName="getProjectSelectMainName">
+      </aj-select-input>
+      <aj-select-input ref="subpackageSelect" Placeholder="请选择分包商" :MainContentFetchList="SubPackageList"
+        :GetMainPrimeId="getTreePrimeId" :GetMainName="getTreePrimeName" :ItemSelect="itemSelected"></aj-select-input>
+      <el-button @click="onSearch">搜索</el-button>
     </template>
   </aj-hot-table>
 </template>
@@ -39,7 +42,7 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
-
+import { SubPackageList } from "@/api/model/dict/subpackage";
 import { ReportSubpackageTree } from "@/api/model/report/subpackage";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
@@ -48,6 +51,7 @@ interface baseObject {
   [key: string]: any;
 }
 let projectSelect = ref<baseObject>({});
+let subpackageSelect = ref<baseObject>({});
 const props = defineProps({
   AfterSelected: {
     type: Function,
@@ -58,9 +62,25 @@ const listUriParams = {} as baseObject;
 /**
  * left tree
  */
-const projectItemSelect = (value: String) => {
-  listUriParams.projectId = value;
-  ajhottable.value.PageLoaded(listUriParams, value);
+const onSearch = (value: any) => {
+  let project = projectSelect.value.GetValue();
+  let subpackage = subpackageSelect.value.GetValue();
+  listUriParams.projectId = project;
+  listUriParams.subPackageId = subpackage;
+
+  ajhottable.value.PageLoaded(listUriParams, 0);
+};
+const itemSelected = (selected: baseObject) => {
+
+};
+const getTreePrimeId = (item: baseObject, value: Object) => {
+  if (value != null) item.subPackageId = value;
+
+  return item.subPackageId;
+};
+const getTreePrimeName = (item: baseObject, value: Object) => {
+  if (value != null) item.subPackageName = value;
+  return item.subPackageName;
 };
 const getProjectSelectMainPrimeId = (item: baseObject) => {
   return item.projectId;
@@ -160,6 +180,7 @@ const getInitHotTable = () => {
 function PageLoaded(uri: baseObject) {
   tools_objToobj(uri, listUriParams);
   projectSelect.value.PageLoaded(uri);
+  subpackageSelect.value.PageLoaded(uri);
   // ;
 }
 

@@ -416,12 +416,23 @@ let settings = ref({
   data: [props.GetInitHotTable()],
   nestedHeaders: props.NestedHeaders,
   cell: [],
+  afterGetColHeader: function (col, TH) {
+
+    function applyClass(elem, className) {
+      if ((' ' + elem.className + ' ').indexOf(' ' + className + ' ') > -1) {
+      } else {
+        elem.classList.add(className);
+      }
+    }
+    applyClass(TH, 'color1');
+
+  },
   afterBeginEditing: (row: any, column: any) => {
     //// console.log("aafter edit");
     if (props.AfterBeginEditing) props.AfterBeginEditing(row, column);
   },
   afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
-    console.log("aaaaaaaaaaa", 33);
+
   }
   ,
   afterDocumentKeyDown: function (event: any) {
@@ -1103,6 +1114,20 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
 }
 </style>
 <style>
+.handsontable THEAD TH.color1 {
+  background: #409EFF;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.handsontable THEAD TH.color1 .collapsibleIndicator {
+  box-shadow: 0px 0px 0px 6px #409EFF;
+  -webkit-box-shadow: 0px 0px 0px 6px #409EFF;
+  background: #409EFF;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
 .iconimgq {
   width: 60px;
   height: 32px;
@@ -1137,31 +1162,31 @@ body .handsontable .truncate {
 }
 
 body .handsontable .sourceproject_1 {
-  background: #f0f0f0f0
+  background: #B0DEFF
 }
 
 body .handsontable .sourceproject_2 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .sourceproject_3 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .sourceproject_4 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .sourceproject_5 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .sourceproject_6 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .sourceproject_7 {
-  background: #f0f0f0f0
+  background: #DFF2FF
 }
 
 body .handsontable .mytagrow {

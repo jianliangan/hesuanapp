@@ -7,7 +7,7 @@
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
     :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true"
-    :GetExtendData="getExtendData">
+    :GetExtendData="getExtendData" :SuplyReadOnly="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
@@ -110,7 +110,8 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
 };
 let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
-  hottableSettings(hottable, value);
+  let divisionarray = hottableSettings(hottable, value);
+  inventorysearch.value.UpdateData(divisionarray[0], divisionarray[1]);
 };
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);

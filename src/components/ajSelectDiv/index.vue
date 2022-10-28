@@ -118,7 +118,7 @@ const AfterSelected = async (row: any, selected: Array<String>) => {
     props
       .MainContentFetchList(row)
       .then((resdata: any) => {
-        console.log("ttttttttttttt", resdata.list);
+
         nodes_list.value = resdata.list;
         for (let i = 0; i < resdata.list.length; i++) {
           let value = resdata.list[i];

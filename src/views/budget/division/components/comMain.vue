@@ -11,7 +11,7 @@
       :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
       :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
       :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true"
-      :GetExtendData="getExtendData">
+      :GetExtendData="getExtendData" :SuplyReadOnly="true">
       <template v-slot:tableitem>
         <hot-column width="0" data="divisionId" title="" />
 
@@ -123,10 +123,12 @@ const tableData2 = ref(new Array<baseObject>());
 //     },
 //   },
 // };
-
+const categoryArray = ref([]);
+const subjectArray = ref([]);
 let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
-  hottableSettings(hottable, value);
+  let divisionarray = hottableSettings(hottable, value);
+  inventorysearch.value.UpdateData(divisionarray[0], divisionarray[1]);
 };
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);

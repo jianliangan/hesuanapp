@@ -3,7 +3,7 @@
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders">
+    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :SuplyReadOnly="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="150" data="projectName" title="项目相关" />
