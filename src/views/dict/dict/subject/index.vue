@@ -8,7 +8,7 @@
           <el-input v-model="formInstance.dictName" />
         </el-form-item>
 
-        <el-form-item label="序号">
+        <el-form-item label="顺序">
           <el-input v-model="formInstance.sort" />
         </el-form-item>
 
@@ -16,7 +16,7 @@
     </template>
     <template v-slot:tableitem>
       <el-table-column prop="dictName" label="科目名称" />
-      <el-table-column prop="sort" label="序号" />
+      <el-table-column prop="sort" label="顺序" />
     </template>
   </aj-table>
 </template>

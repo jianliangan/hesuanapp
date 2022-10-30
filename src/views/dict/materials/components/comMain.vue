@@ -3,17 +3,17 @@
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
     :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="false" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected">
+    :GetComments="getComments" :AfterSelected="afterSelected" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="materialsId" title="" />
-      <hot-column width="120" data="materialsName" title="材料名称" />
+      <hot-column width="310" data="materialsName" title="材料名称" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="分类" />
       <hot-column width="120" data="subject" title="科目" />
       <hot-column width="120" data="distinction" title="特征" />
       <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="status" title="状态" />
-      <hot-column width="120" data="createBy" title="操作者" />
+      <hot-column width="120" data="status" type="dropdown" title="状态" />
+      <hot-column width="120" data="createByName" title="操作者" />
       <hot-column width="120" data="createTime" title="创建时间" />
       <hot-column width="120" data="updateTime" title="更新时间" />
     </template>
@@ -52,7 +52,15 @@ registerAllModules();
 const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
-
+let getExtendData = (value: any) => {
+  //console.log(value);
+  let statusl = value["extend"].statusl;
+  let hottable = ajhottable.value.GetSettings();
+  console.log(statusl);
+  hottable.columns[7].source = statusl;
+  hottable.columns[7].strict = false;
+  hottable.columns[7].allowInvalid = false;
+};
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.materialsId = value;
   return item.materialsId;
@@ -85,6 +93,7 @@ const getInitHotTable = () => {
     status: "",
     delFlag: "",
     createBy: "",
+    createByName: "",
     createTime: "",
     updateTime: "",
     remark: "",

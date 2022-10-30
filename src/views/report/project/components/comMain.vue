@@ -7,8 +7,8 @@
     :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :SuplyReadOnly="true" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
-      <hot-column width="150" data="projectName" title="项目相关" />
-      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="310" data="projectName" title="项目相关" />
+      <hot-column width="310" data="name" title="名称" />
       <hot-column width="120" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" title="类别" />

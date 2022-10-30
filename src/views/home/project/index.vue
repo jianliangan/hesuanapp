@@ -39,8 +39,8 @@
         </el-form-item>
 
         <el-form-item label="竣工日期" prop="completeTime">
-          <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
-            type="date" placeholder="" size="default" />
+          <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
+            placeholder="" size="default" />
         </el-form-item>
 
         <el-form-item label="业主姓名" prop="username">
@@ -58,7 +58,7 @@
         <el-form-item label="工程类别细项">
           <el-input v-model="formInstance.categoryDetail"></el-input>
         </el-form-item>
-        
+
         <el-form-item label="项目状态">
           <el-input v-model="formInstance.status"></el-input>
         </el-form-item>
@@ -66,7 +66,7 @@
         <el-form-item label="合同额">
           <el-input v-model="formInstance.contractPrice"></el-input>
         </el-form-item>
-        
+
         <el-form-item label="结算时间" prop="finalTime">
           <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
             placeholder="" size="default" />
@@ -248,7 +248,7 @@ let userColumn = [
   {
     label: "项目名称",
     prop: "projectName",
-    width: "150",
+    width: "310",
     showOverflowTooltip: true,
     fixed: true,
     isshow: true,
@@ -280,7 +280,7 @@ let userColumn = [
   {
     label: "业主姓名",
     prop: "username",
-    width: "90",
+    width: "70",
     showOverflowTooltip: true,
     fixed: false,
     isshow: true,
@@ -380,6 +380,7 @@ nextTick(() => {
   --el-table-header-bg-color: #409eff;
   --el-table-header-text-color: #ffffff;
 }
+
 .el-table .cell {
   padding: 0 10px;
 }

@@ -6,9 +6,11 @@
     :GetComments="getComments" :AfterSelected="afterSelected">
     <template v-slot:tableitem>
       <hot-column width="0" data="subPackageId" title="" />
-      <hot-column width="120" data="subPackageName" title="分包名称" />
+      <hot-column width="310" data="subPackageName" title="分包名称" />
       <hot-column width="120" data="contact" title="联系人" />
       <hot-column width="120" data="phone" title="电话" />
+      <hot-column width="120" data="managerName" title="录入人" />
+      <hot-column width="120" data="datetime" title="录入时间" />
     </template>
   </aj-hot-table>
 </template>
@@ -72,6 +74,8 @@ const getInitHotTable = () => {
     subPackageName: "",
     contact: "",
     phone: "",
+    manager: "",
+    managerName: "",
     source: "",
     children: [],
   };

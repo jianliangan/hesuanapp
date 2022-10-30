@@ -18,14 +18,14 @@
           <el-form-item label="名称" prop="projectName">
             <el-input v-model="formInstance.projectName" prop="projectName" />
           </el-form-item>
-          <el-form-item label="序号">
+          <el-form-item label="顺序">
             <el-input v-model="formInstance.sort" />
           </el-form-item>
         </el-form>
       </template>
       <template v-slot:tableitem>
         <el-table-column prop="projectName" label="名称" />
-        <el-table-column prop="sort" label="序号" />
+        <el-table-column prop="sort" label="顺序" />
       </template>
     </aj-table>
   </el-container>

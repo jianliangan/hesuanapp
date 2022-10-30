@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 export const MaterialsList = (query: any) => {
     return request({
-        url: '/dict/materials/fetch',
+        url: '/dict/materials/fetchwith',
         method: 'get',
         params: query
     })

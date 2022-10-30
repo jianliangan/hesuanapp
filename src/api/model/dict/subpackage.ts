@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 export const SubPackageList = (query: any) => {
     return request({
-        url: '/dict/subpackage/fetch',
+        url: '/dict/subpackage/fetchwith',
         method: 'get',
         params: query
     })

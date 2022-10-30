@@ -10,8 +10,8 @@
     :GetExtendData="getExtendData" :SuplyReadOnly="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
-      <hot-column width="150" data="projectName" title="项目相关" />
-      <hot-column width="120" data="name" title="名称" />
+      <hot-column width="310" data="projectName" title="项目相关" />
+      <hot-column width="310" data="name" title="名称" />
       <hot-column width="120" data="subject" type="dropdown" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" type="dropdown" title="类别" />
@@ -31,10 +31,8 @@
       <hot-column width="90" data="schedule" type="numeric" numeric-format="formatJP" title="进度" />
     </template>
     <template v-slot:expendcondition>
-      <el-button @click="onSearch">
-        <el-icon>
-          <img class="iconimgq" src="../../../../icons/svg/search.svg" />
-        </el-icon>
+      <el-button @click="onSearch" id="bu">
+        <span title="查询" style="width:50px;">查</span>
       </el-button>
     </template>
   </aj-hot-table>
@@ -136,6 +134,14 @@ const afterSelected = (selected: baseObject, row, column, row2, column2) => {
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
+    col: 1,
+    comment: { value: row.projectName },
+  }, {
+    row: i,
+    col: 2,
+    comment: { value: row.name },
+  }, {
+    row: i,
     col: 6,
     comment: { value: row.distinction },
   });
@@ -168,7 +174,7 @@ let onSearch = () => {
   inventorysearch.value.PageLoaded(null, null);
 }
 const getComments = () => {
-  return [6];
+  return [1, 2, 6];
 };
 const getInitHotTable = () => {
   return {

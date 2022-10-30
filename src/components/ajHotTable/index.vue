@@ -7,7 +7,7 @@
         <template v-if="props.BtnField == true">
           <el-popover placement="bottom-start" title="" :width="70" trigger="click">
             <template #reference>
-              <el-button id="bu">显</el-button>
+              <el-button id="bu"><span title="显示列" style="width:50px;">显</span></el-button>
             </template>
             <template #default>
               <div style="height:300px;overflow-y:auto;overflow-x: hidden;">
@@ -22,42 +22,42 @@
 
 
 
-        <el-button  type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
-          上
+        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
+          <span title="向上移动" style="width:50px;">上</span>
         </el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" id="bu">
-          下
+          <span title="向下移动" style="width:50px;">下</span>
         </el-button>
         <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
           <template #reference>
             <el-button type="primary" v-if="props.BtnDel == true" id="bu">
-              删
+              <span title="删除一行" style="width:50px;">删</span>
             </el-button>
           </template>
         </el-popconfirm>
 
         <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
-          增
+          <span title="增加一行" style="width:50px;">增</span>
         </el-button>
         <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
-         前
+          <span title="向前加一行" style="width:50px;">前</span>
         </el-button>
         <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
-          后
+          <span title="向后加一行" style="width:50px;">后</span>
         </el-button>
         <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
-          标
+          <span title="标记一行" style="width:50px;">标</span>
         </el-button>
         <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true" id="bu">
-          取
+          <span title="取消标记一行" style="width:50px;">取</span>
         </el-button>
-        
+
         <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
-            :on-change="handleChange" auto-upload >
+            :on-change="handleChange" auto-upload>
             <el-button type="primary" id="bu">
-             导
+              <span title="导入数据" style="width:50px;">导</span>
             </el-button>
           </el-upload>
         </template>
@@ -527,11 +527,17 @@ const handleChange: UploadProps["onChange"] = (
   uploadFiles: UploadFiles
 ) => { };
 const handleSuccess: UploadProps["onSuccess"] = (
-  error: Error,
+  response: any,
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
-  ElMessage.success("导入成功");
+
+  if (response.err) {
+    ElMessage.error(response.err);
+  } else {
+    ElMessage.success("导入成功");
+  }
+  //
   firstApiLoad = true;
   LoadData(listUriParams);
 };
@@ -1019,6 +1025,7 @@ const myLoadData = (listData: Array<baseObject>) => {
     filterRow(listData, tableData.value.map, 0);
   }
   let indexi = 0;
+  settings.value.cell.splice(0);
   settings.value.cell = new Array<baseObject>();
 
   for (let [key, value] of tableData.value.map) {
@@ -1106,10 +1113,12 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
   border-color: #ffffff;
   color: #ffffff;
 }
+
 /* 进度条颜色 */
-.ht_master .wtHolder::-webkit-scrollbar-thumb{
+.ht_master .wtHolder::-webkit-scrollbar-thumb {
   background-color: #409EFF;
 }
+
 .handsontable THEAD TH.color1 .collapsibleIndicator {
   box-shadow: 0px 0px 0px 6px #409EFF;
   -webkit-box-shadow: 0px 0px 0px 6px #409EFF;
@@ -1119,27 +1128,30 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
 }
 
 
-.el-button--default .el-button{
+.el-button--default .el-button {
   width: 70px;
   border: 1px solid;
 }
-#bu{
+
+#bu {
   border: 1px solid rgb(77, 74, 74);
   width: 50px;
   height: 38px;
   background-color: #e7f7ff;
-  color:#96c1ec;
+  color: #96c1ec;
   border: none;
 }
+
 /* #bu {
   background-color: #ffffff;
   border: 1px solid rgb(77, 74, 74);
   width: 70px;
   height: 30px;
 } */
-.el-button--default{
+.el-button--default {
   width: 70px;
 }
+
 #bu:hover {
   background-color: #ffffff;
 }
@@ -1206,6 +1218,7 @@ body .handsontable .onlyRead {
   left: 95%;
   margin-top: -30px;
 }
+
 .topbottom1 {
   width: 100px;
   position: fixed;
@@ -1213,6 +1226,7 @@ body .handsontable .onlyRead {
   color: #409eff;
   margin-top: -30px;
 }
+
 .el-space {
   overflow: hidden;
   display: inline-flex;

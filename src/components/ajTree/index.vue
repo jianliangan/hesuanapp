@@ -5,7 +5,11 @@
     </el-header>
     <el-main class="nopadding">
       <el-tree ref="mytree" node-key="projectId" :highlight-current="true" :data="organizedata"
-        :props="props?.GroupsProps" @node-click="leftRowClick"></el-tree>
+        :props="props?.GroupsProps" @node-click="leftRowClick" class="truncate">
+        <template #default="scope">
+          <span class="mynode" :title="scope.node.label">{{ scope.node.label }}</span>
+        </template>
+      </el-tree>
     </el-main>
   </el-container>
 </template>
@@ -127,6 +131,15 @@ defineExpose({ PageLoaded, GetCurrentNode });
 <style>
 .el-main {
   padding: 0px;
+}
+</style>
+<style scoped>
+.mynode {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 20px;
 }
 </style>
   
