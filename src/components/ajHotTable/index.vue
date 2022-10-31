@@ -81,7 +81,7 @@
       </el-icon>
     </div>
     <el-main>
-      <hot-table :settings="settings" v-on:dblclick="dblClick" v-on:click="click" style="height: 100%" ref="myHotTable">
+      <hot-table :settings="settings" v-on:dblclick="dblClick" v-on:click="click" ref="myHotTable">
         <slot name="tableitem"></slot>
       </hot-table>
     </el-main>
@@ -102,6 +102,7 @@ import { computed, nextTick, ref, watch, defineProps, defineExpose, onBeforeUnmo
 import {
   tools_objToobj,
   tools_sort_map_loop,
+  applyClass,
 } from "@/components/jrTools/index";
 
 import {
@@ -342,6 +343,7 @@ const myRender = () => {
   let rows = hot.countRows();
   let cols = hot.countCols();
   let primeId = 0;
+
   for (let j = 0; j < rows; j++) {
     primeId = hot.getCopyableText(j, 0, j, 0);
     if (!primeId) {
@@ -374,6 +376,7 @@ const myRender = () => {
         if (props.GetComments().indexOf(i) != -1) {
           classall += " truncate";
         }
+
         hot.setCellMeta(j, i, "className", classall);
         hot.setCellMeta(j, i, "readOnly", readOnly);
 
@@ -390,7 +393,7 @@ const myRender = () => {
 // hot.getPlugin('nestedRows').collapsingUI.collapseChildren(5); 可以手动展开
 let settings = ref({
   manualColumnResize: true,
-  rowHeaderWidth: 80,
+  rowHeaderWidth: 60,
   outsideClickDeselects: false,
   manualRowMove: true,
   nestedRows: true,
@@ -404,14 +407,30 @@ let settings = ref({
   nestedHeaders: props.NestedHeaders,
   cell: [],
   afterGetColHeader: function (col, TH) {
-
-    function applyClass(elem, className) {
-      if ((' ' + elem.className + ' ').indexOf(' ' + className + ' ') > -1) {
-      } else {
-        elem.classList.add(className);
-      }
-    }
     applyClass(TH, 'color1');
+  },
+  afterGetRowHeader: function (row, TH) {
+    let hot = myHotTable.value.hotInstance;
+    let primeId = hot.getCopyableText(row, 0, row, 0);
+
+    if (!primeId) {
+      return;
+    }
+    let maprow = tableData.value.map.get(primeId);
+
+    let classall = "";
+    if (maprow.tag == 1) {
+      classall = "mytagrow";
+    }
+    if (maprow.source == "project") {
+      classall += " sourceproject_" + maprow.__level;
+    } else if (maprow.children && maprow.children.length > 0) {
+      classall += " sourceproject_" + maprow.__level;
+    }
+    let arrtmp = classall.split(" ");
+    for (let aa = 0; aa < arrtmp.length; aa++) {
+      applyClass(TH, arrtmp[aa]);
+    }
 
   },
   afterBeginEditing: (row: any, column: any) => {
@@ -1108,17 +1127,25 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings }
 }
 </style>
 <style>
+.handsontable {
+  background: #F4F4F4;
+}
+
 .handsontable THEAD TH.color1 {
   background: #409EFF;
   border-color: #ffffff;
   color: #ffffff;
 }
 
-/* 进度条颜色 */
-.ht_master .wtHolder::-webkit-scrollbar-thumb {
-  background-color: #409EFF;
+.el-table .cell {
+  padding: 0 10px;
 }
 
+/* 进度条颜色 */
+/* .ht_master .wtHolder::-webkit-scrollbar-thumb{
+  background-color: #409EFF;
+  width: 20px;
+} */
 .handsontable THEAD TH.color1 .collapsibleIndicator {
   box-shadow: 0px 0px 0px 6px #409EFF;
   -webkit-box-shadow: 0px 0px 0px 6px #409EFF;

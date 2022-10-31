@@ -1,46 +1,44 @@
 <template>
   <inventory-search ref="inventorysearch" :OnSubmit="onSubmit"></inventory-search>
-  <div style="height: 300px">
-    <materials-search ref="materialsSearch" :AfterSelected="materialsSelected"></materials-search>
 
-    <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow"
-      :MainContentFetchList="BudgetDivisionTree"
-      :ImportUri="appContext.config.globalProperties.$CONFIG.API_URL + '/budget/import/'" MaxFileNums="1"
-      MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
-      :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false"
-      :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-      :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
-      :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true"
-      :GetExtendData="getExtendData" :SuplyReadOnly="true">
-      <template v-slot:tableitem>
-        <hot-column width="0" data="divisionId" title="" />
+  <materials-search ref="materialsSearch" :AfterSelected="materialsSelected"></materials-search>
 
-        <hot-column width="310" data="projectName" title="项目相关" />
-        <hot-column width="310" data="name" title="名称" />
-        <hot-column width="120" data="subject" type="dropdown" title="成本科目" />
-        <hot-column width="120" data="code" title="编码" />
-        <hot-column width="120" data="category" type="dropdown" title="类别" />
-        <hot-column width="120" data="distinction" title="项目特征" />
-        <hot-column width="120" data="unit" title="单位" />
-        <hot-column width="90" data="have" type="numeric" title="含量" />
-        <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
-        <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="综合单价" />
-        <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="综合合价" />
-        <hot-column width="90" data="manageUnitprice" type="numeric" numeric-format="formatJP" title="管理费单价" />
-        <hot-column width="90" data="profitUnitprice" type="numeric" numeric-format="formatJP" title="利润单价" />
-        <hot-column width="90" data="manageSumprice" type="numeric" numeric-format="formatJP" title="管理费合价" />
-        <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
+  <aj-hot-table ref="ajhottable" :MainContentPushRow="BudgetDivisionPushRow" :MainContentFetchList="BudgetDivisionTree"
+    :ImportUri="appContext.config.globalProperties.$CONFIG.API_URL + '/budget/import/'" MaxFileNums="1" MaxFileSize="20"
+    TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true"
+    :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
+    :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
+    :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown"
+    :AfterBeginEditing="afterBeginEditing" :BtnField="true" :GetExtendData="getExtendData" :SuplyReadOnly="true">
+    <template v-slot:tableitem>
+      <hot-column width="0" data="divisionId" title="" />
+
+      <hot-column width="310" data="projectName" title="项目相关" />
+      <hot-column width="130" data="name" title="名称" />
+      <hot-column width="150" data="subject" type="dropdown" title="成本科目" />
+      <hot-column width="120" data="code" title="编码" />
+      <hot-column width="120" data="category" type="dropdown" title="类别" />
+      <hot-column width="120" data="distinction" title="项目特征" />
+      <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="90" data="have" type="numeric" title="含量" />
+      <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
+      <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="综合单价" />
+      <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="综合合价" />
+      <hot-column width="90" data="manageUnitprice" type="numeric" numeric-format="formatJP" title="管理费单价" />
+      <hot-column width="90" data="profitUnitprice" type="numeric" numeric-format="formatJP" title="利润单价" />
+      <hot-column width="90" data="manageSumprice" type="numeric" numeric-format="formatJP" title="管理费合价" />
+      <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
 
 
-      </template>
-      <template v-slot:expendcondition>
-        <el-button @click="onSearch" id="bu">
-          <span title="查询" style="width:50px;">查</span>
+    </template>
+    <template v-slot:expendcondition>
+      <el-button @click="onSearch" id="bu">
+        <span title="查询" style="width:50px;">查</span>
 
-        </el-button>
-      </template>
-    </aj-hot-table>
-  </div>
+      </el-button>
+    </template>
+  </aj-hot-table>
+
 </template>
 <script lang="ts" setup>
 
@@ -280,6 +278,41 @@ let userColumn = [
   {
     label: "含量",
     index: 8,
+    isshow: true,
+  },
+  {
+    label: "招标工程量",
+    index: 9,
+    isshow: true,
+  },
+  {
+    label: "综合单价",
+    index: 10,
+    isshow: true,
+  },
+  {
+    label: "综合合价",
+    index: 11,
+    isshow: true,
+  },
+  {
+    label: "管理费单价",
+    index: 12,
+    isshow: true,
+  },
+  {
+    label: "利润单价",
+    index: 13,
+    isshow: true,
+  },
+  {
+    label: "管理费合价",
+    index: 14,
+    isshow: true,
+  },
+  {
+    label: "利润合价",
+    index: 15,
     isshow: true,
   },
 ];

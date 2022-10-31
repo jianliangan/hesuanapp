@@ -14,12 +14,13 @@
     </el-aside>
     <el-container direction="vertical">
       <el-main>
-        <div style="height: 300px">
+        <div style="height: 500px">
           <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
-          <div style="height: 250px; background-color: white">
-            <span style="font-size: 14px">工料机:</span>
-            <com-down ref="comdown"></com-down>
-          </div>
+
+        </div>
+        <div style="height: 300px; background-color: white">
+          <span style="font-size: 14px">工料机:</span>
+          <com-down ref="comdown"></com-down>
         </div>
       </el-main>
     </el-container>

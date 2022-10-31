@@ -1,18 +1,22 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="RolePushRow" :MainContentFetchList="RoleFetchList"
     :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
-    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true">
+    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    Style="width:570px">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="角色名称">
           <el-input v-model="formInstance.roleName" />
         </el-form-item>
-
+        <el-form-item label="备注">
+          <el-input v-model="formInstance.comment" />
+        </el-form-item>
       </el-form>
     </template>
     <template v-slot:tableitem>
-      <el-table-column prop="roleName" label="角色名称" />
-      <el-table-column prop="author" label="权限" class-name="truncate" />
+      <el-table-column width="150px" prop="roleName" label="角色名称" />
+      <el-table-column width="100px" prop="comment" label="备注" class-name="truncate" />
+      <el-table-column width="250px" prop="author" label="权限" class-name="truncate" />
     </template>
   </aj-table>
 </template>

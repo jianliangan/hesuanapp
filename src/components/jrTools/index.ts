@@ -81,3 +81,13 @@ export var myMessageBoxErr = () => {
         },
     })
 }
+export var applyClass = (elem: any, className: any) => {
+    if (!className) return;
+
+    if ((' ' + elem.className + ' ').indexOf(' ' + className + ' ') > -1) {
+    } else {
+
+        elem.classList.add(className);
+
+    }
+}

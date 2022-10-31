@@ -1,26 +1,34 @@
 <template>
   <aj-table ref="ajtable" :MainContentFetchList="proxyMainContentFetchList" :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance" :GetExtendData="getExtendData"
-    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="false"
-    TableKey="name" :hasOptions="false">
+    :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit"
+    :SaveBtn="false" TableKey="name" :hasOptions="false" Style="width:460px">
     <template v-slot:formitem> </template>
     <template v-slot:tableitem>
-      <el-table-column prop="meta.title" label="菜单名称" />
-      <el-table-column label="">
+      <el-table-column width="280px" prop="meta.title" label="菜单名称" />
+      <el-table-column width="180px" label="">
         <template #header>
           <el-space><span>权限</span>
-            <el-checkbox label="可读" name="type" checked v-if="
+            <el-checkbox name="type" checked v-if="
               extendData.authormap &&
               extendData.authormap.get('all') &&
               extendData.authormap.get('all')['read'] == '1'
-            " @change="(value) => readChange(value, { path: 'all' })" />
-            <el-checkbox v-else label="可读" name="type" @change="(value) => readChange(value, { path: 'all' })" />
-            <el-checkbox v-if="
+            " @change="(value) => readChange(value, { path: 'all' })">
+              <font color="#000000">可读</font>
+            </el-checkbox>
+            <el-checkbox v-else name="type" @change="(value) => readChange(value, { path: 'all' })">
+              <font color="#000000">可读</font>
+            </el-checkbox>
+            <el-checkbox checked v-if="
               extendData.authormap &&
               extendData.authormap.get('all') &&
               extendData.authormap.get('all')['write'] == '1'
-            " checked label="可写" @change="(value) => readChange2(value, { path: 'all' })" name="type" />
-            <el-checkbox v-else label="可写" @change="(value) => readChange2(value, { path: 'all' })" name="type" />
+            " @change="(value) => readChange2(value, { path: 'all' })" name="type">
+              <font color="#000000">可写</font>
+            </el-checkbox>
+            <el-checkbox v-else @change="(value) => readChange2(value, { path: 'all' })" name="type">
+              <font color="#000000">可写</font>
+            </el-checkbox>
           </el-space>
         </template>
         <template #default="scope">
@@ -71,7 +79,6 @@ let getExtendData = (value: any) => {
   extendData.value = value["extend"];;
   extendData.value.authormap = tools_objToStrMap(extendData.value.author);
 
-  console.log("dddd3333ddddd", extendData.value.authormap);
 };
 let readChange = (value, p: baseObject) => {
   let tmp = [];
@@ -156,11 +163,10 @@ const onCancelDialog = () => {
 };
 function PageLoaded(uri: baseObject, ownId: Object) {
   tools_objToobj(uri, listUriParams);
-  console.log("gggggggggggggg", ownId);
+
   listUriParamsOwnId = ownId;
   ajtable.value.PageLoaded(uri, ownId);
 }
 
 defineExpose({ PageLoaded });
 </script>
-    

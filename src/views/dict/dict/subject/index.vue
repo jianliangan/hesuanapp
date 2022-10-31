@@ -1,22 +1,21 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="DictSubjectPushRow" :MainContentFetchList="DictSubjectList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true">
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" Style="width:530px"
+    :UseWithDialog="false" OptionType="no" OptionsWidth="100">
     <template v-slot:formitem>
-      <el-form :model="formInstance" label-width="120px">
-        <el-form-item label="科目名称">
-          <el-input v-model="formInstance.dictName" />
-        </el-form-item>
 
-        <el-form-item label="顺序">
-          <el-input v-model="formInstance.sort" />
-        </el-form-item>
+      <div style="width:150px">
+        <el-input v-model="formInstance.dictName" placeholder="名称" />
+      </div>
+      <div style="width:50px">
+        <el-input v-model="formInstance.sort" placeholder="顺序" />
+      </div>
 
-      </el-form>
     </template>
     <template v-slot:tableitem>
-      <el-table-column prop="dictName" label="科目名称" />
-      <el-table-column prop="sort" label="顺序" />
+      <el-table-column width="380px" prop="dictName" label="分类名称" />
+      <el-table-column width="50px" prop="sort" label="顺序" />
     </template>
   </aj-table>
 </template>

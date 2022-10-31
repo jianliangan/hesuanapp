@@ -164,5 +164,6 @@ nextTick(() => {
 <style>
 .golalFirstLine {
   font-weight: bold;
+
 }
 </style>

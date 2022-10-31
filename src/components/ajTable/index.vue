@@ -1,12 +1,13 @@
 <template>
-  <el-dialog v-model="dialogAddVisible" title="新增" width="50%">
+
+  <el-dialog v-model="dialogAddVisible" title="新增" width="50%" v-if="props.UseWithDialog==true">
     <slot name="formitem"></slot>
-    <el-form-item style="margin-left: 80%;">
+    <div style="text-align:right">
       <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"><span
           v-if="dialogIsAdd == true">保存增加</span><span v-else>保存修改</span>
       </el-button>
       <el-button @click="onCancel">取消</el-button>
-    </el-form-item>
+    </div>
   </el-dialog>
 
   <el-container>
@@ -29,75 +30,113 @@
 
           </el-popover>
         </template>
-
-        <el-button type="primary" @click="ClkAddData" v-if="props.BtnNew == true" style="border: #ebebeb 0.5px solid;">新增</el-button>
-        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true">上移</el-button>
-        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true">下移</el-button>
-        <el-button type="primary" @click="ClkInsert" v-if="props.BtnInsert == true">插入</el-button>
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true">标记</el-button>
-        <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
-          <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
-            :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
-            :on-change="handleChange" auto-upload>
-            <el-button type="primary">导入</el-button>
-          </el-upload>
+        <template v-if="props.UseWithDialog == true && props.SaveBtn == true">
+          <el-button type="primary" @click="ClkAddData" style="border: #ebebeb 0.5px solid;">
+            新增</el-button>
         </template>
+        <template v-else-if="props.SaveBtn == true">
+
+          <el-space>
+            <slot name="formitem"></slot>
+            <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit">
+              修改</el-button>
+            <el-button type="primary" :loading="SubMitLoading" @click="OnSubmitAdd">增加
+            </el-button>
+          </el-space>
+
+        </template>
+
+
       </el-space>
     </el-header>
 
     <el-main>
-      <el-table ref="myeltable" v-loading="loading" :data="tableData.list" :row-key="props.TableKey" border
-        default-expand-all stripe height="100%" @selection-change="SelectionChange"
-        :highlight-current-row="props.HighlightCurrentRow" @current-change="currentChange"
-        :cell-class-name="props.CellClass">
-        <slot name="tableitem"></slot>
-        <template v-for="(item, index) in userColumn" :key="index">
-          <el-table-column v-if="item.isshow" :column-key="item.prop" :label="item.label" :prop="item.prop"
-            :width="item.width" :fixed="item.fixed" :show-overflow-tooltip="item.showOverflowTooltip">
-            <template #default="scope">
-              <slot :name="item.prop" v-bind="scope">
-                {{ scope.row[item.prop] }}
-              </slot>
-            </template>
-          </el-table-column>
-        </template>
-        <el-table-column label="操作" fixed="right" width="70" v-if="props.hasOptions == true">
-          <template #default="scope">
-
-            <el-popover placement="top-start" title="" :width="70" trigger="click">
-              <template #reference>
-                <el-button type="text">更多</el-button>
+      <div v-bind:style="props.Style">
+        <el-table ref="myeltable" v-loading="loading" :data="tableData.list" :row-key="props.TableKey" border stripe
+          @selection-change="SelectionChange" :highlight-current-row="props.HighlightCurrentRow"
+          @current-change="currentChange" :cell-class-name="props.CellClass">
+          <slot name="tableitem"></slot>
+          <template v-for="(item, index) in userColumn" :key="index">
+            <el-table-column v-if="item.isshow" :column-key="item.prop" :label="item.label" :prop="item.prop"
+              :width="item.width" :fixed="item.fixed" :show-overflow-tooltip="item.showOverflowTooltip"
+              default-expand-all>
+              <template #default="scope">
+                <slot :name="item.prop" v-bind="scope">
+                  {{ scope.row[item.prop] }}
+                </slot>
               </template>
-              <template #default>
-                <template v-if="!(props.CmdFirst == true && scope.$index == 0)">
-                  <el-space direction="vertical">
-                    <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn == true">
-                      <template #reference>
-                        <el-button link type="primary" size="small"> 删除 </el-button>
-                      </template>
-                    </el-popconfirm>
-                    <span v-if="props.DefaultBtn == true">
-                      <el-button text type="primary" @click.stop="ClkEditData(scope.row)">编辑</el-button>
-                    </span>
+            </el-table-column>
+          </template>
+          <el-table-column label="操作" fixed="right" :width="props.OptionsWidth" v-if="props.hasOptions == true">
+            <template #default="scope" v-if="props.OptionType == 'expand'">
 
-                    <span v-for="(item, index) in props.ExtendButtons" v-bind:key="index">
-                      <el-button v-if="item.confirm == false" text type="primary" @click.stop="item.call(scope.row)">
-                        {{ item.name }}
-                      </el-button>
-                      <el-popconfirm v-else :title="'确定' + item.name + '吗'" @confirm="item.call(scope.row)">
+              <el-popover placement="top-start" title="" :width="70" trigger="click">
+                <template #reference>
+                  <el-button type="text">更多</el-button>
+                </template>
+                <template #default>
+                  <template v-if="!(props.CmdFirst == true && scope.$index == 0)">
+                    <el-space direction="vertical">
+                      <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn == true">
                         <template #reference>
-                          <el-button link type="primary" size="small"> {{ item.name }} </el-button>
+                          <el-button link type="primary" size="small"> 删除 </el-button>
                         </template>
                       </el-popconfirm>
-                    </span>
-                  </el-space>
-                </template>
-              </template>
-            </el-popover>
+                      <span v-if="props.DefaultBtn == true">
+                        <el-button text type="primary" @click.stop="ClkEditData(scope.row)">编辑</el-button>
+                      </span>
 
-          </template>
-        </el-table-column>
-      </el-table>
+                      <span v-for="(item, index) in props.ExtendButtons" v-bind:key="index">
+                        <el-button v-if="item.confirm == false" text type="primary" @click.stop="item.call(scope.row)">
+                          {{ item.name }}
+                        </el-button>
+                        <el-popconfirm v-else :title="'确定' + item.name + '吗'" @confirm="item.call(scope.row)">
+                          <template #reference>
+                            <el-button link type="primary" size="small"> {{ item.name }} </el-button>
+                          </template>
+                        </el-popconfirm>
+                      </span>
+                    </el-space>
+                  </template>
+                </template>
+              </el-popover>
+
+            </template>
+            <template #default="scope" v-else>
+
+
+
+
+              <template v-if="!(props.CmdFirst == true && scope.$index == 0)">
+                <el-space>
+                  <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn == true">
+                    <template #reference>
+                      <el-button link type="primary" size="small"> 删除 </el-button>
+                    </template>
+                  </el-popconfirm>
+                  <span v-if="props.DefaultBtn == true">
+                    <el-button text type="primary" size="small" @click.stop="ClkEditData(scope.row)">编辑</el-button>
+                  </span>
+
+                  <span v-for="(item, index) in props.ExtendButtons" v-bind:key="index">
+                    <el-button v-if="item.confirm == false" text type="primary" @click.stop="item.call(scope.row)">
+                      {{ item.name }}
+                    </el-button>
+                    <el-popconfirm v-else :title="'确定' + item.name + '吗'" @confirm="item.call(scope.row)">
+                      <template #reference>
+                        <el-button link type="primary" size="small"> {{ item.name }} </el-button>
+                      </template>
+                    </el-popconfirm>
+                  </span>
+                </el-space>
+              </template>
+
+
+
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-main>
     <el-footer v-if="HasPage == true">
 
@@ -209,10 +248,7 @@ const props = defineProps({
     type: Function,
     default: null,
   },
-  ImportUri: {
-    type: String,
-    default: "",
-  },
+
   MaxFileNums: {
     type: Number,
     default: 0,
@@ -250,26 +286,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  BtnUpMove: {
-    type: Boolean,
-    default: false,
-  },
-  BtnDownMove: {
-    type: Boolean,
-    default: false,
-  },
-  BtnInsert: {
-    type: Boolean,
-    default: false,
-  },
-  BtnSign: {
-    type: Boolean,
-    default: false,
-  },
-  BtnNew: {
-    type: Boolean,
-    default: false,
-  },
+
   GetMainPrimeId: {
     type: Function,
     default: null,
@@ -310,7 +327,26 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-
+  UseWithDialog: {
+    type: Boolean,
+    default: true,
+  },
+  Style: {
+    type: String,
+    default: "",
+  },
+  OptionType: {
+    type: String,
+    default: "expand"
+  },
+  OptionsWidth: {
+    type: String,
+    default: "70"
+  },
+  SaveBtn: {
+    type: Boolean,
+    default: true
+  }
 });
 //
 tableData.value.tableHeight = computed({
@@ -358,37 +394,7 @@ const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   );
 };
 
-const handleChange: UploadProps["onChange"] = (
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
-) => {
-  // const fileSuffix = uploadFile.name.substring(
-  //   uploadFile.name.lastIndexOf(".") + 1
-  // );
-  // console.log("ggggggggggg:", uploadFile);
-  // if (isSuffix) {
-  //   ElMessage.error("上传文件只能是 " + whiteList + "格式");
-  //   return;
-  // }
-  // if (isLt10M) {
-  //   ElMessage.error("上传文件大小不能超过 " + props?.MaxFileSize + "MB");
-  //   return;
-  // }
-};
-const handleSuccess: UploadProps["onSuccess"] = (
-  error: Error,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
-) => {
-  ElMessage.success("导入成功");
-};
-const handleError: UploadProps["onError"] = (
-  error: Error,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
-) => {
-  ElMessage.error("发生错误：" + error);
-};
+
 
 const currentChange = (newRow: baseObject, oldRow: baseObject) => {
   currentRow = newRow;
@@ -403,104 +409,8 @@ const ClkAddData = () => {
   SubMitLoading.value = false;
   if (props.OnOpenDialog) props?.OnOpenDialog("add");
 };
-const upAllMove = (cmd: String) => {
-  if (!currentRow) {
-    ElMessage.error("没有选中行");
-    return;
-  }
-  let primeId = props.GetMainPrimeId(currentRow);
-  let index = tableData.value.map.get(primeId);
-  if (cmd == "up" && index == 0) return;
-  if (cmd == "down" && index == tableData.value.list.length - 1) return;
-  //更新数据
-  let fromindex = 0;
-  let toindex = 0;
-  if (cmd == "up") {
-    fromindex = index;
-    toindex = index - 1;
-  } else {
-    fromindex = index;
-    toindex = index + 1;
-  }
-  tableData.value.list[fromindex].old_sort =
-    tableData.value.list[fromindex].sort;
-  tableData.value.list[fromindex].old_sortR =
-    tableData.value.list[fromindex].sortR;
 
-  tableData.value.list[toindex].old_sort = tableData.value.list[toindex].sort;
-  tableData.value.list[toindex].old_sortR = tableData.value.list[toindex].sortR;
 
-  tableData.value.list[fromindex].sortR =
-    tableData.value.list[toindex].old_sortR;
-  tableData.value.list[fromindex].sort = tableData.value.list[toindex].old_sort;
-
-  tableData.value.list[toindex].sortR =
-    tableData.value.list[fromindex].old_sortR;
-
-  tableData.value.list[toindex].sort = tableData.value.list[fromindex].old_sort;
-
-  //结束
-
-  tableData.value.list[toindex].cmd = "edit";
-  tableData.value.list[fromindex].cmd = "edit";
-  loading.value = true;
-
-  props
-    .MainContentPushRow([
-      tableData.value.list[toindex],
-      tableData.value.list[fromindex],
-    ])
-    .then((response: any) => {
-      loading.value = false;
-      tableData.value.map.set(
-        props.GetMainPrimeId(tableData.value.list[toindex]),
-        fromindex
-      );
-      tableData.value.map.set(
-        props.GetMainPrimeId(tableData.value.list[fromindex]),
-        toindex
-      );
-      tools_sort_map_loop<baseObject>(
-        tableData.value.list,
-        0,
-        (a: baseObject): number => {
-          return a.sort;
-        }
-      );
-    })
-    .catch((err: any) => {
-      loading.value = false;
-      //恢复状态
-      tableData.value.list[fromindex].sortR =
-        tableData.value.list[fromindex].old_sortR;
-      tableData.value.list[toindex].sortR =
-        tableData.value.list[toindex].old_sortR;
-
-      tableData.value.list[fromindex].sort =
-        tableData.value.list[fromindex].old_sort;
-      tableData.value.list[toindex].sort =
-        tableData.value.list[toindex].old_sort;
-    });
-};
-const ClkUpMove = () => {
-  upAllMove("up");
-};
-const ClkDownMove = () => {
-  upAllMove("down");
-};
-const ClkInsert = () => {
-  if (!currentRow) {
-    ElMessage.error("没有选中行");
-    return;
-  }
-  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
-  if (props.PreInstanData && props.PreInstanData() == false) return;
-  dialogIsAdd.value = true;
-  getDialogAddVisible(true);
-
-  SubMitLoading.value = false;
-  if (props.OnOpenDialog) props?.OnOpenDialog("add");
-};
 const onCancel = () => {
   if (props.GetDialogAddVisible) props?.GetDialogAddVisible(false);
   if (props.OnCancelDialog) props?.OnCancelDialog();
@@ -520,7 +430,10 @@ function ClkEditData(row: baseObject) {
  * need to change
  * api call
  */
-
+const OnSubmitAdd = () => {
+  dialogIsAdd.value = true;
+  OnSubmit();
+}
 const OnSubmit = async () => {
   if (props.PreSubmit) {
     if ((await props.PreSubmit()) == false) {
@@ -566,8 +479,8 @@ const PushDataRow = async (body: any) => {
 };
 
 /**
- * need to change
- * api call
+ * n ed to change
+ * a i call
  */
 const AfterSelected = async (row: any) => {
   loading.value = true;
@@ -617,7 +530,13 @@ function PageLoaded(uri: baseObject) {
 
 defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns });
 </script>
+
 <style scoped>
+.el-table {
+  --el-table-header-bg-color: #409eff;
+  --el-table-header-text-color: #ffffff;
+}
+
 .scTable-table {
   height: calc(100% - 50px);
 }

@@ -1,7 +1,7 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="UsersPushRow" :MainContentFetchList="UsersFetchList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true">
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" Style="width:470px">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="用户名称">
@@ -22,15 +22,15 @@
       </el-form>
     </template>
     <template v-slot:tableitem>
-      <el-table-column prop="usersName" label="用户名称" />
+      <el-table-column width="150px" prop="usersName" label="用户名称" />
 
-      <el-table-column label="角色">
+      <el-table-column width="100px" label="角色">
         <template #default="scope">
           {{ extendData.rolesMap.get(scope.row.roleId)?.roleName }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="phone" label="手机号" />
+      <el-table-column width="150px" prop="phone" label="手机号" />
     </template>
   </aj-table>
 </template>

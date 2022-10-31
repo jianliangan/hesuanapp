@@ -1,6 +1,13 @@
 <template>
 	<div class="adminui-topbar">
 		<div class="left-panel">
+			<div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
+				<el-icon class="el-icon--left">
+					<el-icon-expand v-if="menuIsCollapse" />
+					<el-icon-fold v-else />
+
+				</el-icon>
+			</div>
 			<el-breadcrumb separator-icon="el-icon-arrow-right" class="hidden-sm-and-down">
 				<transition-group name="breadcrumb" mode="out-in">
 					<template v-for="item in breadList" :key="item.title">
@@ -50,7 +57,12 @@ export default {
 			this.breadList = matched;
 
 		}
-	}
+	},
+	computed: {
+		menuIsCollapse() {
+			return this.$store.state.global.menuIsCollapse;
+		},
+	},
 }
 </script>
 

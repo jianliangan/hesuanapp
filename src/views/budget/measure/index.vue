@@ -1,26 +1,20 @@
 
 <template>
   <el-container>
-    <el-aside width="200px" class="ajtree">
+    <el-aside width="200px" class="ajtree" height="100%">
       <com-left ref="comleft" @init="init" :AfterSelected="leftAfterSelected" class="adminui"></com-left>
-      <!-- <div class="adminui-side-bottom left-right" @click="a">
-        <el-icon class="">
-          <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else />
-          <CaretLeft class="jianto8" />
-          <CaretRight />
-        </el-icon>
-      </div> -->
+
     </el-aside>
 
     <el-container direction="vertical">
       <el-main>
-        <div style="height: 300px">
+        <div style="height: 500px">
           <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
-          <div style="height: 250px; background-color: white">
-            <span style="font-size: 14px">工料机:</span>
-            <com-down ref="comdown"></com-down>
-          </div>
+
+        </div>
+        <div style="height: 250px; background-color: white">
+          <span style="font-size: 14px">工料机:</span>
+          <com-down ref="comdown"></com-down>
         </div>
       </el-main>
     </el-container>

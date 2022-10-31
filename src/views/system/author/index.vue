@@ -1,20 +1,16 @@
 <template>
-  <el-container>
+  <el-container direction="horizontal">
     <el-aside width="200px">
-      <com-left
-        ref="comleft"
-        @init="init"
-        :AfterSelected="leftAfterSelected"
-      ></com-left>
+      <com-left ref="comleft" @init="init" :AfterSelected="leftAfterSelected"></com-left>
     </el-aside>
-    <el-container direction="vertical">
-      <el-main>
-        <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
-      </el-main>
-    </el-container>
+
+    <el-main id="pp">
+      <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
+    </el-main>
+
   </el-container>
 </template>
-  <script lang="ts" setup>
+<script lang="ts" setup>
 import comLeft from "./components/comLeft.vue";
 import comMain from "./components/comMain.vue";
 
@@ -35,7 +31,7 @@ const leftAfterSelected = (selected: baseObject) => {
   );
 };
 
-const mainAfterSelected = (selected: baseObject) => {};
+const mainAfterSelected = (selected: baseObject) => { };
 /**
  * commain
  */
@@ -60,3 +56,10 @@ nextTick(() => {
   PageLoaded({ rootId: "0" });
 });
 </script>
+<style>
+#pp .el-header {
+  height: 0px;
+  margin: 0px;
+  padding: 0px
+}
+</style>

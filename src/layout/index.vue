@@ -78,11 +78,9 @@
     </header>
     <div class="adminui-side-bottom topbott" @click="ab">
       <el-icon class="">
-        <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
-            <img src="../icons/svg/fullscreen.svg" class="iconim"/>
-        <!-- <CaretBottom class="jianto" />fullscreen -->
-        <!-- <CaretRight /> -->
+        eeee
+        <img src="../icons/svg/fullscreen.svg" class="iconim" />
+
       </el-icon>
     </div>
     <section class="aminui-wrapper">
@@ -96,16 +94,15 @@
           </el-scrollbar>
         </div>
       </div>
-      <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
-          <el-icon class="el-icon--left">
-            <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
-            <CaretRight v-if="menuIsCollapse" />
-            <CaretLeft v-else />
-          </el-icon>
-        </div>
+      <!-- <div class="adminui-side-bottom" @click="$store.commit('TOGGLE_menuIsCollapse')">
+        <el-icon class="el-icon--left">
+          <el-icon-expand v-if="menuIsCollapse" />
+          <el-icon-fold v-else />
+
+        </el-icon>
+      </div> -->
       <Side-m v-if="ismobile"></Side-m>
-      <div style="width: 20px;"></div>
+      <div style="width: 3px;"></div>
       <div class="aminui-body el-container">
         <Topbar v-if="!ismobile"></Topbar>
         <Tags v-if="!ismobile && layoutTags"></Tags>
@@ -311,8 +308,6 @@ export default {
       return false; //this.$store.state.global.layoutTags
     },
     menuIsCollapse() {
-
-
       return this.$store.state.global.menuIsCollapse;
     },
   },
@@ -414,6 +409,10 @@ export default {
   top: 10px;
 }
 
+.el-menu-item.is-active {
+  border-right: 1px solid #409eff;
+}
+
 .el-space {
   overflow: hidden;
   display: inline-flex;
@@ -428,8 +427,11 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .iconim {
   width: 20px;
   height: 20px;
+  margin-top: 38px;
+
 }
 </style>

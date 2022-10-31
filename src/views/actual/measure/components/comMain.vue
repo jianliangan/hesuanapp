@@ -11,8 +11,8 @@
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="310" data="projectName" title="项目相关" />
-      <hot-column width="310" data="name" title="名称" />
-      <hot-column width="120" data="subject" type="dropdown" title="成本科目" />
+      <hot-column width="130" data="name" title="名称" />
+      <hot-column width="150" data="subject" type="dropdown" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" type="dropdown" title="类别" />
 
@@ -256,7 +256,53 @@ let userColumn = [
     label: "含量",
     index: 8,
     isshow: true,
-  }
+  },
+  {
+    label: "招标工程量",
+    index: 9,
+    isshow: true,
+  },
+  {
+    label: "预算工程量",
+    index: 10,
+    isshow: true,
+  },
+  {
+    label: "成本单价",
+    index: 11,
+    isshow: true,
+  },
+  {
+    label: "成本合价",
+    index: 12,
+    isshow: true,
+  },
+  {
+    label: "成本人工费",
+    index: 13,
+    isshow: true,
+  },
+  {
+    label: "成本材料费",
+    index: 14,
+    isshow: true,
+  },
+  {
+    label: "成本机械费",
+    index: 15,
+    isshow: true,
+  },
+  {
+    label: "成本设备费",
+    index: 16,
+    isshow: true,
+  },
+  {
+    label: "专业分包费",
+    index: 17,
+    isshow: true,
+  },
+
 ];
 
 nextTick(() => {
