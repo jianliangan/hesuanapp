@@ -97,7 +97,7 @@ const materialsSelected = (row: baseObject) => {
   map.set("distinction", row.distinction);
   map.set("unit", row.unit);
 
-  console.log("iiiiiiiii", row);
+
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {
@@ -108,7 +108,7 @@ const afterSelected = (selected: baseObject, row, column, row2, column2) => {
   currentColumn = column;
   if (props.AfterSelected) props.AfterSelected(selected);
   isEditting = false;
-  console.log("afterSelected");
+
   materialsSearch.value.SetVisible(false);
 };
 let getExtendData = (value: any) => {

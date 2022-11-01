@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog v-model="dialogAddVisible" title="新增" width="50%" v-if="props.UseWithDialog==true">
+  <el-dialog v-model="dialogAddVisible" :title="myTitle" :width="props.myWidth" v-if="props.UseWithDialog==true">
     <slot name="formitem"></slot>
     <div style="text-align:right">
       <el-button type="primary" :loading="SubMitLoading" @click="OnSubmit"><span
@@ -147,6 +147,7 @@
 </template>
     
 <script lang="ts" setup>
+
 import { computed, nextTick, ref, watch, defineProps, defineExpose } from "vue";
 import {
   tools_objToobj,
@@ -165,6 +166,7 @@ import {
 interface baseObject {
   [key: string]: any;
 }
+
 const myeltable = ref<baseObject>({});
 const SubMitLoading = ref(false);
 const dialogIsAdd = ref(true);
@@ -346,9 +348,34 @@ const props = defineProps({
   SaveBtn: {
     type: Boolean,
     default: true
+  },
+  myWidth: {
+    type: String,
+    default: "50%"
   }
 });
 //
+const addlabel = "新增";
+const editlabel = "修改";
+
+
+let myTitle = computed(() => {
+  let tt = dialogIsAdd.value == true ? addlabel : editlabel;
+
+  return tt;
+})
+// computed({
+//   myTitle() {
+//     let tt = dialogIsAdd.value == true ? addlabel : editlabel;
+//     return tt;
+//   }
+// get() {
+//   let tt = dialogIsAdd.value == true ? addlabel : editlabel;
+
+//   return tt;
+// },
+// set() { },
+// });
 tableData.value.tableHeight = computed({
   get() {
     let tt = tableData.value.tablePackageHeight;
@@ -376,6 +403,13 @@ watch(filterText, (newValue, oldValue) => {
     }
   });
 });
+const GetTitle = () => {
+  if (dialogIsAdd.value == true) {
+    return "新增";
+  } else {
+    return "修改"
+  }
+}
 const selectUserColumn = (val: baseObject) => {
 
 }

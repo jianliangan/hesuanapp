@@ -1,9 +1,9 @@
 <template>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="SubPackagePushRow" :MainContentFetchList="SubPackageList"
-    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
-    :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnInsertChildren="false" :BtnNew="false"
+    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false"
+    :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected">
+    :GetComments="getComments" :AfterSelected="afterSelected" :BtnMulti="false">
     <template v-slot:tableitem>
       <hot-column width="0" data="subPackageId" title="" />
       <hot-column width="310" data="subPackageName" title="分包名称" />

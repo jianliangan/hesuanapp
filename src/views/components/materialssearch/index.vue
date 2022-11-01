@@ -30,7 +30,7 @@ import "handsontable/dist/handsontable.min.css";
 
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, defineProps, watch } from "vue";
 
 interface baseObject {
   [key: string]: any;
@@ -62,7 +62,7 @@ function SetPosition(width: int, height: int, x: int, y: int) {
   position.value.height = height + "px";
   position.value.left = x + "px";
   position.value.top = y + "px";
-  console.log("111111111111111", position.value);
+
 }
 function SetVisible(visible: any) {
   ui_dialog_visible.value = visible;
@@ -82,6 +82,13 @@ const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
     comment: { value: row.distinction },
   });
 };
+watch(ui_dialog_visible, (newVal, oldVal) => {
+  if (newVal == false) {
+    console.log(",,,,,,,,,,,,,,,,,,,,,");
+    ajhottable.value.DeSelected();
+  }
+
+})
 const getComments = () => {
   return [6];
 };
@@ -121,9 +128,9 @@ const getInitHotTable = () => {
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
-  console.log("11111111111111111333");
+
   ajhottable.value.PageLoaded(uri, ownId);
-  console.log("11111111111111111444");
+
   ui_dialog_visible.value = true;
 }
 

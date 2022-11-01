@@ -3,89 +3,116 @@
   <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
     :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
-    :ExtendButtons="[{ call: boRedirect, name: '单位工程', confirm: false }]">
+    :ExtendButtons="[{ call: boRedirect, name: '单位工程', confirm: false }]" myWidth="600px">
     <template v-slot:formitem>
 
 
 
-      <el-form :model="formInstance" ref="formEl" :rules="rules" label-width="96px">
+      <el-form :model="formInstance" id="myelform" ref="formEl" :rules="rules">
+        <div class="elrowbox">
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="项目名称" prop="projectName">
+                <el-input v-model="formInstance.projectName" />
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="地区" prop="groupcity">
 
-        <!-- <el-row>
-          <el-col>
-            <el-form-item label="项目名称" prop="projectName">
-              <el-input v-model="formInstance.projectName" />
-            </el-form-item>
-          </el-col>
-          <el-col span="12">
-            <el-form-item label="地区" prop="groupcity">
-              <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
-                @change="cityOnChange" trigger="onclick" />
-            </el-form-item>
-          </el-col>
-        </el-row> -->
+                <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
+                  @change="cityOnChange" trigger="onclick" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="开工日期" prop="startTime">
+                <el-date-picker v-model="formInstance.startTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
+                  type="date" placeholder="" size="default" />
 
-        <el-form-item label="项目名称" prop="projectName">
-          <el-input v-model="formInstance.projectName" />
-        </el-form-item>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="竣工日期" prop="completeTime">
+                <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
+                  type="date" placeholder="" size="default" />
 
-        <el-form-item label="地区" prop="groupcity">
-          <el-cascader v-model="formInstance.groupcity" :options="chinaAreas" :props="groupsProps"
-            @change="cityOnChange" trigger="onclick" />
-        </el-form-item>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-        <el-form-item label="开工日期" prop="startTime">
-          <el-date-picker v-model="formInstance.startTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
-        </el-form-item>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="业主姓名" prop="username">
+                <el-input v-model="formInstance.username"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="业主性质">
+                <el-input v-model="formInstance.nature"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-        <el-form-item label="竣工日期" prop="completeTime">
-          <el-date-picker v-model="formInstance.completeTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
-        </el-form-item>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="工程类别">
+                <el-input v-model="formInstance.category"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="工程类别细项">
+                <el-input v-model="formInstance.categoryDetail"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-        <el-form-item label="业主姓名" prop="username">
-          <el-input v-model="formInstance.username"></el-input>
-        </el-form-item>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="项目状态">
+                <el-input v-model="formInstance.status"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="合同额">
+                <el-input v-model="formInstance.contractPrice"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-        <el-form-item label="业主性质">
-          <el-input v-model="formInstance.nature"></el-input>
-        </el-form-item>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="结算时间" prop="finalTime">
+                <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
+                  type="date" placeholder="" size="default" />
 
-        <el-form-item label="工程类别">
-          <el-input v-model="formInstance.category"></el-input>
-        </el-form-item>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="预计总收入">
+                <el-input v-model="formInstance.estimateIncome"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-        <el-form-item label="工程类别细项">
-          <el-input v-model="formInstance.categoryDetail"></el-input>
-        </el-form-item>
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="预计总成本">
+                <el-input v-model="formInstance.estimateCost"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="计税方式">
+                <el-select v-model="formInstance.taxWay" placeholder="Select">
+                  <el-option v-for="item in billmodeList" :key="item.dictName" :label="item.dictName"
+                    :value="item.dictName" />
+                </el-select>
 
-        <el-form-item label="项目状态">
-          <el-input v-model="formInstance.status"></el-input>
-        </el-form-item>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
 
-        <el-form-item label="合同额">
-          <el-input v-model="formInstance.contractPrice"></el-input>
-        </el-form-item>
-
-        <el-form-item label="结算时间" prop="finalTime">
-          <el-date-picker v-model="formInstance.finalTime" format="YYYY/MM/DD" value-format="YYYY-MM-DD" type="date"
-            placeholder="" size="default" />
-        </el-form-item>
-
-        <el-form-item label="预计总收入">
-          <el-input v-model="formInstance.estimateIncome"></el-input>
-        </el-form-item>
-
-        <el-form-item label="预计总成本">
-          <el-input v-model="formInstance.estimateCost"></el-input>
-        </el-form-item>
-
-        <el-form-item label="计税方式">
-          <el-select v-model="formInstance.taxWay" placeholder="Select" size="small">
-            <el-option v-for="item in billmodeList" :key="item.dictName" :label="item.dictName"
-              :value="item.dictName" />
-          </el-select>
-        </el-form-item>
       </el-form>
     </template>
     <template v-slot:tableitem>
@@ -375,6 +402,14 @@ nextTick(() => {
   PageLoaded({ ownId: "0" });
 });
 </script>
-<style>
+<style scoped>
+.elrowbox {
+  width: 620px;
+  text-align: right;
+}
 
+.el-col {
+  padding-left: 15px;
+  width: 280px
+}
 </style>

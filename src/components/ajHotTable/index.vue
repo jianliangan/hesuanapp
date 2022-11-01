@@ -1,9 +1,8 @@
 <template>
   <el-container>
+
     <el-header :class="[props.BtnInsertChildren == true ? 'headeh' : 'headeh2']" v-if="props.HasHeader==true">
       <el-space class="ajtre " :class="[props.BtnInsertChildren == true ? 'spach' : 'spach2']">
-
-
         <template v-if="props.BtnField == true">
           <el-popover placement="bottom-start" title="" :width="70" trigger="click">
             <template #reference>
@@ -19,32 +18,44 @@
             </template>
           </el-popover>
         </template>
-
-
-
         <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
           <span title="向上移动" style="width:50px;">上</span>
         </el-button>
         <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" id="bu">
           <span title="向下移动" style="width:50px;">下</span>
         </el-button>
-        <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
-          <template #reference>
-            <el-button type="primary" v-if="props.BtnDel == true" id="bu">
-              <span title="删除一行" style="width:50px;">删</span>
-            </el-button>
-          </template>
-        </el-popconfirm>
+        <template v-if="props.BtnMulti == true">
+          <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
+            <template #reference>
+              <el-button type="primary" v-if="props.BtnDel == true" id="bu">
+                <span title="删除一行" style="width:50px;">删</span>
+              </el-button>
+            </template>
+          </el-popconfirm>
+          <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
+            <span title="增加子行" style="width:50px;">增</span>
+          </el-button>
+          <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
+            <span title="向前加一行" style="width:50px;">前</span>
+          </el-button>
+          <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
+            <span title="向后加一行" style="width:50px;">后</span>
+          </el-button>
+        </template>
+        <template v-else>
+          <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
+            <template #reference>
+              <el-button type="primary" id="bu">
+                <span title="删除一行" style="width:50px;">删除</span>
+              </el-button>
+            </template>
+          </el-popconfirm>
+          <el-button type="primary" @click="ClkPreInsert" id="bu">
+            <span title="向前加一行" style="width:50px;">增加</span>
+          </el-button>
 
-        <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
-          <span title="增加一行" style="width:50px;">增</span>
-        </el-button>
-        <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
-          <span title="向前加一行" style="width:50px;">前</span>
-        </el-button>
-        <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
-          <span title="向后加一行" style="width:50px;">后</span>
-        </el-button>
+        </template>
+
         <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
           <span title="标记一行" style="width:50px;">标</span>
         </el-button>
@@ -63,23 +74,26 @@
         </template>
         <slot name="expendcondition"></slot>
       </el-space>
+      <div style="margin-left:auto;margin-right:0px;margin-top:auto;height:10px;width:10px" @click="sethidden1($event)">
+        <el-icon class="">
+          <CaretBottom class="jianto1" />
+        </el-icon>
+      </div>
+
     </el-header>
-    <div class="adminui-side-bottom topbottom" v-if="props.BtnInsertChildren == true" @click="ab">
+    <div style="margin-left:auto;margin-right:0px;display: none;height:10px;width:10px" @click="sethidden2($event)">
       <el-icon class="">
-        <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
         <CaretBottom class="jianto1" />
-        <!-- <CaretRight /> -->
       </el-icon>
     </div>
-    <div class="adminui-side-bottom topbottom1" v-if="props.BtnInsertChildren == false" @click="ac">
+
+    <!-- <div class="adminui-side-bottom topbottom1" v-if="props.BtnInsertChildren == false" @click="ac">
       <el-icon>
-        <!-- <el-icon-expand v-if="menuIsCollapse" />
-            <el-icon-fold v-else /> -->
+       
         <CaretBottom class="jianto2" />
-        <!-- <CaretRight /> -->
+      
       </el-icon>
-    </div>
+    </div> -->
     <el-main>
       <hot-table :settings="settings" v-on:dblclick="dblClick" v-on:click="click" ref="myHotTable">
         <slot name="tableitem"></slot>
@@ -115,6 +129,8 @@ import {
 import Big from "big.js";
 import { RowsSpan } from "hyperformula/typings/Span";
 import { ConfigValueTooSmallError } from "hyperformula";
+import { right } from "@popperjs/core";
+import { addAbortSignal } from "stream";
 registerAllModules();
 var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
@@ -144,19 +160,17 @@ function getAllAreas(
   }
 }
 
-function ab() {
-  const space = document.getElementsByClassName('spach')[0];
-  const header = document.getElementsByClassName('headeh')[0];
-  const jianto1 = document.getElementsByClassName('jianto1')[0];
-  if (space.offsetHeight == 0) {
-    space.style.height = "";
-    header.style.height = "";
-    jianto1.style.transform = "rotate(180deg)";
-  } else {
-    space.style.height = "0";
-    header.style.height = "0";
-    jianto1.style.transform = "";
-  }
+function sethidden1(event: any) {
+  const header = event.currentTarget.parentNode
+  header.nextElementSibling.style.display = "block";
+  header.style.display = "none";
+  //header.previousElementSibling
+
+}
+function sethidden2(event: any) {
+  const header = event.currentTarget.previousElementSibling
+  header.style.display = "block"
+  event.currentTarget.style.display = "none";
 }
 function ac() {
   const space = document.getElementsByClassName('spach2')[0];
@@ -333,6 +347,10 @@ const props = defineProps({
   SuplyReadOnly: {
     type: Boolean,
     default: false
+  },
+  BtnMulti: {
+    type: Boolean,
+    default: true
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -406,6 +424,7 @@ let settings = ref({
   data: [props.GetInitHotTable()],
   nestedHeaders: props.NestedHeaders,
   cell: [],
+
   afterGetColHeader: function (col, TH) {
     applyClass(TH, 'color1');
   },
@@ -442,6 +461,13 @@ let settings = ref({
   }
   ,
   afterDocumentKeyDown: function (event: any) {
+
+    // let hot = myHotTable.value.hotInstance;
+    // let cell = hot.getSelectedLast();
+
+    // let selectBody = hot.getCopyableText(cell[0], cell[1], cell[0], cell[1]);
+    // console.log(selectBody);
+    // myAfterDocumentKeyDown(event);
     //console.log("key down");
     if (!event.target.onkeyup)
       event.target.onkeyup = myAfterDocumentKeyDown
@@ -471,7 +497,8 @@ let settings = ref({
     if (tableData.value.map) {
       tmp = tableData.value.map.get(primeId);
     }
-    if (props.AfterSelected) props.AfterSelected(tmp, row, column, row2, column2);
+
+    if (tableData.value.map.size > 0 && props.AfterSelected) props.AfterSelected(tmp, row, column, row2, column2);
 
   },
   afterChange: (changes: []) => {
@@ -1055,9 +1082,7 @@ const myLoadData = (listData: Array<baseObject>) => {
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
-
   myHotTable.value.hotInstance.loadData(listData);
-
   myRender();
 };
 let PageUpdateRows = (map: Map<Object, Object>, celldata: String) => {
@@ -1111,7 +1136,12 @@ const GetSettings = () => {
   let hot = myHotTable.value.hotInstance;
   return hot.getSettings();
 }
-defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings });
+const DeSelected = () => {
+  let hot = myHotTable.value.hotInstance;
+  return hot.deselectCell();
+}
+
+defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings, DeSelected });
 </script>
 <style scoped>
 .scTable-table {
@@ -1239,12 +1269,7 @@ body .handsontable .onlyRead {
   padding: 0px;
 }
 
-.topbottom {
-  width: 100px;
-  position: fixed;
-  left: 95%;
-  margin-top: -30px;
-}
+
 
 .topbottom1 {
   width: 100px;

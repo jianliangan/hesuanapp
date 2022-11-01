@@ -150,7 +150,6 @@ const afterBeginEditing = (row, column) => {
 }
 const afterDocumentKeyDown = (event: any) => {
   let element = event.target;
-
   var current = element.parentNode
   let rect = element.getBoundingClientRect();
   if (isEditting) {

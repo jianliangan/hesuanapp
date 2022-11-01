@@ -76,13 +76,7 @@
         <userbar></userbar>
       </div>
     </header>
-    <div class="adminui-side-bottom topbott" @click="ab">
-      <el-icon class="">
-        eeee
-        <img src="../icons/svg/fullscreen.svg" class="iconim" />
 
-      </el-icon>
-    </div>
     <section class="aminui-wrapper">
       <div v-if="!ismobile" :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div class="adminui-side-scroll">
@@ -102,8 +96,15 @@
         </el-icon>
       </div> -->
       <Side-m v-if="ismobile"></Side-m>
-      <div style="width: 3px;"></div>
+      <div style="width: 2px;"></div>
       <div class="aminui-body el-container">
+        <div class="topbott" @click="ab">
+          <el-icon class="" color="#409EFC">
+
+            <img src="../icons/svg/fullscreen.svg" class="iconim" />
+
+          </el-icon>
+        </div>
         <Topbar v-if="!ismobile"></Topbar>
         <Tags v-if="!ismobile && layoutTags"></Tags>
         <div class="adminui-main" id="adminui-main">
@@ -402,11 +403,11 @@ export default {
 </script>
 <style>
 .topbott {
-  width: 100px;
-  position: relative;
-  left: 95%;
-  height: 10px;
-  top: 10px;
+
+  margin-left: auto;
+  width: 0px;
+  height: 3px;
+  margin-right: 20px;
 }
 
 .el-menu-item.is-active {
