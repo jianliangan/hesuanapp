@@ -2,11 +2,11 @@
   <el-container>
     <el-container direction="vertical">
       <el-main>
-        <div style="height: 600px">
+        <div style="height: 300px">
           <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
 
         </div>
-        <div style="height: 400px; background-color: white">
+        <div style="height: 250px; background-color: white">
           <span style="font-size: 14px">清单:</span>
           <com-down ref="comdown"></com-down>
         </div>
@@ -36,7 +36,7 @@ const leftAfterSelected = (selected: baseObject) => {
 };
 const mainAfterSelected = (selected: baseObject) => {
   comdown.value.PageLoaded({
-    subPackageId: selected.subPackageId,
+    supplyUnitId: selected.supplyUnitId,
   });
 };
 /**

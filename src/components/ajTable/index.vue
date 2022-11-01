@@ -52,8 +52,8 @@
 
     <el-main>
       <div v-bind:style="props.Style">
-        <el-table ref="myeltable" v-loading="loading" :data="tableData.list" :row-key="props.TableKey" border stripe
-          @selection-change="SelectionChange" :highlight-current-row="props.HighlightCurrentRow"
+        <el-table ref="myeltable" v-loading="loading" height="100%" :data="tableData.list" :row-key="props.TableKey"
+          border stripe @selection-change="SelectionChange" :highlight-current-row="props.HighlightCurrentRow"
           @current-change="currentChange" :cell-class-name="props.CellClass">
           <slot name="tableitem"></slot>
           <template v-for="(item, index) in userColumn" :key="index">
@@ -352,7 +352,11 @@ const props = defineProps({
   myWidth: {
     type: String,
     default: "50%"
-  }
+  },
+  AfterSelected: {
+    type: Function,
+    default: null,
+  },
 });
 //
 const addlabel = "新增";
@@ -416,7 +420,7 @@ const selectUserColumn = (val: baseObject) => {
 const handleSizeChange = (val: number) => { }
 const HandleCurrentChange = (val: number) => {
   listUriParams.page = val;
-  AfterSelected(listUriParams);
+  LoadData(listUriParams);
 };
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(
@@ -432,7 +436,7 @@ const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
 
 const currentChange = (newRow: baseObject, oldRow: baseObject) => {
   currentRow = newRow;
-  console.log("change ", newRow, oldRow);
+  props.AfterSelected(currentRow);
 };
 const ClkAddData = () => {
   if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
@@ -489,6 +493,7 @@ const OnSubmit = async () => {
 };
 function SelectionChange(selection: Array<baseObject>) {
   selectData.value = selection;
+
 }
 function DeleteRow(row: any) {
   row.cmd = "delete";
@@ -501,7 +506,7 @@ const PushDataRow = async (body: any) => {
   props
     .MainContentPushRow(body)
     .then((response: any) => {
-      AfterSelected(listUriParams);
+      LoadData(listUriParams);
       loading.value = false;
       getDialogAddVisible(false);
       SubMitLoading.value = false;
@@ -516,7 +521,7 @@ const PushDataRow = async (body: any) => {
  * n ed to change
  * a i call
  */
-const AfterSelected = async (row: any) => {
+const LoadData = async (row: any) => {
   loading.value = true;
 
   if (props.MainContentFetchList)
@@ -558,7 +563,7 @@ const SetColumns = (columns: Array) => {
 function PageLoaded(uri: baseObject) {
 
   tools_objToobj(uri, listUriParams);
-  AfterSelected(uri);
+  LoadData(uri);
   //
 }
 

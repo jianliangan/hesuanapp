@@ -1,18 +1,31 @@
 <template>
-  <aj-hot-table ref="ajhottable" :MainContentPushRow="SubPackagePushRow" :MainContentFetchList="SubPackageList"
-    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false"
-    :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected" :BtnMulti="false">
-    <template v-slot:tableitem>
-      <hot-column width="0" data="subPackageId" title="" />
-      <hot-column width="310" data="subPackageName" title="分包名称" />
-      <hot-column width="120" data="contact" title="联系人" />
-      <hot-column width="120" data="phone" title="电话" />
-      <hot-column width="120" data="managerName" title="录入人" />
-      <hot-column width="120" data="datetime" title="录入时间" />
+
+  <aj-table ref="ajtable" :MainContentPushRow="SubPackagePushRow" :MainContentFetchList="SubPackageList"
+    :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    Style="width:890px;height:100%" :AfterSelected="afterSelected" :UseWithDialog="false" OptionType="no"
+    OptionsWidth="100">
+    <template v-slot:formitem>
+      <div style="width:200px">
+        <el-input v-model="formInstance.subPackageName" placeholder="分包名称" />
+      </div>
+      <div style="width:120px">
+        <el-input v-model="formInstance.contact" placeholder="联系人" />
+      </div>
+      <div style="width:120px">
+        <el-input v-model="formInstance.phone" placeholder="电话" />
+      </div>
+
     </template>
-  </aj-hot-table>
+    <template v-slot:tableitem>
+      <el-table-column width="310px" prop="subPackageName" label="分包名称" />
+      <el-table-column width="120px" prop="contact" label="联系人" />
+      <el-table-column width="120px" prop="phone" label="电话" />
+      <el-table-column width="120px" prop="managerName" label="录入人" />
+      <el-table-column width="120px" prop="datetime" label="录入时间" />
+
+    </template>
+  </aj-table>
 </template>
 <script lang="ts" setup>
 import numbro from "numbro";
@@ -22,7 +35,7 @@ import "handsontable/dist/handsontable.min.css";
 
 import { ProjectFetchTree } from "@/api/model/home/project";
 import { SubPackagePushRow, SubPackageList } from "@/api/model/dict/subpackage";
-import { tools_objToobj } from "@/components/jrTools";
+import { tools_objToobj, tools_objToStrMap } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
 
 interface baseObject {
@@ -41,50 +54,51 @@ const props = defineProps({
 /**
  * right main
  */
+const ajtable = ref<baseObject>({});
+const formInstance = ref<baseObject>({});
+const extendData = ref<baseObject>({});
+let getExtendData = (value: any) => {
 
-const HotCommentIndex = [4];
-registerAllModules();
+  extendData.value = value["extend"];;
+  extendData.value.rolesMap = tools_objToStrMap(extendData.value.roles);
 
-const ajhottable = ref<baseObject>({});
 
-const tableData2 = ref(new Array<baseObject>());
-
-let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.subPackageId = value;
-  return item.subPackageId;
 };
-const afterSelected = (selected: baseObject, row, column, row2, column2) => {
+let getFormInstance = (cmd: string, field: string, value: any) => {
+  if (cmd == "SET") {
+    if (field == "new") {
+      formInstance.value = {};
+    } else if (field == "*") {
+      tools_objToobj(value, formInstance.value);
+    } else if (field == "cmd") {
+      formInstance.value.cmd = value;
+    } else if (field == "children") {
+      formInstance.value.children = value;
+    }
+    return null;
+  } else {
+    return formInstance.value;
+  }
+};
+const afterSelected = (selected: baseObject) => {
   if (props.AfterSelected) props.AfterSelected(selected);
 };
-const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
-  cell.push({
-    row: i,
-    col: 6,
-    comment: { value: row.distinction },
-  });
+const onOpenDialog = (type: String) => {
+
 };
-const getComments = () => {
-  return [6];
+const onCancelDialog = () => {
+  return;
 };
-const getInitHotTable = () => {
-  return {
-    cmd: "",
-    sortR: 0,
-    subPackageId: "",
-    subPackageName: "",
-    contact: "",
-    phone: "",
-    manager: "",
-    managerName: "",
-    source: "",
-    children: [],
-  };
+const preSubmit = () => {
+  return true;
 };
+registerAllModules();
+
 /**
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
-  ajhottable.value.PageLoaded(uri, ownId);
+  ajtable.value.PageLoaded(uri, ownId);
 }
 
 // nextTick(() => {
