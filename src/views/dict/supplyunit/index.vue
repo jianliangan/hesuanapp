@@ -2,11 +2,11 @@
   <el-container>
     <el-container direction="vertical">
       <el-main>
-        <div style="height: 300px">
+        <div style="height: 600px">
           <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
 
         </div>
-        <div style="height: 250px; background-color: white">
+        <div style="height: 400px; background-color: white">
           <span style="font-size: 14px">清单:</span>
           <com-down ref="comdown"></com-down>
         </div>
@@ -18,6 +18,7 @@
 import comMain from "./components/comMain.vue";
 import comDown from "./components/comDown.vue";
 import { ref, nextTick, onMounted } from "vue";
+import { ElMessage } from 'element-plus'
 interface baseObject {
   [key: string]: any;
 }
@@ -35,8 +36,13 @@ const leftAfterSelected = (selected: baseObject) => {
   );
 };
 const mainAfterSelected = (selected: baseObject) => {
+  if (!selected || !selected.projectId) {
+    ElMessage.error('发生错误：请选择项目')
+    return;
+  }
   comdown.value.PageLoaded({
     supplyUnitId: selected.supplyUnitId,
+    projectId: selected.projectId
   });
 };
 /**

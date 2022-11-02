@@ -1,23 +1,49 @@
 <template>
-  <aj-hot-table ref="ajhottable" :MainContentPushRow="SupplyUnitPushRow" :MainContentFetchList="SupplyUnitList"
-    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false"
-    :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected" :GetExtendData="getExtendData" :BtnMulti="false">
-    <template v-slot:tableitem>
-      <hot-column width="0" data="supplyUnitId" title="" />
-      <hot-column width="310" data="supplyUnitName" title="供应商名称" />
-      <hot-column width="120" data="supplierType" type="dropdown" title="供应商类型" />
+  <supplyunit-search ref="supplyunitsearch" :OnSubmit="onSubmit"></supplyunit-search>
+  <aj-table ref="ajtable" :MainContentPushRow="SupplyUnitPushRow" :MainContentFetchList="SupplyUnitList"
+    :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    Style="width:1010px;height:100%" :AfterSelected="afterSelected" :UseWithDialog="false" OptionType="no"
+    OptionsWidth="100">
+    <template v-slot:formitem>
+      <div style="width:200px">
+        <el-input v-model="formInstance.supplyUnitName" placeholder="供应商名称" />
+      </div>
+      <div style="width:80px">
+        <el-input v-model="formInstance.contact" placeholder="供应商类型" />
+      </div>
+      <div style="width:120px">
+        <el-input v-model="formInstance.contact" placeholder="联系人" />
+      </div>
+      <div style="width:120px">
+        <el-input v-model="formInstance.phone" placeholder="电话" />
+      </div>
 
-      <hot-column width="120" data="contact" title="联系人" />
-      <hot-column width="120" data="phone" title="电话" />
-      <hot-column width="120" data="managerName" title="录入人" />
-      <hot-column width="120" data="datetime" title="录入时间" />
     </template>
-  </aj-hot-table>
+    <template v-slot:tableitem>
+
+      <el-table-column width="310px" prop="supplyUnitName" label="供应商名称" />
+      <el-table-column width="120px" prop="supplierType" type="dropdown" label="供应商类型" />
+      <el-table-column width="120px" prop="contact" label="联系人" />
+      <el-table-column width="120px" prop="phone" label="电话" />
+      <el-table-column width="120px" prop="managerName" label="录入人" />
+      <el-table-column width="120px" prop="datetime" label="录入时间" />
+    </template>
+    <template v-slot:expendcondition>
+      <aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
+        :GetMainPrimeId="getProjectSelectMainPrimeId" :GetMainName="getProjectSelectMainName"
+        :ItemSelect="projectItemSelect" Placeholder="选择项目" :SelectFirst="true" :RowStyle="rowStyle"></aj-select-input>
+    </template>
+    <template v-slot:expendBtns>
+      <el-button type="primary" @click="onSearch">
+        查询</el-button>
+    </template>
+  </aj-table>
 </template>
 <script lang="ts" setup>
 import numbro from "numbro";
+import SupplyunitSearch from "../../../components/supplyunitsearch/index.vue";
+import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
@@ -36,13 +62,61 @@ const props = defineProps({
     default: null,
   },
 });
-/**
- * left tree
- */
+const ajtable = ref<baseObject>({});
+const formInstance = ref<baseObject>({});
+const extendData = ref<baseObject>({});
+let projectSelect = ref<baseObject>({});
+let supplyunitsearch = ref<baseObject>({});
+const listUriParams = {} as baseObject;
 
-/**
- * right main
- */
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  ajtable.value.PageLoaded(listUriParams, listUriParams.ownId);
+}
+let onSearch = () => {
+  supplyunitsearch.value.PageLoaded(null, null);
+}
+const getProjectSelectMainPrimeId = (item: baseObject) => {
+  return item.projectId;
+};
+const getProjectSelectMainName = (item: baseObject) => {
+  return item.projectName;
+};
+const projectItemSelect = (value: String) => {
+  listUriParams.projectId = value;
+  // ajhottable.value.PageLoaded(listUriParams, value);
+};
+let getFormInstance = (cmd: string, field: string, value: any) => {
+  if (cmd == "SET") {
+    if (field == "new") {
+      formInstance.value = {};
+    } else if (field == "*") {
+      tools_objToobj(value, formInstance.value);
+    } else if (field == "cmd") {
+      formInstance.value.cmd = value;
+    } else if (field == "children") {
+      formInstance.value.children = value;
+    }
+    return null;
+  } else {
+    return formInstance.value;
+  }
+};
+const afterSelected = (selected: baseObject) => {
+  selected.projectId = listUriParams.projectId;
+  if (props.AfterSelected) props.AfterSelected(selected);
+};
+const onOpenDialog = (type: String) => {
+
+};
+const onCancelDialog = () => {
+  return;
+};
+const preSubmit = () => {
+  return true;
+};
+
+
 
 const HotCommentIndex = [4];
 registerAllModules();
@@ -51,46 +125,16 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getExtendData = (value: any) => {
-  let hottable = ajhottable.value.GetSettings();
-  hottableSettingsSupply(hottable, value);
+
 };
-let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.supplyUnitId = value;
-  return item.supplyUnitId;
-};
-const afterSelected = (selected: baseObject, row, column, row2, column2) => {
-  if (props.AfterSelected) props.AfterSelected(selected);
-};
-const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
-  cell.push({
-    row: i,
-    col: 6,
-    comment: { value: row.distinction },
-  });
-};
-const getComments = () => {
-  return [6];
-};
-const getInitHotTable = () => {
-  return {
-    cmd: "",
-    sortR: 0,
-    supplyUnitId: "",
-    supplyUnitName: "",
-    supplierType: "",
-    contact: "",
-    managerName: "",
-    manager: "",
-    phone: "",
-    source: "",
-    children: [],
-  };
-};
+
 /**
  * this api
  */
 function PageLoaded(uri: baseObject, ownId: Object) {
-  ajhottable.value.PageLoaded(uri, ownId);
+  tools_objToobj(uri, listUriParams);
+  ajtable.value.PageLoaded(uri, ownId);
+  projectSelect.value.PageLoaded();
 }
 
 // nextTick(() => {

@@ -18,6 +18,7 @@
 import comMain from "./components/comMain.vue";
 import comDown from "./components/comDown.vue";
 import { ref, nextTick, onMounted } from "vue";
+import { ElMessage } from 'element-plus'
 interface baseObject {
   [key: string]: any;
 }
@@ -35,8 +36,13 @@ const leftAfterSelected = (selected: baseObject) => {
   );
 };
 const mainAfterSelected = (selected: baseObject) => {
+  if (!selected || !selected.projectId) {
+    ElMessage.error('发生错误：请选择项目')
+    return;
+  }
   comdown.value.PageLoaded({
     subPackageId: selected.subPackageId,
+    projectId: selected.projectId
   });
 };
 /**

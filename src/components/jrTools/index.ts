@@ -35,7 +35,7 @@ export var tools_sort_map_loop = <T>(big: Array<T>, index: number, fun: (val: T)
 //:Map<number, btnpathinfo_str>
 export var tools_sort_map = <TKEY, TVAL>(m: Map<TKEY, TVAL>, big: Array<TVAL>, fun: (val: TVAL) => number): Array<TVAL> => {
 
-    if (m.size == 0)
+    if (!m || m.size == 0)
         return big
     for (let val of m.values()) {
         big.push(val)
@@ -64,6 +64,8 @@ export var tools_objToStrMap = (obj: any) => {
     return strMap;
 }
 export var tools_objToobj = (source: any, dist: any) => {
+    if (!source)
+        return;
     Object.keys(source).forEach((key, index) => {
         if ("function" != typeof source[key]) {
             dist[key] = source[key]

@@ -73,6 +73,7 @@ const change = (value: String) => {
 
 const LoadData = async (row: any) => {
   loading.value = true;
+
   conditionOptions.value.splice(0);
   if (props.MainContentFetchList)
 
@@ -108,7 +109,6 @@ function GetValue() {
 }
 function PageLoaded(uri: baseObject) {
   ui_dialog_visible.value = true;
-
   tools_objToobj(uri, listUriParams);
   LoadData(uri);
   //

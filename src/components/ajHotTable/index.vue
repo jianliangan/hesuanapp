@@ -25,13 +25,7 @@
           <span title="向下移动" style="width:50px;">下</span>
         </el-button>
         <template v-if="props.BtnMulti == true">
-          <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
-            <template #reference>
-              <el-button type="primary" v-if="props.BtnDel == true" id="bu">
-                <span title="删除一行" style="width:50px;">删</span>
-              </el-button>
-            </template>
-          </el-popconfirm>
+
           <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
             <span title="增加子行" style="width:50px;">增</span>
           </el-button>
@@ -41,8 +35,19 @@
           <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
             <span title="向后加一行" style="width:50px;">后</span>
           </el-button>
+          <el-popconfirm title="确认删除吗？" @confirm="ClkDel" v-if="props.BtnDel == true">
+            <template #reference>
+              <el-button type="primary" id="bu">
+                <span title="删除一行" style="width:50px;">删</span>
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
         <template v-else>
+
+          <el-button type="primary" @click="ClkPreInsert" id="bu">
+            <span title="向前加一行" style="width:50px;">增加</span>
+          </el-button>
           <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
             <template #reference>
               <el-button type="primary" id="bu">
@@ -50,10 +55,6 @@
               </el-button>
             </template>
           </el-popconfirm>
-          <el-button type="primary" @click="ClkPreInsert" id="bu">
-            <span title="向前加一行" style="width:50px;">增加</span>
-          </el-button>
-
         </template>
 
         <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
@@ -81,7 +82,8 @@
       </div>
 
     </el-header>
-    <div style="margin-left:auto;margin-right:0px;display: none;height:10px;width:10px" @click="sethidden2($event)">
+    <div v-if="props.HasHeader == true" style="margin-left:auto;margin-right:0px;display: none;height:10px;width:10px"
+      @click="sethidden2($event)">
       <el-icon class="">
         <CaretBottom class="jianto1" />
       </el-icon>

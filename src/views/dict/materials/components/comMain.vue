@@ -8,9 +8,10 @@
       <hot-column width="0" data="materialsId" title="" />
       <hot-column width="310" data="materialsName" title="材料名称" />
       <hot-column width="120" data="code" title="编码" />
-      <hot-column width="120" data="category" title="分类" />
-      <hot-column width="120" data="subject" title="科目" />
+      <hot-column width="120" data="subject" type="dropdown" title="科目" />
       <hot-column width="120" data="distinction" title="特征" />
+      <hot-column width="120" data="category" type="dropdown" title="分类" />
+
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="120" data="status" type="dropdown" title="状态" />
       <hot-column width="120" data="createByName" title="操作者" />
@@ -24,7 +25,7 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import { hottableSettings } from "../../../components/common";
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
 import { tools_objToobj } from "@/components/jrTools";
 import { ref, nextTick, defineProps } from "vue";
@@ -53,10 +54,13 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getExtendData = (value: any) => {
+
+  let hottable = ajhottable.value.GetSettings();
+  let divisionarray = hottableSettings(hottable, value);
+
+
   //console.log(value);
   let statusl = value["extend"].statusl;
-  let hottable = ajhottable.value.GetSettings();
-  console.log(statusl);
   hottable.columns[7].source = statusl;
   hottable.columns[7].strict = false;
   hottable.columns[7].allowInvalid = false;
@@ -71,12 +75,16 @@ const afterSelected = (selected: baseObject, row, column, row2, column2) => {
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,
-    col: 6,
+    col: 1,
+    comment: { value: row.materialsName },
+  }, {
+    row: i,
+    col: 4,
     comment: { value: row.distinction },
   });
 };
 const getComments = () => {
-  return [6];
+  return [1, 4];
 };
 const getInitHotTable = () => {
   return {

@@ -3,7 +3,7 @@
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders">
+    :AfterSelected="afterSelected" :NestedHeaders="nestedHeaders" :HasHeader="false">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
       <hot-column width="310" data="projectName" title="项目相关" />
@@ -26,11 +26,7 @@
       <hot-column width="90" data="manageSumprice" type="numeric" numeric-format="formatJP" title="管理费合价" />
       <hot-column width="90" data="profitSumprice" type="numeric" numeric-format="formatJP" title="利润合价" />
     </template>
-    <template v-slot:expendcondition>
-      <aj-select-input ref="projectSelect" :MainContentFetchList="ProjectFetchList"
-        :GetMainPrimeId="getProjectSelectMainPrimeId" :GetMainName="getProjectSelectMainName"
-        :ItemSelect="projectItemSelect"></aj-select-input>
-    </template>
+
   </aj-hot-table>
 </template>
 <script lang="ts" setup>
@@ -38,7 +34,7 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-import { ProjectFetchList, ProjectPushRow } from "@/api/model/home/project";
+
 
 import { ReportSubpackageTree } from "@/api/model/report/subpackage";
 import { tools_objToobj } from "@/components/jrTools";
@@ -47,7 +43,7 @@ import { ref, nextTick, defineProps } from "vue";
 interface baseObject {
   [key: string]: any;
 }
-let projectSelect = ref<baseObject>({});
+
 const props = defineProps({
   AfterSelected: {
     type: Function,
@@ -58,16 +54,9 @@ const listUriParams = {} as baseObject;
 /**
  * left tree
  */
-const projectItemSelect = (value: String) => {
-  listUriParams.projectId = value;
-  ajhottable.value.PageLoaded(listUriParams, value);
-};
-const getProjectSelectMainPrimeId = (item: baseObject) => {
-  return item.projectId;
-};
-const getProjectSelectMainName = (item: baseObject) => {
-  return item.projectName;
-};
+
+
+
 /**
  * right main
  */
@@ -159,7 +148,8 @@ const getInitHotTable = () => {
  */
 function PageLoaded(uri: baseObject) {
   tools_objToobj(uri, listUriParams);
-  projectSelect.value.PageLoaded(uri);
+
+  ajhottable.value.PageLoaded(listUriParams, 0);
   // ;
 }
 

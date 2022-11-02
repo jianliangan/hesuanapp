@@ -45,16 +45,18 @@
           </el-space>
 
         </template>
-
+        <slot name="expendBtns"></slot>
 
       </el-space>
+      <slot name="expendcondition"></slot>
     </el-header>
 
     <el-main>
       <div v-bind:style="props.Style">
-        <el-table ref="myeltable" v-loading="loading" height="100%" :data="tableData.list" :row-key="props.TableKey"
-          border stripe @selection-change="SelectionChange" :highlight-current-row="props.HighlightCurrentRow"
-          @current-change="currentChange" :cell-class-name="props.CellClass">
+        <el-table ref="myeltable" el-table-aj v-loading="loading" height="100%" :data="tableData.list"
+          :row-key="props.TableKey" border stripe @selection-change="SelectionChange"
+          :highlight-current-row="props.HighlightCurrentRow" @current-change="currentChange"
+          :cell-class-name="props.CellClass" :row-style="props.RowStyle">
           <slot name="tableitem"></slot>
           <template v-for="(item, index) in userColumn" :key="index">
             <el-table-column v-if="item.isshow" :column-key="item.prop" :label="item.label" :prop="item.prop"
@@ -357,6 +359,10 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+  RowStyle: {
+    type: Function,
+    default: null,
+  }
 });
 //
 const addlabel = "新增";
@@ -436,7 +442,8 @@ const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
 
 const currentChange = (newRow: baseObject, oldRow: baseObject) => {
   currentRow = newRow;
-  props.AfterSelected(currentRow);
+  if (props.AfterSelected)
+    props.AfterSelected(currentRow);
 };
 const ClkAddData = () => {
   if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
@@ -586,6 +593,11 @@ defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns })
   align-items: center;
   justify-content: space-between;
   padding: 0 15px;
+}
+</style>
+<style>
+.el-table[el-table-aj] .current-row td {
+  background-color: #90c6fd !important;
 }
 </style>
   

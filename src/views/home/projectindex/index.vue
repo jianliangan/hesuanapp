@@ -4,7 +4,7 @@
     <aj-table ref="ajtable" :MainContentPushRow="ProjectPushRow" :MainContentFetchList="ProjectFetchTree"
       :GetFormInstance="getFormInstance" :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog"
       :PreSubmit="preSubmit" :TableKey="tableKey" :BtnNew="true" :PreInstanData="preInstanData" :DefaultBtn="false"
-      :ExtendButtons="[{ call: extendDelBtn, name: '删除', confirm: true }, { call: extendEditBtn, name: '编1辑', confirm: false }]"
+      :ExtendButtons="[{ call: extendDelBtn, name: '删除', confirm: true }, { call: extendEditBtn, name: '编辑', confirm: false }]"
       :CmdFirst="true" :CellClass="cellClass">
       <template v-slot:formitem>
         <el-form :model="formInstance" ref="formEl" label-width="120px" :rules="rules">
