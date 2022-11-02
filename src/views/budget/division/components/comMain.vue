@@ -32,7 +32,7 @@
 
     </template>
     <template v-slot:expendcondition>
-      <el-button @click="onSearch" id="bu">
+      <el-button @click="onSearch" class="myelbutton">
         <span title="查询" style="width:50px;">查</span>
 
       </el-button>

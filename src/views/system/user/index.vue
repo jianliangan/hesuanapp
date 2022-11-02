@@ -1,7 +1,8 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="UsersPushRow" :MainContentFetchList="UsersFetchList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" Style="width:470px">
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    Style="width:470px;height:100%">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="用户名称">

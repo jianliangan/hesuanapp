@@ -81,7 +81,7 @@
                     <el-space direction="vertical">
                       <el-popconfirm title="确定删除吗" @confirm="DeleteRow(scope.row)" v-if="props.DefaultBtn == true">
                         <template #reference>
-                          <el-button link type="primary" size="small"> 删除 </el-button>
+                          <el-button link type="primary"> 删除 </el-button>
                         </template>
                       </el-popconfirm>
                       <span v-if="props.DefaultBtn == true">
@@ -337,7 +337,7 @@ const props = defineProps({
   },
   Style: {
     type: String,
-    default: "",
+    default: "height:100%",
   },
   OptionType: {
     type: String,
@@ -596,7 +596,35 @@ defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns })
 }
 </style>
 <style>
+.el-table[el-table-aj] td {
+  padding: 0px;
+
+}
+
+.el-table[el-table-aj] th,
+.el-table[el-table-aj] th .cell {
+  padding: 2px 4px;
+  color: #fff;
+  font-weight: normal;
+}
+
+.el-table[el-table-aj] tr {
+  padding: 2px 4px;
+  color: #fff;
+}
+
+.el-table[el-table-aj] td .cell {
+  padding: 2px 4px;
+  color: #373737;
+}
+
+.el-table[el-table-aj] button {
+  padding: 0px 5px;
+  height: auto
+}
+
 .el-table[el-table-aj] .current-row td {
+  padding: 0px;
   background-color: #90c6fd !important;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <aj-table ref="ajtable" :MainContentPushRow="DictSuppliertypePushRow" :MainContentFetchList="DictSuppliertypeList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
-    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" Style="width:530px"
-    :UseWithDialog="false" OptionType="no" OptionsWidth="100">
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
+    Style="width:530px;height:100%" :UseWithDialog="false" OptionType="no" OptionsWidth="100">
     <template v-slot:formitem>
       <div style="width:150px">
         <el-input v-model="formInstance.dictName" placeholder="名称" />

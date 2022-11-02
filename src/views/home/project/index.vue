@@ -5,9 +5,6 @@
     :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
     :ExtendButtons="[{ call: boRedirect, name: '单位工程', confirm: false }]" myWidth="600px">
     <template v-slot:formitem>
-
-
-
       <el-form :model="formInstance" id="myelform" ref="formEl" :rules="rules">
         <div class="elrowbox">
           <el-row>

@@ -980,7 +980,7 @@ const NodeEdit_Init = (selectnode: nodeinfo_str, nodes_map: Map<string, nodeinfo
     infoBtnOkInfo: Map<string, Array<btncheckinfo_str>>,
     infoBtnActInfo: Map<string, Array<btnactinfo_str>>
 ) => {
-    console.log("wwwwwwwwwwwwwwwww")
+
     ALLACTIONS.all_data_clear()
     pageCurrentItem.value = selectnode
     bigmytabs.value = "base1"

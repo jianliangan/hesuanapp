@@ -265,15 +265,7 @@ import NavMenu from "./components/NavMenu.vue";
 import userbar from "./components/userbar.vue";
 import setting from "./components/setting.vue";
 import iframeView from "./components/iframeView.vue";
-// function ab() {
-//   const header=document.getElementsByClassName('adminui-header')[0];
-//   console.log(header.offsetHeight)
-//   if(header.offsetHeight == 0){
-//     header.style.height="56px";
-//   }else{
-//     header.style.height="0";
-//   } 
-// }
+
 export default {
   name: "index",
   components: {
@@ -336,7 +328,7 @@ export default {
     ab() {
       const header = document.getElementsByClassName('adminui-header')[0];
       const iconim = document.getElementsByClassName('iconim')[0];
-      console.log(header.offsetHeight)
+
       if (header.offsetHeight == 0) {
         header.style.height = "56px";
         iconim.style.height = "20px";

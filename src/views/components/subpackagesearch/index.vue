@@ -34,7 +34,7 @@ const props = defineProps({
     },
     Title: {
         type: String,
-        default: "插叙"
+        default: "查询"
     }
 });
 let OnSubmit = () => {

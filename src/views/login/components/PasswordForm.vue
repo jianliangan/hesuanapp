@@ -64,7 +64,7 @@ export default {
         passWord: this.form.passWord,
       };
       //获取token
-      console.log("111", data);
+
       let resdata = await ApiToken(data).catch(err => {
       });
 

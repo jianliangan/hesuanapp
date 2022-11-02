@@ -30,7 +30,7 @@
       <hot-column width="90" data="costSubpackageprice" type="numeric" numeric-format="formatJP" title="专业分包费" />
     </template>
     <template v-slot:expendcondition>
-      <el-button @click="onSearch" id="bu">
+      <el-button @click="onSearch" class="myelbutton">
         <span title="查询" style="width:50px;">查</span>
       </el-button>
     </template>
@@ -117,7 +117,7 @@ const materialsSelected = (row: baseObject) => {
   map.set("distinction", row.distinction);
   map.set("unit", row.unit);
 
-  console.log("iiiiiiiii", row);
+
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 const afterBeginEditing = (row, column) => {

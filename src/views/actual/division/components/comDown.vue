@@ -70,7 +70,7 @@ const clkOk1 = (rows: Array<baseObject>) => {
   let map = new Map<String, Object>();
   map.set("subPackageId", row.subPackageId);
   map.set("subPackageName", row.subPackageName);
-  console.log("iiiiiiiii", row);
+
   ajhottable.value.PageUpdateRows(map, row.subPackageName);
 };
 const getMainName2 = (item: baseObject) => {
@@ -83,7 +83,7 @@ const clkOk2 = (rows: Array<baseObject>) => {
   let map = new Map<String, Object>();
   map.set("supplyUnitId", row.supplyUnitId);
   map.set("supplyUnitName", row.supplyUnitName);
-  console.log("iiiiiiiii", row);
+
   ajhottable.value.PageUpdateRows(map, row.supplyUnitName);
 };
 const cellDblClick = (cell: any, event: any) => {

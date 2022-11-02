@@ -2,11 +2,12 @@
   <el-container>
 
     <el-header :class="[props.BtnInsertChildren == true ? 'headeh' : 'headeh2']" v-if="props.HasHeader==true">
-      <el-space class="ajtre " :class="[props.BtnInsertChildren == true ? 'spach' : 'spach2']">
-        <template v-if="props.BtnField == true">
+
+      <template v-if="props.BtnField == true">
+        <el-space>
           <el-popover placement="bottom-start" title="" :width="70" trigger="click">
             <template #reference>
-              <el-button id="bu"><span title="显示列" style="width:50px;">显</span></el-button>
+              <el-button class="myelbutton"><span title="显示列" style="width:50px;">显</span></el-button>
             </template>
             <template #default>
               <div style="height:300px;overflow-y:auto;overflow-x: hidden;">
@@ -17,64 +18,74 @@
               </div>
             </template>
           </el-popover>
-        </template>
-        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" id="bu">
+        </el-space>
+      </template>
+      <el-space>
+        <el-button type="primary" @click="ClkUpMove" v-if="props.BtnUpMove == true" class="myelbutton">
           <span title="向上移动" style="width:50px;">上</span>
         </el-button>
-        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" id="bu">
+        <el-button type="primary" @click="ClkDownMove" v-if="props.BtnDownMove == true" class="myelbutton">
           <span title="向下移动" style="width:50px;">下</span>
         </el-button>
-        <template v-if="props.BtnMulti == true">
-
-          <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true" id="bu">
+      </el-space>
+      <template v-if="props.BtnMulti == true">
+        <el-space>
+          <el-button type="primary" @click="ClkInsertChildren" v-if="props.BtnInsertChildren == true"
+            class="myelbutton">
             <span title="增加子行" style="width:50px;">增</span>
           </el-button>
-          <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" id="bu">
+          <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" class="myelbutton">
             <span title="向前加一行" style="width:50px;">前</span>
           </el-button>
-          <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" id="bu">
+          <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" class="myelbutton">
             <span title="向后加一行" style="width:50px;">后</span>
           </el-button>
           <el-popconfirm title="确认删除吗？" @confirm="ClkDel" v-if="props.BtnDel == true">
             <template #reference>
-              <el-button type="primary" id="bu">
+              <el-button type="primary" class="myelbutton">
                 <span title="删除一行" style="width:50px;">删</span>
               </el-button>
             </template>
           </el-popconfirm>
-        </template>
-        <template v-else>
-
-          <el-button type="primary" @click="ClkPreInsert" id="bu">
+        </el-space>
+      </template>
+      <template v-else>
+        <el-space>
+          <el-button type="primary" @click="ClkPreInsert" class="myelbutton">
             <span title="向前加一行" style="width:50px;">增加</span>
           </el-button>
           <el-popconfirm title="确认删除吗？" @confirm="ClkDel">
             <template #reference>
-              <el-button type="primary" id="bu">
+              <el-button type="primary" class="myelbutton">
                 <span title="删除一行" style="width:50px;">删除</span>
               </el-button>
             </template>
           </el-popconfirm>
-        </template>
-
-        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" id="bu">
+        </el-space>
+      </template>
+      <el-space>
+        <el-button type="primary" @click="ClkSign" v-if="props.BtnSign == true" class="myelbutton">
           <span title="标记一行" style="width:50px;">标</span>
         </el-button>
-        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true" id="bu">
+        <el-button type="primary" @click="ClkUnSign" v-if="props.BtnSign == true" class="myelbutton">
           <span title="取消标记一行" style="width:50px;">取</span>
         </el-button>
-
-        <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
+      </el-space>
+      <template v-if="props?.ImportUri != undefined && props?.ImportUri != ''">
+        <el-space>
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
             :on-change="handleChange" auto-upload>
-            <el-button type="primary" id="bu">
+            <el-button type="primary" class="myelbutton">
               <span title="导入数据" style="width:50px;">导</span>
             </el-button>
           </el-upload>
-        </template>
+        </el-space>
+      </template>
+      <el-space>
         <slot name="expendcondition"></slot>
       </el-space>
+
       <div style="margin-left:auto;margin-right:0px;margin-top:auto;height:10px;width:10px" @click="sethidden1($event)">
         <el-icon class="">
           <CaretBottom class="jianto1" />
@@ -174,20 +185,7 @@ function sethidden2(event: any) {
   header.style.display = "block"
   event.currentTarget.style.display = "none";
 }
-function ac() {
-  const space = document.getElementsByClassName('spach2')[0];
-  const header = document.getElementsByClassName('headeh2')[0];
-  const jianto1 = document.getElementsByClassName('jianto2')[0];
-  if (space.offsetHeight == 0) {
-    space.style.height = "";
-    header.style.height = "";
-    jianto1.style.transform = "rotate(180deg)";
-  } else {
-    space.style.height = "0";
-    header.style.height = "0";
-    jianto1.style.transform = "";
-  }
-}
+
 const selectedField = (p, index) => {
   let hot = myHotTable.value.hotInstance;
   const hiddenColumnsPlugin = hot.getPlugin('hiddenColumns');
@@ -455,7 +453,7 @@ let settings = ref({
 
   },
   afterBeginEditing: (row: any, column: any) => {
-    //// console.log("aafter edit");
+
     if (props.AfterBeginEditing) props.AfterBeginEditing(row, column);
   },
   afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
@@ -464,13 +462,7 @@ let settings = ref({
   ,
   afterDocumentKeyDown: function (event: any) {
 
-    // let hot = myHotTable.value.hotInstance;
-    // let cell = hot.getSelectedLast();
 
-    // let selectBody = hot.getCopyableText(cell[0], cell[1], cell[0], cell[1]);
-    // console.log(selectBody);
-    // myAfterDocumentKeyDown(event);
-    //console.log("key down");
     if (!event.target.onkeyup)
       event.target.onkeyup = myAfterDocumentKeyDown
   },
@@ -1047,11 +1039,13 @@ const LoadData = async (row: any) => {
       .then((resdata: any) => {
         pageInfo.value.itemTotal = parseInt(resdata["itemTotal"]);
         pageInfo.value.pageSize = parseInt(resdata["pageSize"]);
+
         if (!resdata["list"] || resdata["list"].length == 0) {
           tableData.value.list = [props.GetInitHotTable()];
         } else {
           tableData.value.list = resdata["list"];
         }
+
         if (props.GetExtendData) {
           props.GetExtendData(resdata);
         }
@@ -1084,7 +1078,12 @@ const myLoadData = (listData: Array<baseObject>) => {
     props.AddComment(settings.value.cell, indexi, value);
     indexi++;
   }
+
+  let hot = myHotTable.value.hotInstance;
+  const hiddenColumnsPlugin = hot.getPlugin('hiddenColumns');
+  let tmptrancate = hiddenColumnsPlugin.getHiddenColumns();
   myHotTable.value.hotInstance.loadData(listData);
+  hiddenColumnsPlugin.hideColumns(tmptrancate);
   myRender();
 };
 let PageUpdateRows = (map: Map<Object, Object>, celldata: String) => {
@@ -1103,7 +1102,7 @@ let PageUpdateRows = (map: Map<Object, Object>, celldata: String) => {
     vv[key] = value;
   }
   hot.setDataAtCell(cell[0], cell[1], celldata);
-  console.log("iiiiiiiii", map, vv);
+
   //hot的事件设计不合理，只能再去推送一下，否则直接触发修改就行了
 
   let tmpp: baseObject = {};
@@ -1188,36 +1187,31 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings, 
 
 
 .el-button--default .el-button {
-  width: 70px;
+  width: 50px;
   border: 1px solid;
 }
 
-#bu {
-  border: 1px solid rgb(77, 74, 74);
+.myelbutton,
+.myelbutton:focus {
   width: 50px;
-  height: 38px;
+  height: 32px;
   background-color: #e7f7ff;
   color: #96c1ec;
   border: none;
 }
 
-/* #bu {
-  background-color: #ffffff;
-  border: 1px solid rgb(77, 74, 74);
-  width: 70px;
-  height: 30px;
-} */
+/* 
 .el-button--default {
-  width: 70px;
+  width: 50px;
+} */
+
+.myelbutton:hover {
+  background-color: #ffffff;
+  color: #96c1ec;
 }
 
-#bu:hover {
-  background-color: #ffffff;
-}
 
-#bu--primary {
-  background-color: #ffffff;
-}
+
 
 body .handsontable .truncate {
   width: 250px;

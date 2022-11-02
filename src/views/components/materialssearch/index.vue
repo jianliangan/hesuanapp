@@ -84,7 +84,7 @@ const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
 };
 watch(ui_dialog_visible, (newVal, oldVal) => {
   if (newVal == false) {
-    console.log(",,,,,,,,,,,,,,,,,,,,,");
+
     ajhottable.value.DeSelected();
   }
 

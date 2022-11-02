@@ -7,7 +7,6 @@
     :AfterSelected="afterSelected" :CellDblClick="cellDblClick" :GetExtendData="getExtendData">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
-      <hot-column width="310" data="projectName" title="项目相关" />
       <hot-column width="130" data="name" title="名称" />
       <hot-column width="150" data="subject" title="成本科目" />
       <hot-column width="120" data="code" title="编码" />
@@ -132,7 +131,7 @@ const clkOk1 = (rows: Array<baseObject>) => {
   let map = new Map<String, Object>();
   map.set("materialsId", row.materialsId);
   map.set("materialsName", row.materialsName);
-  console.log("iiiiiiiii", row);
+
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {

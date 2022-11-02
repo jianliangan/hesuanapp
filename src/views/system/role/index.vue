@@ -2,7 +2,7 @@
   <aj-table ref="ajtable" :MainContentPushRow="RolePushRow" :MainContentFetchList="RoleFetchList"
     :GetTreePrimeId="getTreePrimeId" :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance"
     :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
-    Style="width:570px">
+    Style="width:570px;height:100%">
     <template v-slot:formitem>
       <el-form :model="formInstance" label-width="120px">
         <el-form-item label="角色名称">

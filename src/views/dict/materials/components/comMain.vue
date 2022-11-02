@@ -1,134 +1,287 @@
 <template>
-  <aj-hot-table ref="ajhottable" :MainContentPushRow="MaterialsPushRow" :MainContentFetchList="MaterialsList"
-    MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false"
-    :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected" :GetExtendData="getExtendData" :BtnMulti="false">
-    <template v-slot:tableitem>
-      <hot-column width="0" data="materialsId" title="" />
-      <hot-column width="310" data="materialsName" title="材料名称" />
-      <hot-column width="120" data="code" title="编码" />
-      <hot-column width="120" data="subject" type="dropdown" title="科目" />
-      <hot-column width="120" data="distinction" title="特征" />
-      <hot-column width="120" data="category" type="dropdown" title="分类" />
+  <mater-search ref="matersearch" :OnSubmit="onSubmit"></mater-search>
+  <aj-table ref="ajtable" :MainContentPushRow="MaterialsPushRow" :MainContentFetchList="MaterialsList"
+    :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
+    :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true" :BtnField="true"
+    myWidth="600px">
+    <template v-slot:formitem>
+      <el-form :model="formInstance" id="myelform" ref="formEl" :rules="rules">
+        <div class="elrowbox">
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="材料名称" prop="materialsName">
+                <el-input v-model="formInstance.materialsName" />
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="编码" prop="code">
+                <el-input v-model="formInstance.code" />
 
-      <hot-column width="120" data="unit" title="单位" />
-      <hot-column width="120" data="status" type="dropdown" title="状态" />
-      <hot-column width="120" data="createByName" title="操作者" />
-      <hot-column width="120" data="createTime" title="创建时间" />
-      <hot-column width="120" data="updateTime" title="更新时间" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="科目">
+                <el-select v-model="formInstance.subject" placeholder="选择">
+                  <el-option v-for="item in subjectList" :key="item.dictName" :label="item.dictName"
+                    :value="item.dictName" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+              <el-form-item label="分类">
+                <el-select v-model="formInstance.category" placeholder="选择">
+                  <el-option v-for="item in categoryList" :key="item.dictName" :label="item.dictName"
+                    :value="item.dictName" />
+                </el-select>
+              </el-form-item>
+
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col span="12">
+              <el-form-item label="单位">
+                <el-input v-model="formInstance.unit"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col span="12">
+
+              <el-form-item label="状态">
+                <el-select v-model="formInstance.status" placeholder="选择">
+                  <el-option v-for="item in statusList" :key="item" :label="item" :value="item" />
+                </el-select>
+              </el-form-item>
+
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col span="24" distinction>
+              <el-form-item label="特征" prop="username">
+                <el-input type="textarea" v-model="formInstance.distinction"></el-input>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+        </div>
+
+      </el-form>
     </template>
-  </aj-hot-table>
+    <template v-slot:tableitem>
+    </template>
+    <template v-slot:expendBtns>
+      <el-button type="primary" @click="onSearch">
+        查询</el-button>
+    </template>
+  </aj-table>
 </template>
-<script lang="ts" setup>
-import numbro from "numbro";
 
-import { registerAllModules } from "handsontable/registry";
-import "handsontable/dist/handsontable.min.css";
-import { hottableSettings } from "../../../components/common";
+<script lang="ts" setup>
 import { MaterialsPushRow, MaterialsList } from "@/api/model/dict/materials";
+import MaterSearch from "../../../components/matersearch/index.vue";
 import { tools_objToobj } from "@/components/jrTools";
-import { ref, nextTick, defineProps } from "vue";
+import { ref, nextTick, reactive } from "vue";
+import { useRouter } from 'vue-router'
+import type { FormRules } from 'element-plus'
 
 interface baseObject {
   [key: string]: any;
 }
-const props = defineProps({
-  AfterSelected: {
-    type: Function,
-    default: null,
-  },
-});
-/**
- * left tree
- */
+////////////////
 
-/**
- * right main
- */
+////////////////
 
-const HotCommentIndex = [4];
-registerAllModules();
+const ajtable = ref<baseObject>({});
+const router = useRouter();
+const formInstance = ref<baseObject>({});
+let matersearch = ref<baseObject>({});
+const formEl = ref<baseObject>({});
+const listUriParams = {} as baseObject;
 
-const ajhottable = ref<baseObject>({});
 
-const tableData2 = ref(new Array<baseObject>());
+const rules = reactive<FormRules>({
+  materialsName: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+  code: [
+    { required: true, message: '必填项', trigger: 'blur' },
+  ],
+
+
+})
+let onSubmit = (params: baseObject) => {
+  tools_objToobj(params, listUriParams);
+  ajtable.value.PageLoaded(listUriParams, listUriParams.ownId);
+}
+let onSearch = () => {
+  matersearch.value.PageLoaded(null, null);
+}
+const preSubmit = async () => {
+
+  if (!formEl.value) return false;
+  return await formEl.value.validate((valid: any, fields: any) => {
+    if (valid) {
+      return true;
+    } else {
+      return false;
+    }
+  })
+};
+
+let statusList = ref([]);
+let subjectList = ref([]);
+let categoryList = ref([]);
 let getExtendData = (value: any) => {
+  let list = value["list"];
+  subjectList.value = value["extend"].subject;
+  categoryList.value = value["extend"].category;
+  statusList.value = value["extend"].statusl;
 
-  let hottable = ajhottable.value.GetSettings();
-  let divisionarray = hottableSettings(hottable, value);
+};
 
+let getFormInstance = (cmd: string, field: string, value: any) => {
+  if (cmd == "SET") {
+    if (field == "new") {
+      formInstance.value = {};
+    } else if (field == "*") {
+      tools_objToobj(value, formInstance.value);
 
-  //console.log(value);
-  let statusl = value["extend"].statusl;
-  hottable.columns[7].source = statusl;
-  hottable.columns[7].strict = false;
-  hottable.columns[7].allowInvalid = false;
+    } else if (field == "cmd") {
+      formInstance.value.cmd = value;
+    } else if (field == "children") {
+      formInstance.value.children = value;
+    }
+    return null;
+  } else {
+    return formInstance.value;
+  }
 };
-let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.materialsId = value;
-  return item.materialsId;
-};
-const afterSelected = (selected: baseObject, row, column, row2, column2) => {
-  if (props.AfterSelected) props.AfterSelected(selected);
-};
-const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
-  cell.push({
-    row: i,
-    col: 1,
-    comment: { value: row.materialsName },
-  }, {
-    row: i,
-    col: 4,
-    comment: { value: row.distinction },
+const boRedirect = (row: baseObject) => {
+  router.replace({
+    path: '/home/projectindex',
+    // name: 'index',
+    query: {
+      ownId: row.projectId,
+      rootId: row.projectId,
+      cmd: "self"
+    }
   });
 };
-const getComments = () => {
-  return [1, 4];
+let userColumn = [
+  {
+    label: "材料名称",
+    prop: "materialsName",
+    width: "310",
+    showOverflowTooltip: true,
+    fixed: true,
+    isshow: true,
+  },
+  {
+    label: "编码",
+    prop: "code",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "科目",
+    prop: "subject",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "特征",
+    prop: "distinction",
+    width: "120",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "分类",
+    prop: "category",
+    width: "70",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "单位",
+    prop: "unit",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "状态",
+    prop: "status",
+    width: "90",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "操作者",
+    prop: "createByName",
+    width: "150",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "创建时间",
+    prop: "createTime",
+    width: "100",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+  {
+    label: "更新时间",
+    prop: "updateTime",
+    width: "100",
+    showOverflowTooltip: true,
+    fixed: false,
+    isshow: true,
+  },
+
+
+];
+
+const onOpenDialog = (type: String) => {
+  if (type == "add") formInstance.value.parentId = formInstance.value.ownId;
 };
-const getInitHotTable = () => {
-  return {
-    cmd: "",
-    sortR: 0,
-    materialsId: "",
-
-    materialsName: "",
-    code: "",
-    category: "",
-    subject: "",
-    distinction: "",
-    unit: "",
-    status: "",
-    delFlag: "",
-    createBy: "",
-    createByName: "",
-    createTime: "",
-    updateTime: "",
-    remark: "",
-    by1: "",
-    by2: "",
-    by3: "",
-    by4: "",
-
-    sort: 0,
-    ownId: "",
-    parentId: "",
-    tag: 0,
-
-    source: "",
-    children: [],
-  };
+const onCancelDialog = () => {
+  return;
 };
-/**
- * this api
- */
 function PageLoaded(uri: baseObject, ownId: Object) {
-  ajhottable.value.PageLoaded(uri, ownId);
+  ajtable.value.PageLoaded(uri, ownId);
 }
 
-// nextTick(() => {
-//   PageLoaded({ rootId: "0" });
-// });
-
-defineExpose({ PageLoaded });
+nextTick(() => {
+  ajtable.value.SetColumns(userColumn);
+  PageLoaded({ ownId: "0" });
+});
 </script>
+<style scoped>
+.elrowbox {
+  width: 560px;
+  text-align: right;
+}
+
+.el-col {
+  padding-left: 15px;
+  width: 280px
+}
+
+.el-col[distinction] {
+  width: 100%;
+}
+</style>

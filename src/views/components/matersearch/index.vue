@@ -2,9 +2,9 @@
     <el-dialog v-model="dialogAddVisible" :title="props.Title">
 
 
-        <el-input v-model="formInstance.supplyUnitName" placeholder="供应商名称" />
+        <el-input v-model="formInstance.materialsName" placeholder="材料名称" />
 
-        <el-input v-model="formInstance.phone" placeholder="手机号" />
+        <el-input v-model="formInstance.code" placeholder="编码" />
 
 
         <el-button type="primary" @click="OnSubmit">查询
@@ -39,7 +39,7 @@ const props = defineProps({
 });
 let OnSubmit = () => {
     props.OnSubmit(formInstance.value);
-
+    dialogAddVisible.value = false;
 }
 let onCancel = () => {
 

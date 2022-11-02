@@ -243,7 +243,7 @@ const textmouseclick = () => {
 
   let selectnodeinfo = instan_nodes_map.value.get(node_idtmp)
   if (selectnodeinfo == undefined) {
-    console.log("找不到节点信息")
+
     return
   }
 
@@ -416,9 +416,9 @@ const Get_Nodes_list = async (row: any) => {
     for (let i = 0; i < response.data.obj.NodeRows.length; i++) {
       let noderow = response.data.obj.NodeRows[i] as nodeinfo_str
       real_xy_nodes_map.set(noderow.vx + ":" + noderow.vy, noderow.node_id)
-      console.log("set ", noderow)
+
       instan_nodes_map.value.set(noderow.node_id, noderow)
-      console.log("set 11  ", instan_nodes_map.value)
+
     }
 
     for (let key in response.data.obj.PathRows) {
@@ -458,13 +458,13 @@ PageLoaded()
 // })
 </script>
 
- <style scoped>
- svg .tspannode {
- 
-   color: aqua;
- }
- 
- .pointer {
-   cursor: pointer;
- }
- </style>
+<style scoped>
+svg .tspannode {
+
+  color: aqua;
+}
+
+.pointer {
+  cursor: pointer;
+}
+</style>

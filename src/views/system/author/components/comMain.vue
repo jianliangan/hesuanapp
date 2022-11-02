@@ -2,7 +2,7 @@
   <aj-table ref="ajtable" :MainContentFetchList="proxyMainContentFetchList" :GetTreePrimeId="getTreePrimeId"
     :GetTreePrimeName="getTreePrimeName" :GetFormInstance="getFormInstance" :GetExtendData="getExtendData"
     :OnOpenDialog="onOpenDialog" :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit"
-    :SaveBtn="false" TableKey="name" :hasOptions="false" Style="width:460px">
+    :SaveBtn="false" TableKey="name" :hasOptions="false" Style="width:460px;height:100%">
     <template v-slot:formitem> </template>
     <template v-slot:tableitem>
       <el-table-column width="280px" prop="meta.title" label="菜单名称" />
