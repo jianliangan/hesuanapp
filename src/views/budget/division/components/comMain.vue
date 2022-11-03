@@ -9,7 +9,8 @@
     :BtnDel="true" :BtnInsertChildren="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
     :AfterSelected="afterSelected" :Click="click" :AfterDocumentKeyDown="afterDocumentKeyDown"
-    :AfterBeginEditing="afterBeginEditing" :BtnField="true" :GetExtendData="getExtendData" :SuplyReadOnly="true">
+    :AfterBeginEditing="afterBeginEditing" :BtnField="true" :GetExtendData="getExtendData" :SuplyReadOnly="true"
+    :CheckUpfile="props.CheckUpfile">
     <template v-slot:tableitem>
       <hot-column width="0" data="divisionId" title="" />
 
@@ -69,6 +70,10 @@ const props = defineProps({
     type: Function,
     default: null,
   },
+  CheckUpfile: {
+    type: Function,
+    default: null,
+  }
 });
 /**
  * left tree

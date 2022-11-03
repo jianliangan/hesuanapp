@@ -106,7 +106,8 @@ const FetchLeftTreeDataList = async (row: baseObject) => {
 };
 
 //event handles
-const leftRowClick = (data: any) => {
+const leftRowClick = (data: any, node: any) => {
+
   if (props.GetTreePrimeId) {
     if (
       props?.GetTreePrimeId(data) == 0 ||
@@ -117,17 +118,20 @@ const leftRowClick = (data: any) => {
   }
 
   if (props.AfterSelected) {
-    props.AfterSelected(data);
+    props.AfterSelected(data, node.level);
   }
 };
 let GetCurrentNode = () => {
   return mytree.value!.getCurrentNode();
 };
+let GetCurrentTreeNode = () => {
+  return mytree.value!.getNode(mytree.value!.getCurrentKey());
+};
 let PageLoaded = (uri: baseObject) => {
   tools_objToobj(uri, listUriParams);
   FetchLeftTreeDataList(uri);
 };
-defineExpose({ PageLoaded, GetCurrentNode });
+defineExpose({ PageLoaded, GetCurrentNode, GetCurrentTreeNode });
 </script>
 
 <style>

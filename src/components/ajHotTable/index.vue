@@ -76,7 +76,7 @@
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
             :on-change="handleChange" auto-upload>
-            <el-button type="primary" class="myelbutton">
+            <el-button type="primary" class="myelbutton" @click="CheckUpfile">
               <span title="导入数据" style="width:50px;">导</span>
             </el-button>
           </el-upload>
@@ -351,6 +351,10 @@ const props = defineProps({
   BtnMulti: {
     type: Boolean,
     default: true
+  },
+  CheckUpfile: {
+    type: Function,
+    default: null,
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -799,6 +803,17 @@ const ClkDel = () => {
 const ClkUnSign = () => {
   allSign("unsign");
 };
+const CheckUpfile = (e: any) => {
+  if (props.CheckUpfile) {
+    let msg = props.CheckUpfile();
+
+    if (msg != "") {
+      e.preventDefault();
+      e.stopPropagation();
+      ElMessage.error(msg);
+    }
+  }
+}
 const allInstert = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
   if (!hot.getSelected()) {
@@ -918,12 +933,18 @@ const allInstert = (cmd: string) => {
         row.sort = selectSort.add(toRowSort).div(2).toString();
         row.cmd = "add";
         row.parentId = selectId;
-        row.ownId = selectRow.ownId;
+        if (selectRow.source == "project")
+          row.ownId = selectId;
+        else
+          row.ownId = selectRow.ownId;
       } else {
         row.sort = 1;
         row.cmd = "add";
         row.parentId = selectId;
-        row.ownId = selectRow.ownId;
+        if (selectRow.source == "project")
+          row.ownId = selectId;
+        else
+          row.ownId = selectRow.ownId;
       }
     } else {
       let selectSort = new Big(selectRow.sort);

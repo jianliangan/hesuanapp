@@ -35,6 +35,10 @@ const groupsProps = {
   emitPath: false,
   checkStrictly: true,
 };
+const GetCurrentTreeNode = () => {
+  return ajtree.value.GetCurrentTreeNode();
+};
+
 const getTreePrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.projectId = value;
 
@@ -55,5 +59,5 @@ const afterSelected = (selected: baseObject) => {
 function PageLoaded(uri: baseObject) {
   ajtree.value.PageLoaded(uri);
 }
-defineExpose({ PageLoaded });
+defineExpose({ PageLoaded, GetCurrentTreeNode });
 </script>

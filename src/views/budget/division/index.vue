@@ -17,7 +17,7 @@
     <el-container direction="vertical">
       <el-main>
         <div style="height: 500px">
-          <com-main ref="commain" :AfterSelected="mainAfterSelected"></com-main>
+          <com-main ref="commain" :AfterSelected="mainAfterSelected" :CheckUpfile="checkUpfile"></com-main>
         </div>
         <div style="height: 300px; background-color: white">
           <span style="font-size: 14px">工料机:</span>
@@ -68,6 +68,13 @@ const leftAfterSelected = (selected: baseObject) => {
     selected.ownId
   );
 };
+const checkUpfile = () => {
+  let node = comleft.value.GetCurrentTreeNode();
+  if (node.level != 3)
+    return "只有单位工程可以导入"
+  else
+    return "";
+}
 const mainAfterSelected = (selected: baseObject, row, column, row2, column2) => {
 
   comdown.value.PageLoaded(
