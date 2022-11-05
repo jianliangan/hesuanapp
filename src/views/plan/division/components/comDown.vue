@@ -1,8 +1,10 @@
 <template>
-  <aj-select-dialog ref="selectDialog" :MainContentFetchList="SubPackageList" :ClkOk="clkOk1" :GetMainName="getMainName"
-    Title="分包商"></aj-select-dialog>
-  <aj-select-dialog ref="selectDialog2" :MainContentFetchList="SupplyUnitList" :ClkOk="clkOk2"
-    :GetMainName="getMainName2" Title="供应商"></aj-select-dialog>
+  <!-- <aj-select-dialog ref="selectDialog" :MainContentFetchList="SubPackageList" :ClkOk="clkOk1" :GetMainName="getMainName"
+    Title="分包商"></aj-select-dialog> -->
+  <aj-subpackage-pop ref="selectDialog" Title="分包商列表" :AfterSelected="clkOk1"></aj-subpackage-pop>
+  <aj-supplyunit-pop ref="selectDialog2" Title="供应商列表" :AfterSelected="clkOk2"></aj-supplyunit-pop>
+  <!-- <aj-select-dialog ref="selectDialog2" :MainContentFetchList="SupplyUnitList" :ClkOk="clkOk2"
+    :GetMainName="getMainName2" Title="供应商"></aj-select-dialog> -->
   <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanDivisionMachinePushRow"
     :MainContentFetchList="PlanDivisionMachineTree" MaxFileNums="1" MaxFileSize="20" TableKey="name"
     :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="false" :BtnDel="true" :BtnSign="true"
@@ -33,8 +35,8 @@ import numbro from "numbro";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 import { hottableSettingsMachine } from "../../../components/common";
-import ajSelectDialog from "@/components/ajSelectDialog/index.vue";
-import { SubPackageList } from "@/api/model/dict/subpackage";
+import AjSubpackagePop from "../../../components/subpackagePop/index.vue";
+import AjSupplyunitPop from "../../../components/supplyunitPop/index.vue";
 import { SupplyUnitList } from "@/api/model/dict/supplyunit";
 import {
   PlanDivisionMachinePushRow,
@@ -60,36 +62,29 @@ const props = defineProps({
  * right main
  */
 let selectDialog = ref<baseObject>({});
-const getMainName = (item: baseObject) => {
-  return item.subPackageName;
-};
+
 let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
   let divisionarray = hottableSettingsMachine(hottable, value);
 
 };
-const clkOk1 = (rows: Array<baseObject>) => {
+const clkOk1 = (row: baseObject) => {
   // subPackageName
   // rows: Array<>
-  let row = rows[0];
+
   let map = new Map<String, Object>();
   map.set("subPackageId", row.subPackageId);
-  map.set("subPackageName", row.subPackageName);
 
   ajhottable.value.PageUpdateRows(map, row.subPackageName);
 };
 let selectDialog2 = ref<baseObject>({});
-const getMainName2 = (item: baseObject) => {
-  return item.supplyUnitName;
-};
-const clkOk2 = (rows: Array<baseObject>) => {
+
+const clkOk2 = (row: baseObject) => {
   // subPackageName
   // rows: Array<>
-  let row = rows[0];
+
   let map = new Map<String, Object>();
   map.set("supplyUnitId", row.supplyUnitId);
-  map.set("supplyUnitName", row.supplyUnitName);
-
   ajhottable.value.PageUpdateRows(map, row.supplyUnitName);
 };
 const cellDblClick = (cell: any, event: any) => {

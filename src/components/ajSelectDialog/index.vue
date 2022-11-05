@@ -1,41 +1,32 @@
 <template>
   <el-dialog v-model="ui_dialog_visible" :title="props.Title" width="50%">
-    <el-space direction="vertical">
-      <el-space alignment="top">
-        <div>
-          <el-space direction="vertical" class="myspace">
-            <el-tag v-for="(item, index) in selected_tags" closable :key="index" :type="color_config_array[0]"
-              @close="selected_tags_close(index)">
-              {{ props.GetMainName(item) }}
-            </el-tag>
-          </el-space>
-        </div>
-        <el-divider direction="vertical" style="height: 100%" />
-        <el-table :data="filterTableData" style="width: 100%" height="300" :loading="loading">
-          <el-table-column width="180">
-            <template #header>
-              <el-space><span>总条数({{ node_number }})</span>
-              </el-space>
-            </template>
-            <template #default="scope">
-              {{ props.GetMainName(scope.row) }}
-            </template>
-          </el-table-column>
-          <el-table-column width="150">
-            <template #header>
-              <el-input v-model="search" size="small" placeholder="搜索" />
-            </template>
 
-            <template #default="scope">
-              <el-button size="small" round @click="handleSelect(scope.row)">选择</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-space>
-      <el-button type="primary" v-if="props.MultiSelete" class="my-smallbutton" @click="handleSave">
-        确认
-      </el-button>
-    </el-space>
+
+    <el-table :data="filterTableData" height="300" :loading="loading">
+      <el-table-column>
+        <template #header>
+          <el-space><span>总条数({{ node_number }})</span>
+          </el-space>
+        </template>
+        <template #default="scope">
+          {{ props.GetMainName(scope.row) }}
+        </template>
+      </el-table-column>
+      <el-table-column width="100">
+        <template #header>
+          <el-input v-model="search" size="small" placeholder="搜索" />
+        </template>
+
+        <template #default="scope">
+          <el-button size="small" round @click="handleSelect(scope.row)">选择</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-button type="primary" v-if="props.MultiSelete" class="my-smallbutton" @click="handleSave">
+      确认
+    </el-button>
+
   </el-dialog>
 </template>
 
