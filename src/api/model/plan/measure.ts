@@ -26,7 +26,7 @@ export const PlanMeasureTree = (query: any) => {
 }
 export const PlanMeasureMachineTree = (query: any) => {
     return request({
-        url: '/plan/measure/machine/tree',
+        url: '/plan/measure/machine/treewith',
         method: 'get',
         params: query
     })

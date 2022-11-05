@@ -37,6 +37,9 @@
           <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnInsert == true" class="myelbutton">
             <span title="向前加一行" style="width:50px;">前</span>
           </el-button>
+          <el-button type="primary" @click="ClkPreInsert" v-if="props.BtnOneInsert == true" class="myelbutton">
+            <span title="增加一行" style="width:50px;">增</span>
+          </el-button>
           <el-button type="primary" @click="ClkBackInsert" v-if="props.BtnInsert == true" class="myelbutton">
             <span title="向后加一行" style="width:50px;">后</span>
           </el-button>
@@ -321,8 +324,8 @@ const props = defineProps({
     default: null,
   },
   AutoSelectFirst: {
-    type: String,
-    default: "yes",
+    type: Boolean,
+    default: true,
   },
   HasHeader: {
     type: Boolean,
@@ -355,6 +358,14 @@ const props = defineProps({
   CheckUpfile: {
     type: Function,
     default: null,
+  },
+  BtnOneInsert: {
+    type: Boolean,
+    default: false
+  },
+  AllReadOnly: {
+    type: Boolean,
+    default: false
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -393,6 +404,9 @@ const myRender = () => {
       }
       if (props.SuplyReadOnly == false) {
         readOnly = false;
+      }
+      if (props.AllReadOnly == true) {
+        readOnly = true;
       }
       for (let i = 0; i < cols; i++) {
         if (props.GetComments().indexOf(i) != -1) {
@@ -474,8 +488,10 @@ let settings = ref({
     if (firstApiLoad) {
       let hot = myHotTable.value.hotInstance;
       //AfterSelected
-      if (props.AutoSelectFirst == "yes")
-        hot.selectCell(0, 0);
+      if (props.AutoSelectFirst) {
+
+        hot.selectCell(0, 1);
+      }
       firstApiLoad = false;
     }
     myRender();
@@ -610,7 +626,7 @@ const upAllMove = (cmd: String) => {
   let hot = myHotTable.value.hotInstance;
   let plugin = hot.getPlugin("manualRowMove");
   if (!hot.getSelected()) {
-    ElMessage.info("需要先选中一行");
+    ElMessage.info("需要先在下面表格选中一行");
     return;
   }
   let selectR = hot.getSelected()[0][0];
@@ -698,20 +714,20 @@ const upAllMove = (cmd: String) => {
     .then((response: any) => {
       loading.value = false;
       //array换位置
+      LoadData(listUriParams);
+      // if (cmd == "up") {
+      //   if (selectIndex > 0) {
+      //     let tmp = brotherRows.splice(selectIndex, 1);
+      //     brotherRows.splice(selectIndex - 1, 0, ...tmp);
+      //   }
+      // } else {
+      //   if (selectIndex < brotherRows.length - 1) {
+      //     let tmp = brotherRows.splice(selectIndex + 1, 1);
+      //     brotherRows.splice(selectIndex, 0, ...tmp);
+      //   }
+      // }
 
-      if (cmd == "up") {
-        if (selectIndex > 0) {
-          let tmp = brotherRows.splice(selectIndex, 1);
-          brotherRows.splice(selectIndex - 1, 0, ...tmp);
-        }
-      } else {
-        if (selectIndex < brotherRows.length - 1) {
-          let tmp = brotherRows.splice(selectIndex + 1, 1);
-          brotherRows.splice(selectIndex, 0, ...tmp);
-        }
-      }
-
-      myLoadData(tableData.value.list);
+      // myLoadData(tableData.value.list);
     })
     .catch((err: any) => {
       loading.value = false;
@@ -745,7 +761,7 @@ const allSign = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
 
   if (!hot.getSelected()) {
-    ElMessage.info("需要先选中一行");
+    ElMessage.info("需要先在下面表格选中一行");
     return;
   }
   let selectR = hot.getSelected()[0][0];
@@ -783,11 +799,12 @@ const allSign = (cmd: string) => {
     .MainContentPushRow([postSelectRow])
     .then((response: any) => {
       loading.value = false;
-      if (cmd == "delete") {
-        if (brotherRows) brotherRows.splice(selectIndex, 1);
-        myLoadData(tableData.value.list);
-      }
-      myRender();
+      LoadData(listUriParams);
+      // if (cmd == "delete") {
+      //   if (brotherRows) brotherRows.splice(selectIndex, 1);
+      //   myLoadData(tableData.value.list);
+      // }
+      // myRender();
       //loaddata
     })
     .catch((err: any) => {
@@ -817,8 +834,14 @@ const CheckUpfile = (e: any) => {
 const allInstert = (cmd: string) => {
   let hot = myHotTable.value.hotInstance;
   if (!hot.getSelected()) {
-    ElMessage.info("需要先选中一行");
-    return;
+    if (cmd == "down" || cmd == "up") { hot.selectCell(0, 1); }
+    else {
+      if (tableData.value.map && tableData.value.map.size == 0) {
+        hot.selectCell(0, 1);
+        cmd = "up"
+      }
+
+    }
   }
   let selectR = hot.getSelected()[0][0];
   let selectC = hot.getSelected()[0][1];
@@ -970,17 +993,17 @@ const allInstert = (cmd: string) => {
     .MainContentPushRow([row])
     .then((response: any) => {
       loading.value = false;
+      LoadData(listUriParams);
+      // props.GetMainPrimeId(row, response);
+      // if (brotherRows) {
+      //   if (cmd == "up") {
+      //     brotherRows.splice(selectIndex, 0, row);
+      //   } else {
+      //     brotherRows.splice(selectIndex + 1, 0, row);
+      //   }
+      // }
 
-      props.GetMainPrimeId(row, response);
-      if (brotherRows) {
-        if (cmd == "up") {
-          brotherRows.splice(selectIndex, 0, row);
-        } else {
-          brotherRows.splice(selectIndex + 1, 0, row);
-        }
-      }
-
-      myLoadData(tableData.value.list);
+      // myLoadData(tableData.value.list);
     })
     .catch((err: any) => {
       loading.value = false;
@@ -1016,12 +1039,6 @@ const ClkInsertChildren = () => {
 function SelectionChange(selection: Array<baseObject>) {
   selectData.value = selection;
 }
-function DeleteRow(row: any) {
-  row.cmd = "delete";
-  row.children = [];
-  PushDataRow([row]);
-}
-
 const PushDataRow = async (body: any, ...args: Function[]) => {
   loading.value = true;
   let cb: Function = args[0];
@@ -1070,6 +1087,7 @@ const LoadData = async (row: any) => {
         if (props.GetExtendData) {
           props.GetExtendData(resdata);
         }
+
         myLoadData(tableData.value.list);
         //////////////////////
 

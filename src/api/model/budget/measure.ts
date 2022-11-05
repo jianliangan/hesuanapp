@@ -26,7 +26,7 @@ export const BudgetMeasureTree = (query: any) => {
 }
 export const BudgetMeasureMachineTree = (query: any) => {
     return request({
-        url: '/budget/measure/machine/tree',
+        url: '/budget/measure/machine/treewith',
         method: 'get',
         params: query
     })

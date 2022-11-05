@@ -9,10 +9,13 @@
       <div style="width:200px">
         <el-input v-model="formInstance.supplyUnitName" placeholder="供应商名称" />
       </div>
-      <div style="width:80px">
-        <el-input v-model="formInstance.contact" placeholder="供应商类型" />
+      <div style="width:130px">
+        <el-select v-model="formInstance.supplierType" placeholder="供应商类型">
+          <el-option v-for="item in supplierTypeList" :key="item.dictName" :label="item.dictName"
+            :value="item.dictName" />
+        </el-select>
       </div>
-      <div style="width:120px">
+      <div style="width:70px">
         <el-input v-model="formInstance.contact" placeholder="联系人" />
       </div>
       <div style="width:120px">
@@ -68,7 +71,7 @@ const extendData = ref<baseObject>({});
 let projectSelect = ref<baseObject>({});
 let supplyunitsearch = ref<baseObject>({});
 const listUriParams = {} as baseObject;
-
+const supplierTypeList = ref([]);
 let onSubmit = (params: baseObject) => {
   tools_objToobj(params, listUriParams);
   ajtable.value.PageLoaded(listUriParams, listUriParams.ownId);
@@ -125,7 +128,7 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getExtendData = (value: any) => {
-
+  supplierTypeList.value = value["extend"].suppliertype;
 };
 
 /**

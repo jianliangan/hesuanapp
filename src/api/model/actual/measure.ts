@@ -26,7 +26,7 @@ export const ActualMeasureTree = (query: any) => {
 }
 export const ActualMeasureMachineTree = (query: any) => {
     return request({
-        url: '/actual/measure/machine/tree',
+        url: '/actual/measure/machine/treewith',
         method: 'get',
         params: query
     })

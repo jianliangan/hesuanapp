@@ -26,7 +26,7 @@ export const BudgetDivisionTree = (query: any) => {
 }
 export const BudgetDivisionMachineTree = (query: any) => {
     return request({
-        url: '/budget/division/machine/tree',
+        url: '/budget/division/machine/treewith',
         method: 'get',
         params: query
     })

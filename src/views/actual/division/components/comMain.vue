@@ -19,7 +19,7 @@
       <hot-column width="120" data="distinction" title="项目特征" />
       <hot-column width="120" data="unit" title="单位" />
       <hot-column width="90" data="have" type="numeric" title="含量" />
-      <hot-column width="90" data="WorkAmount" type="numeric" title="招标工程量" />
+      <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
       <hot-column width="90" data="budgetWorkAmount" type="numeric" title="预算工程量" />
       <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="成本单价" />
       <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="成本合价" />

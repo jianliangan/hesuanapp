@@ -1,13 +1,14 @@
 <template>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanMeasureMachinePushRow"
     :MainContentFetchList="PlanMeasureMachineTree" MaxFileNums="1" MaxFileSize="20" TableKey="name"
-    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="true" :BtnSign="true" :BtnNew="false"
-    :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-    :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false">
+    :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnDel="true" :BtnInsert="false" :BtnSign="true"
+    :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
+    :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false" :GetExtendData="getExtendData"
+    :BtnOneInsert="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
-      <hot-column width="120" data="category" title="类别" />
+      <hot-column width="120" data="category" type="dropdown" title="类别" />
       <hot-column width="310" data="name" title="名称" />
       <hot-column width="120" data="type" title="规格型号" />
       <hot-column width="120" data="unit" title="单位" />
@@ -25,7 +26,7 @@ import numbro from "numbro";
 
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
-
+import { hottableSettingsMachine } from "../../../components/common";
 import {
   PlanMeasureMachinePushRow,
   PlanMeasureMachineTree,
@@ -60,7 +61,11 @@ let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.id = value;
   return item.id;
 };
+let getExtendData = (value: any) => {
+  let hottable = ajhottable.value.GetSettings();
+  let divisionarray = hottableSettingsMachine(hottable, value);
 
+};
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,

@@ -22,6 +22,22 @@ export var hottableSettings = (hottable: any, value: any) => {
     hottable.columns[5].allowInvalid = false;
     return [subjecttmp, categorytmp];
 }
+export var hottableSettingsMachine = (hottable: any, value: any) => {
+    if (!value["extend"]) {
+        console.error("获取扩展信息错误！")
+    }
+    let list2 = value["extend"].category;
+
+    let categorytmp = new Array<String>();
+    for (let i = 0; i < list2.length; i++) {
+        categorytmp.push(list2[i].dictName);
+    }
+
+    hottable.columns[2].source = categorytmp;
+    hottable.columns[2].strict = false;
+    hottable.columns[2].allowInvalid = false;
+    return [categorytmp];
+}
 export var hottableSettingsSupply = (hottable: any, value: any) => {
     let list = value["extend"].suppliertype;
     let suppliertypetmp = new Array<String>();

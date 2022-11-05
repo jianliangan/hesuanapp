@@ -1,9 +1,9 @@
 <template>
   <aj-hot-table ref="ajhottable" :MainContentPushRow="PlanOtherPushRow" :MainContentFetchList="PlanOtherList"
     MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true"
-    :BtnInsert="true" :BtnSign="true" :BtnDel="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
+    :BtnInsert="false" :BtnSign="true" :BtnDel="true" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected">
+    :AfterSelected="afterSelected" :BtnOneInsert="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="otherId" title="" />
       <hot-column width="310" data="name" title="名称" />

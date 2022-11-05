@@ -4,7 +4,7 @@
     TableKey="name" :HighlightCurrentRow="true" :BtnUpMove="false" :BtnDownMove="false" :BtnInsert="false"
     :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false" :BtnNew="false" :GetMainPrimeId="getMainPrimeId"
     :GetInitHotTable="getInitHotTable" :AddComment="addComment" :GetComments="getComments"
-    :AfterSelected="afterSelected" :CellDblClick="cellDblClick" :GetExtendData="getExtendData">
+    :AfterSelected="afterSelected" :CellDblClick="cellDblClick" :GetExtendData="getExtendData" :AllReadOnly="true">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="130" data="name" title="名称" />

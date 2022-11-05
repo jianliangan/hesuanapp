@@ -5,7 +5,7 @@
       MaxFileNums="1" MaxFileSize="20" TableKey="name" :HighlightCurrentRow="false" :BtnUpMove="false"
       :BtnDownMove="false" :BtnInsert="false" :BtnSign="false" :BtnDel="false" :BtnInsertChildren="false"
       :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
-      :GetComments="getComments" :AfterSelected="afterSelected" AutoSelectFirst="no" :HasHeader="false">
+      :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false" :HasHeader="false">
       <template v-slot:tableitem>
         <hot-column width="0" data="materialsId" title="" />
         <hot-column width="120" data="materialsName" title="材料名称" />

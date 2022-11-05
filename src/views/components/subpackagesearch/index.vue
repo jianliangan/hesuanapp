@@ -39,7 +39,7 @@ const props = defineProps({
 });
 let OnSubmit = () => {
     props.OnSubmit(formInstance.value);
-
+    dialogAddVisible.value = false;
 }
 let onCancel = () => {
 
