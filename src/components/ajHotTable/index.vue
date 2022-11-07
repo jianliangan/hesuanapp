@@ -366,6 +366,10 @@ const props = defineProps({
   AllReadOnly: {
     type: Boolean,
     default: false
+  },
+  CheckIfReadOnly: {
+    type: Function,
+    default: null,
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -412,7 +416,9 @@ const myRender = () => {
         if (props.GetComments().indexOf(i) != -1) {
           classall += " truncate";
         }
-
+        if (props.CheckIfReadOnly != null) {
+          readOnly = props.CheckIfReadOnly(i);
+        }
         hot.setCellMeta(j, i, "className", classall);
         hot.setCellMeta(j, i, "readOnly", readOnly);
 

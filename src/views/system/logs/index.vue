@@ -7,6 +7,10 @@
     <template v-slot:tableitem>
       <el-table-column prop="datetime" label="时间" />
       <el-table-column prop="userName" label="用户名称" />
+      <el-table-column prop="actionInfos" label="点击" />
+      <el-table-column prop="params" label="参数" />
+      <el-table-column prop="body" label="内容" />
+      <el-table-column prop="action" label="act" />
       <el-table-column prop="ip" label="登录地址" />
       <el-table-column prop="browser" label="浏览器" />
       <el-table-column prop="status" label="登录状态" />

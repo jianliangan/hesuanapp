@@ -7,7 +7,7 @@
     :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :Click="click"
     :AfterDocumentKeyDown="afterDocumentKeyDown" :AfterBeginEditing="afterBeginEditing" :BtnField="true"
-    :GetExtendData="getExtendData" :SuplyReadOnly="true">
+    :GetExtendData="getExtendData" :SuplyReadOnly="true" :CheckIfReadOnly="checkIfReadOnly">
     <template v-slot:tableitem>
       <hot-column width="0" data="measureId" title="" />
       <hot-column width="310" data="projectName" title="项目相关" />
@@ -23,11 +23,16 @@
       <hot-column width="90" data="budgetWorkAmount" type="numeric" title="预算工程量" />
       <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="成本单价" />
       <hot-column width="90" data="costSumprice" type="numeric" numeric-format="formatJP" title="成本合价" />
-      <hot-column width="90" data="costManprice" type="numeric" numeric-format="formatJP" title="成本人工费" />
-      <hot-column width="90" data="costMaterialsprice" type="numeric" numeric-format="formatJP" title="成本材料费" />
-      <hot-column width="90" data="costMechanicsprice" type="numeric" numeric-format="formatJP" title="成本机械费" />
-      <hot-column width="90" data="costDeviceprice" type="numeric" numeric-format="formatJP" title="成本设备费" />
-      <hot-column width="90" data="costSubpackageprice" type="numeric" numeric-format="formatJP" title="专业分包费" />
+      <hot-column width="90" data="costManprice" type="numeric" numeric-format="formatJP" title="成本人工费"
+        read-only="true" />
+      <hot-column width="90" data="costMaterialsprice" type="numeric" numeric-format="formatJP" title="成本材料费"
+        read-only="true" />
+      <hot-column width="90" data="costMechanicsprice" type="numeric" numeric-format="formatJP" title="成本机械费"
+        read-only="true" />
+      <hot-column width="90" data="costDeviceprice" type="numeric" numeric-format="formatJP" title="成本设备费"
+        read-only="true" />
+      <hot-column width="90" data="costSubpackageprice" type="numeric" numeric-format="formatJP" title="专业分包费"
+        read-only="true" />
     </template><template v-slot:expendcondition>
       <el-button @click="onSearch" class="myelbutton">
         <span title="查询" style="width:50px;">查</span>
@@ -100,6 +105,10 @@ const materialsSelected = (row: baseObject) => {
 
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
+const checkIfReadOnly = (col: Number) => {
+  if (col == 13 || col == 14 || col == 15 || col == 16 || col == 17)
+    return true;
+}
 let getMainPrimeId = (item: baseObject, value: Object) => {
   if (value != null) item.measureId = value;
   return item.measureId;
