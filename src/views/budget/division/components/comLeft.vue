@@ -40,12 +40,12 @@ const GetCurrentTreeNode = () => {
 };
 
 const getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.projectId = value;
+  if (value) item.projectId = value;
 
   return item.projectId;
 };
 const getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.projectName = value;
+  if (value) item.projectName = value;
   return item.projectName;
 };
 

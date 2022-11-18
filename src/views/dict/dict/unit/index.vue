@@ -1,23 +1,21 @@
 <template>
 
-  <aj-table ref="ajtable" :MainContentPushRow="DictCategoryPushRow" :MainContentFetchList="DictCategoryList"
+  <aj-table ref="ajtable" :MainContentPushRow="DictUnitPushRow" :MainContentFetchList="DictUnitList"
     :GetFormInstance="getFormInstance" :GetExtendData="getExtendData" :OnOpenDialog="onOpenDialog"
     :OnCancelDialog="onCancelDialog" :HasPage="true" :PreSubmit="preSubmit" :BtnNew="true"
     Style="width:530px;height:100%" :UseWithDialog="false" OptionType="no" OptionsWidth="100">
     <template v-slot:formitem>
       <div style="width:150px">
-        <el-input v-model="formInstance.dictName" placeholder="分类名称" />
+        <el-input v-model="formInstance.dictName" placeholder="单位名称" />
       </div>
-      <div style="width:150px">
-        <el-input v-model="formInstance.dictName2" placeholder="清单名称" />
-      </div>
+
       <div style="width:50px">
         <el-input v-model="formInstance.sort" placeholder="顺序" />
       </div>
     </template>
     <template v-slot:tableitem>
-      <el-table-column width="80px" prop="dictName" label="分类名称" />
-      <el-table-column width="300px" prop="dictName2" label="清单名称" />
+      <el-table-column width="80px" prop="dictName" label="单位名称" />
+
       <el-table-column width="50px" prop="sort" label="顺序" />
     </template>
   </aj-table>
@@ -25,7 +23,7 @@
 </template>
   
 <script lang="ts" setup>
-import { DictCategoryList, DictCategoryPushRow } from "@/api/model/dict/dict";
+import { DictUnitList, DictUnitPushRow } from "@/api/model/dict/dict";
 
 import { tools_objToobj, tools_objToStrMap } from "@/components/jrTools";
 import { ref, nextTick } from "vue";

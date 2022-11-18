@@ -14,31 +14,64 @@
 </template>
 
 <script>
-	export default {
-		methods: {
-			gohome(){
-				location.href="#/"
-			},
-			goback(){
-				this.$router.go(-1);
-			},
-			gologin(){
-				this.$router.push("/login");
-			}
+export default {
+	methods: {
+		gohome() {
+			location.href = "#/"
+		},
+		goback() {
+			this.$router.go(-1);
+		},
+		gologin() {
+			this.$router.push("/login");
 		}
 	}
+}
 </script>
 
 <style scoped>
-	.router-err {display: flex;width: 900px;margin: 50px auto;align-items: center;}
-	.router-err__icon {width: 400px;}
-	.router-err__icon img {width: 100%;}
-	.router-err__content {flex: 1;padding:40px;}
-	.router-err__content h2 {font-size: 26px;}
-	.router-err__content p {font-size: 14px;color: #999;margin: 15px 0 30px 0;line-height: 1.5;}
+.router-err {
+	display: flex;
+	width: 900px;
+	margin: 50px auto;
+	align-items: center;
+}
 
-	@media (max-width: 992px){
-		.router-err {display: block;width: 100%;margin-top: 10px;text-align: center;}
-		.router-err__icon {width: 280px;margin: 0 auto;}
+.router-err__icon {
+	width: 400px;
+}
+
+.router-err__icon img {
+	width: 100%;
+}
+
+.router-err__content {
+	flex: 1;
+	padding: 40px;
+}
+
+.router-err__content h2 {
+	font-size: 26px;
+}
+
+.router-err__content p {
+	font-size: 14px;
+	color: #999;
+	margin: 15px 0 30px 0;
+	line-height: 1.5;
+}
+
+@media (max-width: 992px) {
+	.router-err {
+		display: block;
+		width: 100%;
+		margin-top: 10px;
+		text-align: center;
 	}
+
+	.router-err__icon {
+		width: 280px;
+		margin: 0 auto;
+	}
+}
 </style>

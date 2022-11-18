@@ -17,7 +17,7 @@
       <hot-column width="120" data="category" type="dropdown" title="类别" />
 
       <hot-column width="120" data="distinction" title="项目特征" />
-      <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="120" data="unit" type="dropdown" title="单位" />
       <hot-column width="90" data="have" type="numeric" title="含量" />
       <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
       <hot-column width="90" data="budgetWorkAmount" type="numeric" title="预算工程量" />
@@ -84,9 +84,19 @@ function scrollHancle() {
   materialsSearch.value?.SetVisible(false)
 }
 document.addEventListener('scroll', scrollHancle, true);
+function refreshtable() {
+  ajhottable.value.Refresh();
+};
+document.addEventListener(
+  "MyComdownChange",
+  refreshtable, true
+);
 onBeforeUnmount(() => {
   document.removeEventListener(
     'scroll', scrollHancle, true
+  );
+  document.removeEventListener(
+    'MyComdownChange', refreshtable, true
   );
 })
 
@@ -108,9 +118,10 @@ const materialsSelected = (row: baseObject) => {
 const checkIfReadOnly = (col: Number) => {
   if (col == 13 || col == 14 || col == 15 || col == 16 || col == 17)
     return true;
+  return undefined;
 }
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.measureId = value;
+  if (value) item.measureId = value;
   return item.measureId;
 };
 const click = (cell: any, event: any) => {

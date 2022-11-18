@@ -134,6 +134,10 @@ let getFormInstance = (cmd: string, field: string, value: any) => {
   if (cmd == "SET") {
     if (field == "new") {
       formInstance.value = {};
+      formInstance.value.sort = 1;
+      if (value) {
+        formInstance.value.parentId = value.projectId;
+      }
     } else if (field == "*") {
       tools_objToobj(value, formInstance.value);
     } else if (field == "cmd") {

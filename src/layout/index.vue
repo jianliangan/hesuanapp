@@ -81,7 +81,7 @@
       <div v-if="!ismobile" :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
         <div class="adminui-side-scroll">
           <el-scrollbar>
-            <el-menu :default-active="active" router :collapse="menuIsCollapse"
+            <el-menu background-color="#21304C" :default-active="active" router :collapse="menuIsCollapse"
               :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
               <NavMenu :navMenus="menu"></NavMenu>
             </el-menu>
@@ -415,7 +415,7 @@ export default {
 .adminui-header {
   overflow: hidden;
   height: 56px;
-  background: #222b45;
+  background: #1972C6;
   color: #fff;
   display: flex;
   justify-content: space-between;

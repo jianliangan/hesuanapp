@@ -10,16 +10,17 @@
     :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="false" :BtnDel="true" :BtnSign="true"
     :BtnNew="false" :GetMainPrimeId="getMainPrimeId" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :CellDblClick="cellDblClick" :AutoSelectFirst="false"
-    :GetExtendData="getExtendData" :BtnOneInsert="true">
+    :GetExtendData="getExtendData" :BtnOneInsert="true" :Changed="changed">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" type="dropdown" title="类别" />
       <hot-column width="310" data="name" title="名称" />
+
+      <hot-column width="120" data="type" title="规格型号" />
+      <hot-column width="120" data="unit" type="dropdown" title="单位" />
       <hot-column width="120" data="subPackageName" title="分包商" />
       <hot-column width="120" data="supplyUnitName" title="供应商" />
-      <hot-column width="120" data="type" title="规格型号" />
-      <hot-column width="120" data="unit" title="单位" />
       <hot-column width="90" data="have" title="含量" />
       <hot-column width="90" data="count" type="numeric" title="数量" />
       <hot-column width="90" data="price" type="numeric" numeric-format="formatJP" title="市场价" />
@@ -67,7 +68,13 @@ let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
   let divisionarray = hottableSettingsMachine(hottable, value);
 
+  selectDialog2.value.UpdateData(divisionarray[1]);
 };
+let changed = () => {
+  //发送事件
+  var ev = new Event("MyComdownChange");
+  document.dispatchEvent(ev);
+}
 const clkOk1 = (row: baseObject) => {
   // subPackageName
   // rows: Array<>
@@ -88,8 +95,8 @@ const clkOk2 = (row: baseObject) => {
   ajhottable.value.PageUpdateRows(map, row.supplyUnitName);
 };
 const cellDblClick = (cell: any, event: any) => {
-  if (cell[1] == 4) selectDialog.value.PageLoaded("", null);
-  if (cell[1] == 5) selectDialog2.value.PageLoaded("", null);
+  if (cell[1] == 6) selectDialog.value.PageLoaded("", null);
+  if (cell[1] == 7) selectDialog2.value.PageLoaded("", null);
 };
 const HotCommentIndex = [4];
 registerAllModules();
@@ -98,7 +105,7 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
+  if (value) item.id = value;
   return item.id;
 };
 

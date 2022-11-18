@@ -1,55 +1,47 @@
 <template>
   <div class="adminui-tags">
-		<ul ref="tags">
-			<li v-for="tag in tagList" v-bind:key="tag"
-				:class="[isActive(tag) ? 'active' : '', tag.meta.affix ? 'affix' : '']"
-				@contextmenu.prevent="openContextMenu($event, tag)">
-				<router-link :to="tag">
-					<span>{{ tag.meta.title }}</span>
-					<el-icon v-if="!tag.meta.affix" @click.prevent.stop='closeSelectedTag(tag)'>
-						<el-icon-close />
-					</el-icon>
-				</router-link>
-			</li>
-		</ul>
-	</div>
+    <ul ref="tags">
+      <li v-for="tag in tagList" v-bind:key="tag"
+        :class="[isActive(tag) ? 'active' : '', tag.meta.affix ? 'affix' : '']"
+        @contextmenu.prevent="openContextMenu($event, tag)">
+        <router-link :to="tag">
+          <span>{{ tag.meta.title }}</span>
+          <el-icon v-if="!tag.meta.affix" @click.prevent.stop='closeSelectedTag(tag)'>
+            <el-icon-close />
+          </el-icon>
+        </router-link>
+      </li>
+    </ul>
+  </div>
 
   <transition name="el-zoom-in-top">
-    <ul
-      v-if="contextMenuVisible"
-      :style="{ left: left + 'px', top: top + 'px' }"
-      class="contextmenu"
-      id="contextmenu"
-    >
+    <ul v-if="contextMenuVisible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu" id="contextmenu">
       <li @click="refreshTab()">
         <el-icon>
-          <el-icon-refresh /> </el-icon
-        >刷新
+          <el-icon-refresh />
+        </el-icon>刷新
       </li>
       <hr />
-      <li
-        @click="closeTabs()"
-        :class="contextMenuItem.meta.affix ? 'disabled' : ''"
-      >
+      <li @click="closeTabs()" :class="contextMenuItem.meta.affix ? 'disabled' : ''">
         <el-icon>
-          <el-icon-close /> </el-icon
-        >关闭标签
+          <el-icon-close />
+        </el-icon>关闭标签
       </li>
       <li @click="closeOtherTabs()">
         <el-icon>
-          <el-icon-folder-delete /> </el-icon
-        >关闭其他标签
+          <el-icon-folder-delete />
+        </el-icon>关闭其他标签
       </li>
       <hr />
       <li @click="maximize()">
         <el-icon>
-          <el-icon-full-screen /> </el-icon
-        >最大化
+          <el-icon-full-screen />
+        </el-icon>最大化
       </li>
       <li @click="openWindow()">
         <el-icon>
-          <el-icon-copy-document /> </el-icon
-        >在新的窗口中打开
+          <el-icon-copy-document />
+        </el-icon>在新的窗口中打开
       </li>
     </ul>
   </transition>
@@ -325,7 +317,7 @@ export default {
 }
 
 .contextmenu li i {
-  font-size: 14px;
+  font-size: 12px;
   margin-right: 10px;
 }
 

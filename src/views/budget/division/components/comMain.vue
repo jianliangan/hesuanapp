@@ -20,7 +20,7 @@
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" type="dropdown" title="类别" />
       <hot-column width="120" data="distinction" title="项目特征" />
-      <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="120" data="unit" type="dropdown" title="单位" />
       <hot-column width="90" data="have" type="numeric" title="含量" />
       <hot-column width="90" data="workAmount" type="numeric" title="招标工程量" />
       <hot-column width="90" data="costUnitprice" type="numeric" numeric-format="formatJP" title="综合单价" />
@@ -86,9 +86,21 @@ function scrollHancle() {
   materialsSearch.value?.SetVisible(false)
 }
 document.addEventListener('scroll', scrollHancle, true);
+
+function refreshtable() {
+  ajhottable.value.Refresh();
+};
+document.addEventListener(
+  "MyComdownChange",
+  refreshtable, true
+);
+
 onBeforeUnmount(() => {
   document.removeEventListener(
     'scroll', scrollHancle, true
+  );
+  document.removeEventListener(
+    'MyComdownChange', refreshtable, true
   );
 })
 const HotCommentIndex = [4];
@@ -125,8 +137,7 @@ const tableData2 = ref(new Array<baseObject>());
 //     },
 //   },
 // };
-const categoryArray = ref([]);
-const subjectArray = ref([]);
+
 let getExtendData = (value: any) => {
   let hottable = ajhottable.value.GetSettings();
   let divisionarray = hottableSettings(hottable, value);
@@ -190,7 +201,7 @@ const materialsSelected = (row: baseObject) => {
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.divisionId = value;
+  if (value) item.divisionId = value;
   return item.divisionId;
 };
 const afterSelected = (selected: baseObject, row, column, row2, column2) => {

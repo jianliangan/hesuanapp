@@ -7,7 +7,7 @@
 
         </div>
         <div style="height: 400px; background-color: white">
-          <span style="font-size: 14px">清单:</span>
+          <span style="font-size: 12px">清单:</span>
           <com-down ref="comdown"></com-down>
         </div>
       </el-main>

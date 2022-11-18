@@ -135,7 +135,7 @@ const clkOk1 = (rows: Array<baseObject>) => {
   ajhottable.value.PageUpdateRows(map, row.materialsName);
 };
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
+  if (value) item.id = value;
   return item.id;
 };
 let getExtendData = (value: any) => {

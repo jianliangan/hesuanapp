@@ -30,12 +30,12 @@ const groupsProps = {
   checkStrictly: true,
 };
 const getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.roleId = value;
+  if (value) item.roleId = value;
 
   return item.roleId;
 };
 const getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.roleName = value;
+  if (value) item.roleName = value;
   return item.roleName;
 };
 

@@ -4,7 +4,7 @@ export default {
 		str = str.replace("#", "")
 		var hxs = str.match(/../g)
 		let hxss = []
-		if (hxs != null)
+		if (hxs)
 			for (let i = 0; i < 3; i++) hxss[i] = parseInt(hxs[i], 16)
 		return hxss
 	},

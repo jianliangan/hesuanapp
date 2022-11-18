@@ -4,14 +4,14 @@
     :HighlightCurrentRow="true" :BtnUpMove="true" :BtnDownMove="true" :BtnInsert="false" :BtnSign="true" :BtnNew="false"
     :GetMainPrimeId="getMainPrimeId" :BtnDel="true" :GetInitHotTable="getInitHotTable" :AddComment="addComment"
     :GetComments="getComments" :AfterSelected="afterSelected" :AutoSelectFirst="false" :GetExtendData="getExtendData"
-    :BtnOneInsert="true">
+    :BtnOneInsert="true" :Changed="changed">
     <template v-slot:tableitem>
       <hot-column width="0" data="id" title="" />
       <hot-column width="120" data="code" title="编码" />
       <hot-column width="120" data="category" type="dropdown" title="类别" />
       <hot-column width="310" data="name" title="名称" />
       <hot-column width="120" data="type" title="规格型号" />
-      <hot-column width="120" data="unit" title="单位" />
+      <hot-column width="120" data="unit" type="dropdown" title="单位" />
 
       <hot-column width="120" data="loss" title="损耗率" />
       <hot-column width="90" data="have" title="含量" />
@@ -58,7 +58,7 @@ const ajhottable = ref<baseObject>({});
 
 const tableData2 = ref(new Array<baseObject>());
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.id = value;
+  if (value) item.id = value;
   return item.id;
 };
 let getExtendData = (value: any) => {
@@ -66,6 +66,11 @@ let getExtendData = (value: any) => {
   let divisionarray = hottableSettingsMachine(hottable, value);
 
 };
+let changed = () => {
+  //发送事件
+  var ev = new Event("MyComdownChange");
+  document.dispatchEvent(ev);
+}
 const addComment = (cell: Array<baseObject>, i: Number, row: baseObject) => {
   cell.push({
     row: i,

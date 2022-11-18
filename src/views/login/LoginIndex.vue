@@ -30,20 +30,11 @@
     </div> -->
     <div class="login_main">
       <div class="login_config">
-        <el-dropdown
-          trigger="click"
-          placement="bottom-end"
-          @command="configLang"
-        >
+        <el-dropdown trigger="click" placement="bottom-end" @command="configLang">
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                v-for="item in lang"
-                :key="item.value"
-                :command="item"
-                :class="{ selected: config.lang == item.value }"
-                >{{ item.name }}</el-dropdown-item
-              >
+              <el-dropdown-item v-for="item in lang" :key="item.value" :command="item"
+                :class="{ selected: config.lang == item.value }">{{ item.name }}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -252,8 +243,7 @@ export default {
   margin-top: 40px;
 }
 
-.login-form {
-}
+.login-form {}
 
 .login-form:deep(.el-tabs) .el-tabs__header {
   margin-bottom: 25px;

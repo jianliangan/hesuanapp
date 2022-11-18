@@ -18,7 +18,9 @@
 
       <template v-slot:expendBtns>
         <el-input v-model="searchObject.supplyUnitName" placeholder="分包名称" />
-        <el-input v-model="searchObject.phone" placeholder="电话" />
+        <el-select v-model="searchObject.supplierType" filterable placeholder="供应商类型">
+          <el-option v-for="item in supplierTypeOptions" :key="item" :label="item" :value="item" />
+        </el-select>
         <el-button type="primary" @click="onSearch">
           查询</el-button>
       </template>
@@ -54,7 +56,7 @@ const ui_dialog_visible = ref(false);
 const ajtable = ref<baseObject>({});
 const formInstance = ref<baseObject>({});
 const extendData = ref<baseObject>({});
-
+const supplierTypeOptions = ref([]);
 let supplyunitsearch = ref<baseObject>({});
 const listUriParams = {} as baseObject;
 const supplierTypeList = ref([]);
@@ -117,11 +119,14 @@ function PageLoaded(uri: baseObject, ownId: Object) {
   })
 }
 
-// nextTick(() => {
-//   PageLoaded({ rootId: "0" });
-// });
+function UpdateData(supplierTypeSource: any) {
+  supplierTypeOptions.value.splice(0);
+  for (let i = 0; i < supplierTypeSource.length; i++) {
+    supplierTypeOptions.value.push(supplierTypeSource[i]);
+  }
+}
 
-defineExpose({ PageLoaded });
+defineExpose({ PageLoaded, UpdateData });
 </script>
 <style>
 

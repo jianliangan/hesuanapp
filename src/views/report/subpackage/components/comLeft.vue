@@ -33,12 +33,12 @@ const groupsProps = {
   checkStrictly: true,
 };
 const getTreePrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.subPackageId = value;
+  if (value) item.subPackageId = value;
 
   return item.subPackageId;
 };
 const getTreePrimeName = (item: baseObject, value: Object) => {
-  if (value != null) item.subPackageName = value;
+  if (value) item.subPackageName = value;
   return item.subPackageName;
 };
 

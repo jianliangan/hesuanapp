@@ -20,7 +20,7 @@
           <com-main ref="commain" :AfterSelected="mainAfterSelected" :CheckUpfile="checkUpfile"></com-main>
         </div>
         <div style="height: 300px; background-color: white">
-          <span style="font-size: 14px">工料机:</span>
+          <span style="font-size: 12px">工料机:</span>
           <com-down ref="comdown"></com-down>
         </div>
 
@@ -30,7 +30,7 @@
 </template>
 <script lang="ts" setup>
 import comLeft from "./components/comLeft.vue";
-import { CaretLeft, CaretRight } from "@element-plus/icons-vue";
+import { CaretLeft, CaretRight, Refresh } from "@element-plus/icons-vue";
 import comMain from "./components/comMain.vue";
 import comDown from "./components/comDown.vue";
 import { ref, nextTick, onMounted } from "vue";

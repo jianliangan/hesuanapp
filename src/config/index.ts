@@ -35,7 +35,7 @@ const DEFAULT_CONFIG = {
     LAYOUT: 'menu',
 
     //菜单是否折叠
-    MENU_IS_COLLAPSE: false,
+    MENU_IS_COLLAPSE: true,
 
     //菜单是否启用手风琴效果
     MENU_UNIQUE_OPENED: false,

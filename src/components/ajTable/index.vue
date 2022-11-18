@@ -176,7 +176,7 @@ let planAreas = ref(new Map<string, baseObject>());
 const organizedata = ref(new Array<baseObject>());
 let organizedata2 = new Array<any>();
 let getDialogAddVisible = (value: any) => {
-  if (value != null) dialogAddVisible.value = value;
+  if (value ) dialogAddVisible.value = value;
   return dialogAddVisible.value;
 };
 function getAllAreas(
@@ -446,7 +446,7 @@ const currentChange = (newRow: baseObject, oldRow: baseObject) => {
     props.AfterSelected(currentRow);
 };
 const ClkAddData = () => {
-  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", null);
+  if (props.GetFormInstance) props?.GetFormInstance("SET", "new", currentRow);
   if (props.PreInstanData && props.PreInstanData() == false) return;
   dialogIsAdd.value = true;
   getDialogAddVisible(true);
@@ -573,8 +573,10 @@ function PageLoaded(uri: baseObject) {
   LoadData(uri);
   //
 }
-
-defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns });
+function GetCurrentRow() {
+  return currentRow;
+}
+defineExpose({ PageLoaded, ExportDataList, ClkEditData, DeleteRow, SetColumns, GetCurrentRow });
 </script>
 
 <style scoped>

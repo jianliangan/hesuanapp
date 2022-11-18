@@ -46,7 +46,7 @@ const ajhottable = ref<baseObject>({});
 const tableData2 = ref(new Array<baseObject>());
 
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.otherId = value;
+  if (value) item.otherId = value;
   return item.otherId;
 };
 const afterSelected = (selected: baseObject, row, column, row2, column2) => {

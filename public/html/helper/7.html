@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-size: 12px;
+            width: 100%;
+        }
+
+        img {
+
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>场景7：导入清单</div>
+    <div>目前支持两种格式导入：<a href="#aaaa">格式a</a>和<a href="#bbbb">格式b</a></div>
+    <div style="font-weight:bold"><a name="aaaa">1、格式a导入</a></div>
+    <div>1、只有预算收入的列表里可以导入</div>
+    <div><a target="_blank" href="img/1.png"><img src="img/1.png" /></a></div>
+    <div>点击《导》弹出选择文件，然后选中文件立即导入，导入成功样子如下图：</div>
+    <div><a target="_blank" href="img/2.png"><img src="img/2.png" /></a></div>
+
+    <div>Xlsx文件格式说明：</div>
+    <div>只导入xlsx中的第2个，第3个，第5个sheet,其他的sheet不处理；</div>
+    <div>第2个sheet对应预算收入的分部分项，</div>
+    <div>第3个sheet对应预算收入的措施分项</div>
+    <div>第5个sheet对应其他费用</div>
+    <div>举例说明：比如只想导入措施分项，只需要把措施分项放到第3个sheet就可以。</div>
+    <div>二、表单导入规则说明：</div>
+
+    <div>1、分部分项和措施分项</div>
+    <div>单个单位工程里边（项目名称+项目特征）是唯一的，重复导入无效，会直接被忽略。</div>
+    <div>2、其他费用</div>
+    <div>项目名称是唯一的，重复导入会被忽略。</div>
+    <div>3、分部分项、措施分项、其他费用，表格内容格式需要注意事项</div>
+    <div>A.导入时从上到下扫描行，遇到第一个列单元格里以”工程名称”开头，那么隔两行开始连续导入，遇到”/”,终止导入。不断循环以上过程，直到文件结尾。</div>
+    <div>B.数据里的项目编码是特殊字段，如果为空则这条信息会被导入成父节点。</div>
+    <div>4、表格列不能随意改变，比如顺序，合并单元格个数等都不能动。只能用原来提供的格式。</div>
+
+    <div>分部分项：</div>
+    <div><a target="_blank" href="img/3.png"><img src="img/3.png" /></a></div>
+    <div><a target="_blank" href="img/4.png"><img src="img/4.png" /></a></div>
+
+    <div>措施分项：</div>
+    <div><a target="_blank" href="img/5.png"><img src="img/5.png" /></a></div>
+    <div>其他：</div>
+    <div><a target="_blank" href="img/6.png"><img src="img/6.png" /></a></div>
+
+    <div style="font-weight:bold"><a name="bbbb">2、格式b导入</a></div>
+</body>
+
+</html>

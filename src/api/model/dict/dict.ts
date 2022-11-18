@@ -72,3 +72,20 @@ export const DictSuppliertypePushRow = (body: any) => {
         }
     })
 }
+export const DictUnitList = (query: any) => {
+    return request({
+        url: '/dict/dict/unit/fetch',
+        method: 'get',
+        params: query
+    })
+}
+export const DictUnitPushRow = (body: any) => {
+    return request({
+        url: '/dict/dict/unit/push',
+        method: 'post',
+        data: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

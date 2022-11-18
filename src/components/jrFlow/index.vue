@@ -1,45 +1,45 @@
 <template>
 
-  <div class="hello" v-loading="loading" style="background-color: beige;" @mousemove="flowpagemousemove">
+  <div class="hello" v-loading="loading" style="background-color: beige;" @mousemove="flowpag em ousemo  ve">
 
-    <NodeEdit ref="view_node_edit" @nodeeditok="event_nodeeditok_cb" :my_reques_flow_id="props.my_reques_flow_id">
+    <NodeEdit ref="view_node_edit" @nodeeditok="event_nodeeditok  _cb" :my_reques_flow_id="props.my_reque  s_flow_id">
     </NodeEdit>
 
-    <svg :width="mysvgWidth" :height="mysvgHeight" style="background-color: white;margin: 10px;" ref="mysvg">
+    <svg :width="mysvgWidth  " :height="mysvgHei  ght" style="background-color: white;margin: 10px;" ref="mysvg">
 
-      <template v-for="nodeinfo of instan_nodes_map.values()" v-bind:key="nodeinfo.key">
+      <template v-for="nodeinfo of inst  an_nodes_map.  values()" v-bind:key="nodeinfo.key">
 
-        <rect v-bind:width="nodewidth" v-bind:height="nodeheight" style="cursor:pointer;" v-bind:x="nodeinfo.x_ui"
-          v-bind:y="nodeinfo.y_ui" fill="#bff3c3" v-bind:stroke="nodeinfo.stroke_ui" />
+        <rect v-bind:width="nodewidth" v-bind:height="no  deheight" style="cursor:pointer;" v-bind:x="nodeinfo.x_ui"
+          v-bind:y="nod  einfo.y_ui" fill="#bff3c3" v-bind:stroke="n  odeinfo.strok  e_ui" />
 
         <text font-size="13" font-family="Verdana" style="text-anchor: middle;cursor:pointer;">
-          <tspan v-bind:x="nodeinfo.x_ui + nodewidth / 2" v-bind:y="nodeinfo.y_ui + 0 + nodeheight / 2"
+          <tspan v-bind:x="nodeinf  o.x_ui + nodewi  dth / 2" v-bind:y="nodeinfo.y_ui +   0 + nodeheight / 2"
             v-bind:width="nodewidth" v-bind:height="nodeheight">
-            {{ nodeinfo.node_name }}</tspan>
+            {{ nodein  fo.node_name }}</tspan>
 
-          <tspan v-if="nodeinfo.timeout > 0" v-bind:x="nodeinfo.x_ui + nodewidth / 2"
-            v-bind:y="nodeinfo.y_ui + 13 + nodeheight / 2" fill="#ff0000" style="font-size:10px;">{{ nodeinfo.timeout +
-                "分"
+          <tspan v-if="nodeinf  o.timeout > 0" v-bind:x="  nodeinfo.x_ui   + nodewidth / 2"
+            v-bind:y="nodeinfo.y_ui   + 13 + nodeheig  ht / 2" fill="#ff0000" style="font-size:10px;">{{ nodeinfo.timeo  ut +
+                        "分"
             }}
           </tspan>
 
         </text>
       </template>
-      <template v-for="(value, index) in ui_lines_map" v-bind:key="index">
+      <template v-for="(value, inde  x) in ui_lines_map" v-bind:key="index">
 
-        <path v-bind:d="value.d" style="cursor:pointer;" v-if="value.type === 'line'" fill="none"
-          v-bind:stroke="value.stroke" stroke-miterlimit="10" v-on:dblclick="pathmouseclick(index)"
-          v-on:mouseenter="pathmouseover(index, true)" v-on:mouseleave="pathmouseover(index, false)">
+        <path v-bind:d="valu  e.d" style="cursor:pointer;" v-if="value.type   === 'line'" fill="none"
+          v-bind:stroke="value.stro  ke" stroke-miterlimit="10" v-on:dblclick="pathmouse  click(index)"
+          v-on:mouseenter="pathmouseove  r(index, true)  " v-on:mouseleave="pathmouseo  ver(index, fal  se)">
         </path>
 
-        <path v-bind:d="value.d" style="cursor:pointer;" v-else v-bind:fill="value.stroke" v-bind:stroke="value.stroke"
-          stroke-miterlimit="10" pointer-events="all" v-on:dblclick="pathmouseclick(index - 1)"
-          v-on:mouseenter="pathmouseover(index - 1, true)" v-on:mouseleave="pathmouseover(index - 1, false)">
+        <path v-bind:d="value.d  " style="cursor:pointer;" v-else v-bind:fill="value.stro  ke" v-bind:stroke="value.stroke"
+          stroke-miterlimit="10" pointer-events="all" v-on:dblclick="pathm  ouseclick(  index - 1)"
+          v-on:mouseenter="pathmouse  over(index - 1, true)" v-on:mouseleave="pathmouseover(  index - 1, false)">
         </path>
       </template>
 
-      <rect v-bind:width="nodewidth" v-bind:height="nodeheight" v-bind:x="rectmyoffset.left"
-        v-bind:visibility="rectmyoffset.visibility" v-bind:y="rectmyoffset.top" fill="#aa0000" stroke="#aa0000"
+      <rect v-bind:width="nodewid  th" v-bind:height="nodeheight" v-bind:x="r  ectmyoffse  t.left"
+        v-bind:visibility="rectmyoffset.visibilit  y" v-bind:y="r  ectmyoffset.top" fill="#aa0000" stroke="#aa0000"
         v-on:dblclick="textmouseclick" />
     </svg>
 
@@ -217,7 +217,7 @@ const textmouseclick_2 = (selectnodeinfo: nodeinfo_str) => {
 
   }
 
-  if (view_node_edit.value != null)
+  if (view_node_edit.value )
     view_node_edit.value.NodeEdit_Init(selectnodeinfo, instan_nodes_map.value, infoBtnInfo, infoPathsInfo, infoCheckInfo, infoBtnOkInfo,
       infoBtnActInfo)
 }

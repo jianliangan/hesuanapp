@@ -68,7 +68,7 @@ function SetVisible(visible: any) {
   ui_dialog_visible.value = visible;
 }
 let getMainPrimeId = (item: baseObject, value: Object) => {
-  if (value != null) item.materialsId = value;
+  if (value) item.materialsId = value;
   return item.materialsId;
 };
 const afterSelected = (selected: baseObject, row, column, row2, column2) => {

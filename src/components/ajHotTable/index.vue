@@ -1,7 +1,30 @@
 <template>
+  <el-drawer v-model="drawer" title="I am the title" :with-header="false">
+    <iframe src="/html/helper/7.html" style="width:100%;height:100%"></iframe>
+  </el-drawer>
+
+  <el-dialog v-model="importDialogVisible" title="导入说明">
+
+    <div style="font-size:12px" class="importflag">导入前请您确定导入文件和模板是对应的。如果您不清楚文档格式，请点击查看帮助。</div>
+    <div class="importflag">
+      <el-select v-model="currentImportTemplate" placeholder="选择导入模板">
+        <el-option label="A模板" value="1"></el-option>
+        <el-option label="B模板" value="2"></el-option>
+      </el-select>
+    </div>
+    <div class="importflag">
+      <el-button @click="OnImportCancel">查看帮助
+      </el-button>
+      <el-button type="primary" @click="OnImportResume">继续导入
+      </el-button>
+    </div>
+
+  </el-dialog>
+
+
   <el-container>
 
-    <el-header :class="[props.BtnInsertChildren == true ? 'headeh' : 'headeh2']" v-if="props.HasHeader==true">
+    <el-header :class="[props.BtnInsertChildren == true ? 'headeh' : 'headeh2']" v-if="props.HasHeader == true">
 
       <template v-if="props.BtnField == true">
         <el-space>
@@ -79,8 +102,8 @@
           <el-upload :accept="props.FilesExts" :maxSize="props.MaxFileSize" :limit="1" :data="listUriParams"
             :show-file-list="false" :action="props?.ImportUri" :on-error="handleError" :on-success="handleSuccess"
             :on-change="handleChange" auto-upload>
-            <el-button type="primary" class="myelbutton" @click="CheckUpfile">
-              <span title="导入数据" style="width:50px;">导</span>
+            <el-button type="primary" ref="myelbuttonref" class="myelbutton" @click="CheckUpfile">
+              <span title="导入数据" style="width:50px;" @click="ImportBtn">导</span>
             </el-button>
           </el-upload>
         </el-space>
@@ -128,7 +151,7 @@ import { CaretLeft, CaretRight, CaretTop, CaretBottom } from "@element-plus/icon
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.min.css";
 
-import { computed, nextTick, ref, watch, defineProps, defineExpose, onBeforeUnmount } from "vue";
+import { h, computed, nextTick, ref, watch, defineProps, defineExpose, onBeforeUnmount } from "vue";
 import {
   tools_objToobj,
   tools_sort_map_loop,
@@ -136,6 +159,8 @@ import {
 } from "@/components/jrTools/index";
 
 import {
+  ElSwitch,
+  ElMessageBox,
   ElMessage,
   UploadFile,
   UploadFiles,
@@ -152,9 +177,15 @@ var languages = require("numbro/dist/languages.min.js");
 interface baseObject {
   [key: string]: any;
 }
+const myelbuttonref = ref({});
+const drawer = ref(false);
 const userColumn = ref(new Array<baseObject>());
 var firstApiLoad = true;
 const myHotTable = ref<baseObject>({});
+const importDialogVisible = ref(false);
+const currentImportTemplate = ref("1");
+const importTemplateList = ref([]);
+let myImportBtn = {};
 let listUriParamsOwnId = {};
 let planAreas = ref(new Map<string, baseObject>());
 const formatJP = {
@@ -370,6 +401,10 @@ const props = defineProps({
   CheckIfReadOnly: {
     type: Function,
     default: null,
+  },
+  Changed: {
+    type: Function,
+    default: null,
   }
 });
 const myAfterDocumentKeyDown = (e: any) => {
@@ -406,6 +441,7 @@ const myRender = () => {
         classall += " sourceproject_" + maprow.__level;
         readOnly = true;
       }
+
       if (props.SuplyReadOnly == false) {
         readOnly = false;
       }
@@ -416,8 +452,14 @@ const myRender = () => {
         if (props.GetComments().indexOf(i) != -1) {
           classall += " truncate";
         }
-        if (props.CheckIfReadOnly != null) {
-          readOnly = props.CheckIfReadOnly(i);
+        if (props.CheckIfReadOnly) {
+          let readonlytmp = props.CheckIfReadOnly(i);
+          if (readonlytmp === undefined) {
+
+          } else {
+            readOnly = readonlytmp;
+          }
+
         }
         hot.setCellMeta(j, i, "className", classall);
         hot.setCellMeta(j, i, "readOnly", readOnly);
@@ -544,7 +586,7 @@ let settings = ref({
       tmpp.cmd = "edit";
       PushDataRow([tmpp], () => {
         //myLoadData(tableData.value.list);
-
+        if (props.Changed) props.Changed();
         LoadData(listUriParams);
       });
     });
@@ -740,6 +782,23 @@ const upAllMove = (cmd: String) => {
     });
   ///////////////////////////////
 };
+const OnImportCancel = () => {
+  drawer.value = true;
+  importDialogVisible.value = false;
+}
+const OnImportResume = () => {
+  // myelbuttonref.value.emit('click');
+  listUriParams.templateId = currentImportTemplate.value;
+  if (myImportBtn) {
+    myImportBtn.dispatchEvent(new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    }));
+  }
+
+  importDialogVisible.value = false;
+}
 const ClkUpMove = () => {
   upAllMove("up");
 };
@@ -826,6 +885,16 @@ const ClkDel = () => {
 const ClkUnSign = () => {
   allSign("unsign");
 };
+const ImportBtn = (e: any) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  myImportBtn = e.currentTarget.parentNode.parentNode;
+  //myImportBtn.dispatchEvent(new MouseEvent('click'));
+  importDialogVisible.value = true;
+
+
+}
 const CheckUpfile = (e: any) => {
   if (props.CheckUpfile) {
     let msg = props.CheckUpfile();
@@ -1186,8 +1255,10 @@ const DeSelected = () => {
   let hot = myHotTable.value.hotInstance;
   return hot.deselectCell();
 }
-
-defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings, DeSelected });
+const Refresh = () => {
+  LoadData(listUriParams);
+}
+defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings, DeSelected, Refresh });
 </script>
 <style scoped>
 .scTable-table {
@@ -1203,6 +1274,10 @@ defineExpose({ PageLoaded, PageUpdateRows, PageResize, SetColumns, GetSettings, 
 }
 </style>
 <style>
+.importflag {
+  padding: 10px;
+}
+
 .handsontable {
   background: #F4F4F4;
 }

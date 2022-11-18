@@ -20,6 +20,17 @@ export var hottableSettings = (hottable: any, value: any) => {
     hottable.columns[5].source = categorytmp;
     hottable.columns[5].strict = false;
     hottable.columns[5].allowInvalid = false;
+
+    let listunit = value["extend"].unit;
+    let unittmp = new Array<String>();
+    for (let i = 0; i < listunit.length; i++) {
+        unittmp.push(listunit[i].dictName);
+    }
+
+    hottable.columns[7].source = unittmp;
+    hottable.columns[7].strict = false;
+    hottable.columns[7].allowInvalid = false;
+
     return [subjecttmp, categorytmp];
 }
 export var hottableSettingsMachine = (hottable: any, value: any) => {
@@ -36,7 +47,24 @@ export var hottableSettingsMachine = (hottable: any, value: any) => {
     hottable.columns[2].source = categorytmp;
     hottable.columns[2].strict = false;
     hottable.columns[2].allowInvalid = false;
-    return [categorytmp];
+
+
+    let listunit = value["extend"].unit;
+    let unittmp = new Array<String>();
+    for (let i = 0; i < listunit.length; i++) {
+        unittmp.push(listunit[i].dictName);
+    }
+
+    hottable.columns[5].source = unittmp;
+    hottable.columns[5].strict = false;
+    hottable.columns[5].allowInvalid = false;
+
+    let listsuppliertype = value["extend"].suppliertype;
+    let suppliertypetmp = new Array<String>();
+    for (let i = 0; i < listsuppliertype.length; i++) {
+        suppliertypetmp.push(listsuppliertype[i].dictName);
+    }
+    return [categorytmp, suppliertypetmp];
 }
 export var hottableSettingsSupply = (hottable: any, value: any) => {
     let list = value["extend"].suppliertype;

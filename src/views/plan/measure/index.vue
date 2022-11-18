@@ -19,7 +19,7 @@
 
         </div>
         <div style="height: 300px; background-color: white">
-          <span style="font-size: 14px">工料机:</span>
+          <span style="font-size: 12px">工料机:</span>
           <com-down ref="comdown"></com-down>
         </div>
       </el-main>
